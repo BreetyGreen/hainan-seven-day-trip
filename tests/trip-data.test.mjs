@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -47,4 +48,25 @@ test("budget totals are derived from their line items", () => {
   assert.equal(budgets.duo.people, 2);
   assert.ok(budgets.solo.total.max <= 8000);
   assert.ok(budgets.duo.total.max <= 16000);
+});
+
+test("ships a local route feature for every day", async () => {
+  const raw = await readFile(
+    new URL("../public/routes/puer-loop.geojson", import.meta.url),
+    "utf8",
+  );
+  const routeData = JSON.parse(raw);
+
+  assert.equal(routeData.type, "FeatureCollection");
+  assert.equal(routeData.features.length, 7);
+  assert.deepEqual(
+    routeData.features.map((feature) => feature.properties.dayId),
+    [1, 2, 3, 4, 5, 6, 7],
+  );
+
+  for (const feature of routeData.features) {
+    assert.equal(feature.geometry.type, "LineString");
+    assert.ok(feature.geometry.coordinates.length >= 2);
+    assert.ok(["flight-rail", "drive"].includes(feature.properties.mode));
+  }
 });

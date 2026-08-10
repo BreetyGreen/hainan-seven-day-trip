@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { RouteMap } from "./RouteMap";
 import {
   days,
   getBudget,
@@ -161,21 +162,7 @@ export default function Home() {
         </header>
 
         <div className="route-workspace">
-          <div className="map-shell" aria-label="动态路线地图区域">
-            <div className="map-placeholder" role="img" aria-label="普洱自驾环线地图正在接入">
-              <div className="map-rings" aria-hidden="true" />
-              <div className="map-placeholder-copy">
-                <span>路线地图</span>
-                <strong>Day {selectedDay}</strong>
-                <small>{day.placeIds.length} 个真实站点</small>
-              </div>
-            </div>
-            <div className="map-caption">
-              <span className="legend-dot city" /> 城市
-              <span className="legend-dot forest" /> 雨林
-              <span className="legend-dot tea" /> 茶山
-            </div>
-          </div>
+          <RouteMap selectedDay={selectedDay} />
 
           <div className="day-panel">
             <div className="day-tabs" role="tablist" aria-label="选择行程日期">
