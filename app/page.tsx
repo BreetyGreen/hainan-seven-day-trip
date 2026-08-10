@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { RouteMap } from "./RouteMap";
 import {
   days,
@@ -133,9 +134,12 @@ export default function Home() {
         </div>
 
         <figure className="hero-visual">
-          <img
+          <Image
             src="/jingmai-tea-forest.jpg"
             alt="景迈山大平掌古茶林入口，石阶进入林下种植的古茶林"
+            fill
+            priority
+            sizes="(max-width: 1080px) 100vw, 56vw"
           />
           <figcaption>
             <span>22.1991°N, 100.0097°E</span>

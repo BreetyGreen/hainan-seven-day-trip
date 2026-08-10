@@ -1,98 +1,51 @@
-# vinext-starter
+# 普洱七日慢行
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+一份为 2026 年 9 月从武汉出发、普洱 7 天 6 晚自驾设计的交互式旅行网页。页面包含单人版和双人版预算、每日路线、吃穿住行、真实地点来源以及可重播的道路动画。
 
-## Prerequisites
+## 使用
 
-- Node.js `>=22.13.0`
-
-## Quick Start
+需要 Node.js `>=22.13.0`。
 
 ```bash
 npm install
 npm run dev
-npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+浏览器打开终端显示的本地地址。正式验证使用：
 
-## Included Shape
-
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm test
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+## 路线与地点数据
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+- `app/trip-data.ts`：七天行程、真实地点、经纬度、来源链接和单双人预算。
+- `public/routes/puer-loop.geojson`：Day 1–7 的本地路线数据。
+- `scripts/fetch-routes.mjs`：使用 OSRM / OpenStreetMap 重新生成 Day 2–6 道路折线。
+- Day 1 与 Day 7 是飞机、动车衔接示意线；没有伪装成公路。
+- Day 2–6 的道路数据生成于 2026-08-10，共约 738 km；它用于行程规划，不替代出发当天导航和交通管制。
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+## 内容来源
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+主要核验来源包括：
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+- [UNESCO：普洱景迈山古茶林文化景观](https://whc.unesco.org/en/list/1665/)
+- [云南省林业和草原局：太阳河省级自然保护区](https://lcj.yn.gov.cn/special/2025/0508/6583.html)
+- [文化和旅游部：普洱咖啡庄园乡村旅游线路](https://zhuanti.mct.gov.cn/xcsshfghlxj/jpxl/detail/9148.html)
+- [云南网：思茅老街与戴家巷](https://m.yunnan.cn/system/2026/05/04/033993822.shtml)
+- [普洱日报：五一农贸市场](https://www.puerw.cn/perb/html/2022-01/06/content_6310.htm)
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+首屏照片为 Wikimedia Commons 的 [Old Tea Forest of the Jingmai Mountain](https://commons.wikimedia.org/wiki/File:Old_Tea_Forest_of_the_Jingmai_Mountain.jpg)，作者 919sth，采用 CC BY-SA 4.0 许可。
 
-## Useful Commands
+## 价格与开放状态
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+机票、动车、租车、住宿、门票和体验费用均使用规划区间，不代表锁价。出发前应再次确认：
 
-## Learn More
+1. 航空公司与 12306 的实际班次。
+2. “景迈山预约服务”的入园和车辆要求。
+3. 咖啡庄园、民宿的参观、晚餐与停车安排。
+4. 普洱、澜沧和景迈山的天气、道路与景区公告。
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+## 技术结构
+
+页面使用 React 19、TypeScript、Vinext/Vite 与 Leaflet 构建，底图来自 OpenStreetMap。地图瓦片加载失败时，本地路线数据与完整文字行程仍然可用。

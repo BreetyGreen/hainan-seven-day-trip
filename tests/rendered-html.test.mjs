@@ -59,6 +59,8 @@ test("removes the disposable starter and uses accessible controls", async () => 
 
   assert.match(page, /aria-live/);
   assert.match(page, /aria-pressed/);
+  assert.match(page, /<RouteMap/);
+  assert.match(page, /selectedDay/);
   assert.match(page, /<main/);
   assert.match(page, /<nav/);
   assert.match(layout, /lang="zh-CN"/);
