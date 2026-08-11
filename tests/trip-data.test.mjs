@@ -24,11 +24,12 @@ test("defines the complete Wuhan to Hainan seven-day route", () => {
     assert.ok(day.title.length > 0);
     assert.ok(day.placeIds.length > 0);
     assert.equal(getDayRoute(day.id).length, day.placeIds.length);
+    assert.equal(day.legs.length, day.placeIds.length - 1);
   }
 });
 
 test("every mapped point is a sourced real Hainan or Wuhan place", () => {
-  assert.ok(places.length >= 14);
+  assert.ok(places.length >= 12);
   const ids = new Set(places.map((place) => place.id));
   assert.equal(ids.size, places.length);
 
@@ -50,37 +51,41 @@ test("every mapped point is a sourced real Hainan or Wuhan place", () => {
   }
 });
 
-test("hotel recommendations keep official and Xiaohongshu evidence", async () => {
-  assert.equal(hotels.length, 2, "the trip must use exactly two hotel bases");
-  assert.deepEqual(hotels.map((hotel) => hotel.checkInDay), [1, 4]);
+test("hotel recommendations keep official and visual evidence", async () => {
+  assert.equal(hotels.length, 3, "the trip must use exactly three hotels");
+  assert.deepEqual(hotels.map((hotel) => hotel.checkInDay), [1, 2, 5]);
 
   for (const hotel of hotels) {
     assert.ok(hotel.reasons.length >= 2);
     assert.ok(hotel.cautions.length >= 1);
     assert.match(hotel.officialUrl, /^https:\/\//);
-    assert.match(hotel.xhsSource.url, /^https:\/\/www\.xiaohongshu\.com\//);
+    assert.match(hotel.xhsSource.url, /^https:\/\//);
     assert.ok(hotel.xhsSource.author.length > 0);
     assert.ok(hotel.xhsSource.title.length > 0);
     assert.match(hotel.image.src, /^\/hainan\/.+\.webp$/i);
-    assert.match(hotel.image.creditUrl, /^https:\/\/www\.xiaohongshu\.com\//);
+    assert.match(hotel.image.creditUrl, /^https:\/\//);
     await access(new URL(`../public${hotel.image.src}`, import.meta.url));
   }
 });
 
-test("uses two three-night bases and changes hotel only on Day 4", () => {
+test("uses one Haikou night, three Lingshui nights, and two Sanya nights", () => {
   const overnightBases = new Set(days.slice(0, 6).map((day) => day.sleep));
-  assert.equal(overnightBases.size, 2);
+  assert.equal(overnightBases.size, 3);
   assert.deepEqual([...overnightBases], [
-    "万宁神州半岛君悦酒店",
-    "三亚海棠湾君悦酒店",
+    "海口万国大都会骑楼亚朵酒店",
+    "海南三正月酒店",
+    "三亚理文索菲特酒店",
   ]);
-  assert.deepEqual(days.filter((day) => day.isHotelChange).map((day) => day.id), [4]);
-  assert.equal(days.filter((day) => /换宿/.test(day.pace)).length, 1);
+  assert.deepEqual(days.filter((day) => day.isHotelChange).map((day) => day.id), [2, 5]);
+  assert.equal(days.filter((day) => /换宿/.test(day.pace)).length, 2);
+  assert.equal(places.some((place) => place.city === "万宁"), false);
+  assert.equal(hotels.some((hotel) => hotel.city === "万宁"), false);
+  assert.match(hotels.find((hotel) => hotel.id === "sangem-moon")?.fit ?? "", /海景/);
 });
 
 test("every activity point contains specific playable instructions", () => {
   const activityPlaces = places.filter((place) => !["transport", "stay"].includes(place.category));
-  assert.ok(activityPlaces.length >= 12);
+  assert.ok(activityPlaces.length >= 6);
 
   for (const place of activityPlaces) {
     assert.ok(place.activity.time.length > 0, `${place.name} needs a time`);
@@ -92,14 +97,14 @@ test("every activity point contains specific playable instructions", () => {
   }
 });
 
-test("ships local Xiaohongshu images with attribution", async () => {
+test("ships local verified images with attribution", async () => {
   const imageStops = places.filter((place) => place.image);
-  assert.ok(imageStops.length >= 11, `expected at least 11 matched place images, got ${imageStops.length}`);
+  assert.ok(imageStops.length >= 9, `expected at least 9 matched place images, got ${imageStops.length}`);
 
   for (const place of imageStops) {
     assert.match(place.image.src, /^\/hainan\/.+\.webp$/i);
-    assert.equal(place.image.platform, "小红书");
-    assert.match(place.image.creditUrl, /^https:\/\/www\.xiaohongshu\.com\//);
+    assert.ok(["小红书", "官网"].includes(place.image.platform));
+    assert.match(place.image.creditUrl, /^https:\/\//);
     assert.ok(place.image.credit.length > 0);
     await access(new URL(`../public${place.image.src}`, import.meta.url));
   }
@@ -130,13 +135,13 @@ test("each airport contains distinct executable travel instructions", () => {
 
 test("locality photos stay attached to the matching real place", () => {
   const xincun = places.find((place) => place.id === "xincun-port");
-  const clearwater = places.find((place) => place.id === "clearwater-bay");
+  const sangemBeach = places.find((place) => place.id === "sangem-beach");
 
   assert.match(xincun?.image?.src ?? "", /xincun-port-xhs\.webp$/);
   assert.match(xincun?.image?.alt ?? "", /新村港/);
   assert.doesNotMatch(xincun?.image?.src ?? "", /raffles-hainan/);
-  assert.match(clearwater?.image?.src ?? "", /raffles-hainan-xhs\.webp$/);
-  assert.match(clearwater?.image?.alt ?? "", /清水湾/);
+  assert.match(sangemBeach?.image?.src ?? "", /sangem-beach-official\.webp$/);
+  assert.match(sangemBeach?.image?.alt ?? "", /三正月/);
 });
 
 test("ships separate flight and drive legs so transport can be mapped honestly", async () => {
@@ -162,13 +167,14 @@ test("ships separate flight and drive legs so transport can be mapped honestly",
     ["drive", "flight"],
   );
   assert.equal(routeData.features.filter((feature) => feature.properties.mode === "flight").length, 2);
-  assert.equal(routeData.features.filter((feature) => feature.properties.mode === "drive").length, 7);
+  assert.equal(routeData.features.filter((feature) => feature.properties.mode === "drive").length, 6);
+  assert.equal(routeData.features.filter((feature) => feature.properties.mode === "walk").length, 1);
 
   for (const feature of routeData.features) {
     assert.equal(feature.geometry.type, "LineString");
     assert.ok(feature.geometry.coordinates.length >= 2);
-    assert.ok(["flight", "drive"].includes(feature.properties.mode));
-    assert.match(feature.properties.legId, /^D[1-7]-(flight|drive)$/);
+    assert.ok(["flight", "drive", "walk"].includes(feature.properties.mode));
+    assert.match(feature.properties.legId, /^D[1-7]-(flight|drive|walk)$/);
   }
 
   for (let index = 1; index < routeData.features.length; index += 1) {
@@ -183,7 +189,7 @@ test("turns the four user-supplied Xiaohongshu notes into structured in-page gui
   assert.ok(userResearchSources.some((source) => /6QybMpO8y3I/.test(source.url)));
   assert.ok(userResearchSources.some((source) => /2HxyZx28FWw/.test(source.url)));
   assert.ok(userResearchSources.some((source) => /6gqXrkMD9Zk/.test(source.url)));
-  assert.ok(userResearchSources.some((source) => /6a707066/.test(source.url)));
+  assert.ok(userResearchSources.some((source) => /6a71b3a5/.test(source.url)));
 
   assert.deepEqual(dayGuides.map((guide) => guide.dayId), [1, 2, 3, 4, 5, 6, 7]);
   for (const guide of dayGuides) {
@@ -198,17 +204,17 @@ test("turns the four user-supplied Xiaohongshu notes into structured in-page gui
     }
   }
 
-  const wanningNames = dayGuides
-    .filter((guide) => [2, 3].includes(guide.dayId))
+  const lingshuiNames = dayGuides
+    .filter((guide) => [3, 4].includes(guide.dayId))
     .flatMap((guide) => guide.foodStops.map((stop) => stop.name));
-  assert.ok(wanningNames.includes("新大众茶坊"));
-  assert.ok(wanningNames.includes("原辉记清补凉"));
+  assert.ok(lingshuiNames.includes("新村镇明码标价午饭"));
+  assert.ok(lingshuiNames.includes("酒店或土福湾附近简餐"));
 
   const sanyaNames = dayGuides
     .filter((guide) => [5, 6, 7].includes(guide.dayId))
     .flatMap((guide) => guide.foodStops.map((stop) => stop.name));
   assert.ok(sanyaNames.includes("正合中西茶店"));
-  assert.ok(sanyaNames.includes("小高后安粉餐厅"));
+  assert.ok(sanyaNames.includes("酒店早餐与机场简餐"));
 });
 
 test("explains the four Sanya bay choices without making price the main story", () => {

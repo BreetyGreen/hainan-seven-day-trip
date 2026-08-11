@@ -1,7 +1,7 @@
 import type { Day, Place } from "./trip-data";
 
 export type PlaybackKind = "transport" | "explore" | "meal" | "rest";
-export type PlaybackMode = "flight" | "drive";
+export type PlaybackMode = "flight" | "drive" | "walk";
 export type RouteCoordinate = [number, number];
 
 export type PlaybackRouteFeature = {
@@ -180,6 +180,7 @@ function modeForSegment(ranges: ModeRange[], fromIndex: number, toIndex: number)
 
 function durationForSegment(mode: PlaybackMode, coordinates: RouteCoordinate[]) {
   if (mode === "flight") return 4200;
+  if (mode === "walk") return 2800;
   return Math.round(Math.min(4200, Math.max(2400, 2000 + routeDistanceKm(coordinates) * 18)));
 }
 

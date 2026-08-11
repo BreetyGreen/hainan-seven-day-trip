@@ -2,6 +2,32 @@
 
 核验日期：2026-08-11。用途：私人旅行地图中的活动编排、避坑和来源跳转；不把笔记中的价格当作固定事实。
 
+## 当前采用版本：海口 1 晚 → 陵水 3 晚 → 三亚 2 晚
+
+2026-08-11 内容复核后，默认路线已经移除万宁，换宿日固定为 Day 2 与 Day 5。旧版万宁材料保留在本文后半，仅作为历史调研记录，不再驱动网站默认路线。
+
+### 三家主住宿与图片核验
+
+- 海口万国大都会骑楼亚朵酒店：携程公开酒店页 <https://hotels.ctrip.com/hotels/120750482.html>。图片用于核对酒店建筑与公共区域；只住抵达夜，选择位置、隔音和退改，不购买海景溢价。
+- 海南三正月酒店：酒店官网 <https://www.sangemmoon.com/>。分别保留临海建筑/海景与酒店海岸/空中泳池两类实景，用作全程主要海景住宿；订房时必须确认“高楼层海景大床、独立阳台、双早”，不以池景或园景替代。
+- 三亚理文索菲特酒店：Accor 官方页 <https://all.accor.com/hotel/8167/index.zh.shtml>。图片用于核对园林泳池与海岸环境；连续住 Day 5–6，海景房只在差价合理时升级。
+
+### 当前活动图片与地点来源
+
+- 骑楼老街：小红书“好运狗🍀”实景 <https://www.xiaohongshu.com/search_result/6a689911000000000503abca>；仅在落地不晚且不下暴雨时执行。
+- 新村港：小红书“金属滚儿”疍家渔排实景 <https://www.xiaohongshu.com/search_result/6a71b3a50000000021020fc8>；乘船必须服从港口当日停航和现场安排。
+- 三亚小东海：生态环境部美丽海湾案例 <https://www.mee.gov.cn/home/ztbd/2021/mlhwyxalzjhd/algs/hns2/202109/t20210906_900104.shtml>；采用与小东海匹配的海湾航拍图。
+- 半山半岛帆船港：三亚旅游推广局地点页 <https://www.visitsanya.com/zh/venue/%E4%B8%89%E4%BA%9A%E5%8D%8A%E5%B1%B1%E5%8D%8A%E5%B2%9B%E5%B8%86%E8%88%B9%E6%B8%AF?language=chinese_traditional>。
+- 鹿回头：小红书“橙子”高处城市与游艇港实景 <https://www.xiaohongshu.com/search_result/690489c200000000030373f2>；雷雨或低能见度时取消登高。
+
+### 路线时间口径
+
+- 公路线路通过 OSRM / OpenStreetMap 重新生成 GeoJSON；页面显示规划区间而不是承诺到达时间。
+- 当前关键段：海口至陵水约 232 km、2 小时 45 分至 3 小时 15 分；陵水三正月至新村港约 44 km/程；陵水至海棠湾约 20 km；三亚城市海岸环线约 83 km。
+- 航班、服务区休息、停车、还车和九月雷雨延误均单独留缓冲，不计入道路引擎的纯驾驶时长。
+
+## 历史材料：旧版万宁路线（已停用）
+
 ## 万宁三日
 
 - 菠萝，《个人觉得万宁无法超越的店（已吃版）》：<https://www.xiaohongshu.com/explore/6a7070660000000025002e78?xsec_token=CBmz0SfFtHmk_f4oQ2cE0Syi6myVeaDZHS-UFAP3rABMU=&xsec_source=app_share>

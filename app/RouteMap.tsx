@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
-import { days, getDayRoute, getHotel, places, type Place } from "./trip-data";
+import { days, getDayRoute, getHotel, places, type Place, type TravelLegMode } from "./trip-data";
 import { getDayGuide, hotelBayGuide } from "./trip-details";
+import { getDayLegs, getLegAfter, modeLabel } from "./trip-legs";
 import { cameraForArrival, cameraForTravel, travelCameraFollow, travelStageProgress } from "./trip-camera";
 import {
   createRouteContext,
@@ -23,7 +24,7 @@ type RouteFeature = {
   properties: {
     dayId: number;
     legId: string;
-    mode: "flight" | "drive";
+    mode: PlaybackMode;
     label: string;
     distanceKm: number | null;
     durationHours: number | null;
@@ -103,7 +104,16 @@ function featureMarkerCoordinate(feature: RouteFeature) {
 function travelerGlyph(modeOrKind: PlaybackMode | PlaybackKind) {
   return modeOrKind === "flight" ? "✈"
     : modeOrKind === "drive" ? "🚙"
-      : playbackMeta[modeOrKind].glyph;
+      : modeOrKind === "walk" ? "🚶"
+        : playbackMeta[modeOrKind].glyph;
+}
+
+function routeModeGlyph(mode: TravelLegMode | PlaybackMode) {
+  if (mode === "flight") return "✈";
+  if (mode === "drive") return "🚙";
+  if (mode === "walk") return "🚶";
+  if (mode === "boat") return "⛴";
+  return "＋";
 }
 
 function travelerIconHtml(modeOrKind: PlaybackMode | PlaybackKind) {
@@ -125,8 +135,8 @@ function JourneyStartGate({ ready, onStart }: { ready: boolean; onStart: () => v
       <h2 id="journey-start-title">海南七日旅程</h2>
       <div className="journey-start-facts">
         <span><b>7</b>天 6 晚</span>
-        <span><b>2</b>个住宿基地</span>
-        <span><b>1</b>次换酒店</span>
+        <span><b>3</b>个住宿基地</span>
+        <span><b>2</b>次换酒店</span>
       </div>
       <button type="button" onClick={onStart} disabled={!ready}>
         <span>{ready ? "开始七日旅程" : "正在准备路线"}</span>
@@ -155,7 +165,8 @@ function PlaceDetailDialog({
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const dayGuide = getDayGuide(dayId);
   const hotel = getHotel(place.hotelId);
-  const isSanyaBase = hotel?.id === "grand-hyatt-sanya";
+  const isSanyaBase = hotel?.id === "sofitel-sanya";
+  const nextLeg = getLegAfter(dayId, routeContext.position - 1);
   const sourceLinks = [
     { label: `${place.activity.source.platform} · ${place.activity.source.title}`, url: place.activity.source.url },
     { label: "地点核验", url: place.sourceUrl },
@@ -190,7 +201,7 @@ function PlaceDetailDialog({
           )}
           <div className="place-detail-hero-caption">
             <span>DAY {dayId} · {place.city} · {categoryLabel[place.category]}</span>
-            {place.image && <small>实景图 · 小红书 @{place.image.credit}</small>}
+            {place.image && <small>实景图 · {place.image.platform} · {place.image.credit}</small>}
           </div>
         </div>
 
@@ -214,9 +225,16 @@ function PlaceDetailDialog({
               <div className={!routeContext.next ? "is-empty" : ""}>
                 <small>下一站</small>
                 <b>{routeContext.next?.place.shortName ?? "今日完成"}</b>
-                {routeContext.nextMode && <em>{routeContext.nextMode === "flight" ? "✈ 航班" : "🚙 自驾"}</em>}
+                {routeContext.nextMode && <em>{modeLabel(routeContext.nextMode)}</em>}
               </div>
             </div>
+            {nextLeg && (
+              <div className="place-detail-next-leg">
+                <span>{routeModeGlyph(nextLeg.mode)}</span>
+                <p><small>前往下一站</small><b>{modeLabel(nextLeg.mode)} · {nextLeg.durationLabel}</b></p>
+                <em>{nextLeg.distanceLabel}</em>
+              </div>
+            )}
             <div className="place-detail-remaining">
               <small>今日剩余</small>
               <div>{routeContext.remaining.length > 0
@@ -275,7 +293,7 @@ function PlaceDetailDialog({
                   </article>
                 ))}
               </div>
-              <p className="hotel-official-note">君悦官网确认酒店位于海棠湾海滨，设有临海餐饮、泳池与度假设施；它适合作为连续三晚基地，而不是每天更换的打卡酒店。</p>
+              <p className="hotel-official-note">索菲特官网确认酒店位于海棠湾海滨，设有临海餐饮、泳池与度假设施；连续住两晚，第一天留给酒店，第二天再进城慢逛。</p>
             </section>
           )}
 
@@ -307,6 +325,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
   const playbackRendererRef = useRef<Canvas | null>(null);
   const playbackDriveRef = useRef<Polyline | null>(null);
   const playbackFlightRef = useRef<Polyline | null>(null);
+  const playbackWalkRef = useRef<Polyline | null>(null);
   const travelerMarkerRef = useRef<Marker | null>(null);
   const leafletRef = useRef<typeof import("leaflet") | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -431,6 +450,15 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
           opacity: 1,
           weight: 5,
         }).addTo(map);
+        const playbackWalk = L.polyline([], {
+          renderer: playbackRenderer,
+          color: "#2e7773",
+          dashArray: "3 8",
+          lineCap: "round",
+          lineJoin: "round",
+          opacity: 1,
+          weight: 6,
+        }).addTo(map);
         const travelerIcon = L.divIcon({
           className: "journey-traveler-wrap",
           html: travelerIconHtml("flight"),
@@ -462,6 +490,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
         playbackRendererRef.current = playbackRenderer;
         playbackDriveRef.current = playbackDrive;
         playbackFlightRef.current = playbackFlight;
+        playbackWalkRef.current = playbackWalk;
         travelerMarkerRef.current = travelerMarker;
         routeLayerRef.current = L.layerGroup().addTo(map);
         markerLayerRef.current = L.layerGroup().addTo(map);
@@ -481,6 +510,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       playbackRendererRef.current = null;
       playbackDriveRef.current = null;
       playbackFlightRef.current = null;
+      playbackWalkRef.current = null;
       travelerMarkerRef.current = null;
       routeLayerRef.current = null;
       markerLayerRef.current = null;
@@ -502,11 +532,12 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       const isActive = selectedDay === null || feature.properties.dayId === selectedDay;
       const isOverview = selectedDay === null;
       const isFlight = feature.properties.mode === "flight";
+      const isWalk = feature.properties.mode === "walk";
       L.geoJSON(feature as GeoJsonObject, {
         renderer: routeRenderer,
         style: {
-          color: isOverview ? "#4e9896" : isActive ? (isFlight ? "#143747" : "#ff6557") : "#7ebcb8",
-          dashArray: isFlight ? "6 10" : undefined,
+          color: isOverview ? "#4e9896" : isActive ? (isFlight ? "#143747" : isWalk ? "#2e7773" : "#ff6557") : "#7ebcb8",
+          dashArray: isFlight ? "6 10" : isWalk ? "3 8" : undefined,
           lineCap: "round",
           lineJoin: "round",
           opacity: isOverview ? 0.3 : isActive ? 0.96 : 0.15,
@@ -544,45 +575,73 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     });
 
     const transportFeatures = routeData.features.filter((feature) => {
-      if (selectedDay !== null) return feature.properties.dayId === selectedDay;
-      return feature.properties.mode === "flight" || [1, 4, 7].includes(feature.properties.dayId);
+      if (selectedDay !== null) return false;
+      return feature.properties.mode === "flight" || [1, 2, 5, 7].includes(feature.properties.dayId);
     });
     transportFeatures.forEach((feature) => {
       const [lng, lat] = featureMarkerCoordinate(feature);
-      const isFlight = feature.properties.mode === "flight";
+      const glyph = routeModeGlyph(feature.properties.mode);
+      const label = modeLabel(feature.properties.mode);
       const transportIcon = L.divIcon({
         className: "transport-icon-wrap",
-        html: `<span class="transport-icon transport-icon-${feature.properties.mode}"><b aria-hidden="true">${isFlight ? "✈" : "🚙"}</b><small>D${feature.properties.dayId}</small></span>`,
+        html: `<span class="transport-icon transport-icon-${feature.properties.mode}"><b aria-hidden="true">${glyph}</b><small>D${feature.properties.dayId}</small></span>`,
         iconAnchor: [18, 18],
         iconSize: [36, 36],
       });
       L.marker([lat, lng], {
         icon: transportIcon,
         keyboard: false,
-        title: `${isFlight ? "航班" : "自驾"} · ${feature.properties.label}`,
+        title: `${label} · ${feature.properties.label}`,
         zIndexOffset: 300,
-      }).bindTooltip(`<strong>${isFlight ? "航班" : "自驾"} · Day ${feature.properties.dayId}</strong><small>${escapeHtml(feature.properties.label)}</small>`, {
+      }).bindTooltip(`<strong>${escapeHtml(label)} · Day ${feature.properties.dayId}</strong><small>${escapeHtml(feature.properties.label)}</small>`, {
         direction: "top",
         offset: [0, -14],
       }).addTo(markerGroup);
     });
 
-    if (selectedDay === null || selectedDay === 4) {
-      const sanyaHotel = places.find((place) => place.id === "sanya-hyatt");
-      if (sanyaHotel) {
+    const hotelChanges = [
+      { dayId: 2, placeId: "sangem-moon", title: "从海口骑楼亚朵换到陵水三正月酒店", label: "第一次换宿" },
+      { dayId: 5, placeId: "sofitel-sanya", title: "从陵水三正月换到海棠湾索菲特", label: "第二次换宿" },
+    ];
+    hotelChanges.forEach((change) => {
+      if (selectedDay === null || selectedDay === change.dayId) {
+        const hotelPlace = places.find((place) => place.id === change.placeId);
+        if (!hotelPlace) return;
         const changeIcon = L.divIcon({
           className: "hotel-change-marker-wrap",
-          html: '<span class="hotel-change-marker"><b>DAY 4</b><span>⇄ 唯一换宿</span></span>',
+          html: `<span class="hotel-change-marker"><b>DAY ${change.dayId}</b><span>⇄ ${change.label}</span></span>`,
           iconAnchor: [58, 54],
           iconSize: [116, 42],
         });
-        L.marker([sanyaHotel.coordinates.lat, sanyaHotel.coordinates.lng], {
+        L.marker([hotelPlace.coordinates.lat, hotelPlace.coordinates.lng], {
           icon: changeIcon,
           keyboard: false,
-          title: "Day 4：从万宁君悦换到三亚海棠湾君悦",
+          title: `Day ${change.dayId}：${change.title}`,
           zIndexOffset: 450,
         }).addTo(markerGroup);
       }
+    });
+
+    if (selectedDay !== null) {
+      const selectedPlaybackDay = playbackPlan.find((day) => day.dayId === selectedDay);
+      const dayLegs = getDayLegs(selectedDay);
+      selectedPlaybackDay?.segments.forEach((segment, index) => {
+        const leg = dayLegs[index];
+        if (!leg || leg.mode === "optional" || segment.coordinates.length === 0) return;
+        const [lng, lat] = segment.coordinates[Math.floor(segment.coordinates.length / 2)];
+        const legIcon = L.divIcon({
+          className: "route-leg-duration-wrap",
+          html: `<span class="route-leg-duration-marker"><b>${routeModeGlyph(leg.mode)}</b><span>${escapeHtml(leg.durationLabel)}</span><small>${escapeHtml(leg.distanceLabel)}</small></span>`,
+          iconAnchor: [42, 22],
+          iconSize: [84, 44],
+        });
+        L.marker([lat, lng], {
+          icon: legIcon,
+          interactive: false,
+          keyboard: false,
+          zIndexOffset: 240,
+        }).addTo(markerGroup);
+      });
     }
 
     const features = selectedDay === null ? routeData.features : activeFeatures;
@@ -606,15 +665,16 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
     if (selectedDay !== null) animateRoute(map);
     window.setTimeout(() => map.invalidateSize(), 50);
-  }, [activeFeatures, openPlaceDetail, routeData, selectedDay]);
+  }, [activeFeatures, openPlaceDetail, playbackPlan, routeData, selectedDay]);
 
   useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
     const driveLine = playbackDriveRef.current;
     const flightLine = playbackFlightRef.current;
+    const walkLine = playbackWalkRef.current;
     const traveler = travelerMarkerRef.current;
-    if (!L || !map || !driveLine || !flightLine || !traveler || status !== "ready" || playbackStages.length === 0) return;
+    if (!L || !map || !driveLine || !flightLine || !walkLine || !traveler || status !== "ready" || playbackStages.length === 0) return;
 
     let cancelled = false;
     let stageIndex = 0;
@@ -623,7 +683,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     let lastCameraUpdate = 0;
     let lastProgressUpdate = 0;
     let currentTravelPhase: "camera" | "moving" | null = null;
-    let completedLines: Record<PlaybackMode, RouteCoordinate[][]> = { drive: [], flight: [] };
+    let completedLines: Record<PlaybackMode, RouteCoordinate[][]> = { drive: [], flight: [], walk: [] };
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const updateStatus = (next: PlaybackStatus) => {
@@ -648,13 +708,15 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
     const setModeLine = (mode: PlaybackMode, current?: RouteCoordinate[]) => {
       const lines = current?.length ? [...completedLines[mode], current] : completedLines[mode];
-      (mode === "drive" ? driveLine : flightLine).setLatLngs(toLeafletLines(lines));
+      const line = mode === "drive" ? driveLine : mode === "flight" ? flightLine : walkLine;
+      line.setLatLngs(toLeafletLines(lines));
     };
 
     const resetVisuals = () => {
-      completedLines = { drive: [], flight: [] };
+      completedLines = { drive: [], flight: [], walk: [] };
       driveLine.setLatLngs([]);
       flightLine.setLatLngs([]);
+      walkLine.setLatLngs([]);
       traveler.setOpacity(0);
       setVisibleStage(null);
       setActivePlaybackDay(null);
@@ -889,16 +951,19 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       : playbackStatus === "complete" ? "再次播放"
         : "播放";
   const activeStageDay = visibleStage ? playbackPlan[visibleStage.dayIndex] : null;
+  const visibleLeg = visibleStage?.type === "travel" && activeStageDay
+    ? getDayLegs(activeStageDay.dayId)[visibleStage.segmentIndex]
+    : undefined;
   const stageKind: PlaybackKind = visibleStage?.type === "stop" ? visibleStage.stop.kind : "transport";
   const stageMeta = playbackMeta[stageKind];
   const stagePlace = visibleStage?.type === "stop" ? visibleStage.stop.place : visibleStage?.segment.to.place;
   const routeLabel = visibleStage && selectedDay === null
     ? visibleStage.type === "travel"
-      ? `${visibleStage.segment.mode === "flight" ? "✈" : "🚙"} ${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}`
+      ? `${routeModeGlyph(visibleStage.segment.mode)} ${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}${visibleLeg ? ` · ${visibleLeg.durationLabel}` : ""}`
       : `${stageMeta.glyph} ${stageMeta.verb} · ${visibleStage.stop.place.shortName}`
     : selectedDay === null
       ? "✈ 武汉 → 海口 · 🚙 海南东线 · ✈ 三亚 → 武汉"
-      : activeFeatures.map((feature) => `${feature.properties.mode === "flight" ? "✈" : "🚙"} ${feature.properties.label}`).join(" · ") || `Day ${selectedDay}`;
+      : getDayLegs(selectedDay).map((leg) => `${routeModeGlyph(leg.mode)} ${leg.durationLabel}`).join(" · ") || `Day ${selectedDay}`;
 
   return (
     <div className="map-layer" data-playback-status={playbackStatus}>
@@ -947,7 +1012,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {stagePlace.image && <img src={stagePlace.image.src} alt={stagePlace.image.alt} />}
             <div className={`activity-motion activity-motion-${stageKind}`} aria-hidden="true">
-              <span>{visibleStage.type === "travel" && visibleStage.segment.mode === "drive" ? "🚙" : visibleStage.type === "travel" ? "✈" : stageMeta.glyph}</span>
+              <span>{visibleStage.type === "travel" ? routeModeGlyph(visibleStage.segment.mode) : stageMeta.glyph}</span>
               <i /><i /><i />
             </div>
           </div>
@@ -963,8 +1028,8 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
                 : `${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}，路线正在实时绘制。`
               : stagePlace.why}</p>
             <div className="playback-stop-facts">
-              <span><b>{visibleStage.type === "travel" ? "方式" : "建议时间"}</b>{visibleStage.type === "travel" ? visibleStage.segment.mode === "flight" ? "航班" : "自驾" : stagePlace.activity.time}</span>
-              <span><b>{visibleStage.type === "travel" ? "下一站" : "停留"}</b>{visibleStage.type === "travel" ? stagePlace.shortName : stagePlace.activity.duration}</span>
+              <span><b>{visibleStage.type === "travel" ? "交通时间" : "建议时间"}</b>{visibleStage.type === "travel" ? visibleLeg?.durationLabel ?? modeLabel(visibleStage.segment.mode) : stagePlace.activity.time}</span>
+              <span><b>{visibleStage.type === "travel" ? "方式 · 距离" : "停留"}</b>{visibleStage.type === "travel" ? `${modeLabel(visibleStage.segment.mode)}${visibleLeg ? ` · ${visibleLeg.distanceLabel}` : ""}` : stagePlace.activity.duration}</span>
             </div>
             <button className="playback-detail-button" type="button" onClick={() => {
               const stopIndex = visibleStage.type === "stop" ? visibleStage.stopIndex : visibleStage.segmentIndex + 1;
@@ -1007,15 +1072,16 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       <div className="map-legend" aria-label="地图图例">
         <span><i className="solid" />🚙 自驾</span>
         <span><i className="dashed" />✈ 航班</span>
+        <span><i className="walk" />🚶 步行</span>
         <span><i className="photo" />实景图</span>
-        <span><i className="change" />Day 4 换宿</span>
+        <span><i className="change" />Day 2 / 5 换宿</span>
       </div>
 
       {status === "loading" && <div className="map-status" role="status">正在连接 Day 1–7 完整路线…</div>}
       {status === "error" && (
         <div className="map-status map-error" role="alert">
           <strong>地图底图暂未加载</strong>
-          <span>本地路线与两基地文字计划仍可浏览。</span>
+          <span>本地路线与三基地文字计划仍可浏览。</span>
         </div>
       )}
       {tilesFailed && status === "ready" && <div className="tile-note">底图网络较慢，本地路线与节点仍可点击。</div>}

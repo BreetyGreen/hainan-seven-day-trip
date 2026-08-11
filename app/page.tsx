@@ -21,9 +21,11 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
   return (
     <article className="hotel-story">
       <div className="hotel-photo-wrap">
+        {/* Local, source-verified photography is intentionally served from the static itinerary bundle. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={hotel.image.src} alt={hotel.image.alt} loading={base === 1 ? "eager" : "lazy"} />
         <span>BASE {base} · {hotel.city}</span>
-        <small>图源：小红书 @{hotel.image.credit}</small>
+        <small>图源：{hotel.image.platform} · {hotel.image.credit}</small>
       </div>
       <div className="hotel-story-body">
         <p className="hotel-nights">入住 Day {hotel.checkInDay} · {hotel.nights}</p>
@@ -38,7 +40,7 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
         </details>
         <div className="hotel-links">
           <a href={hotel.officialUrl} target="_blank" rel="noreferrer">酒店官网 ↗</a>
-          <a href={hotel.xhsSource.url} target="_blank" rel="noreferrer">小红书实住图文 ↗</a>
+          <a href={hotel.xhsSource.url} target="_blank" rel="noreferrer">查看图片与房型来源 ↗</a>
         </div>
       </div>
     </article>
@@ -72,7 +74,7 @@ export default function Home() {
               className={[selectedDay === day.id ? "active" : "", day.isHotelChange ? "hotel-change-day" : ""].filter(Boolean).join(" ")}
               aria-pressed={selectedDay === day.id}
               onClick={() => setSelectedDay(day.id)}
-              title={day.isHotelChange ? `${day.title} · 全程唯一换宿` : day.title}
+              title={day.isHotelChange ? `${day.title} · 换宿日` : day.title}
             >
               <span>D{day.id}</span>
               {day.isHotelChange && <small>换宿</small>}
@@ -104,32 +106,44 @@ export default function Home() {
                 <div><dt>驾驶</dt><dd>{activeDay.driveLabel}</dd></div>
                 <div><dt>今晚</dt><dd>{activeDay.sleep}</dd></div>
               </dl>
-              {activeDay.isHotelChange && (
-                <section className="day-hotel-swap" aria-label="Day 4 酒店更换">
-                  <strong>DAY 4 唯一换宿</strong>
+              {activeDay.isHotelChange && (() => {
+                const swap = activeDay.id === 2
+                  ? { from: hotels[0], to: hotels[1], fromLabel: "海口亚朵", toLabel: "三正月 · 入住 3 晚" }
+                  : { from: hotels[1], to: hotels[2], fromLabel: "三正月", toLabel: "索菲特 · 入住 2 晚" };
+                return (
+                <section className="day-hotel-swap" aria-label={`Day ${activeDay.id} 酒店更换`}>
+                  <strong>DAY {activeDay.id} · 换宿日</strong>
                   <div>
-                    <figure><img src={hotels[0].image.src} alt={hotels[0].image.alt} /><figcaption>万宁君悦<br /><small>退房</small></figcaption></figure>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <figure><img src={swap.from.image.src} alt={swap.from.image.alt} /><figcaption>{swap.fromLabel}<br /><small>退房</small></figcaption></figure>
                     <span aria-hidden="true">行李 →</span>
-                    <figure><img src={hotels[1].image.src} alt={hotels[1].image.alt} /><figcaption>三亚君悦<br /><small>入住 3 晚</small></figcaption></figure>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <figure><img src={swap.to.image.src} alt={swap.to.image.alt} /><figcaption>{swap.toLabel}</figcaption></figure>
                   </div>
-                  <p className="change-badge">上午带行李出发，玩完新村港与清水湾后直接入住三亚，不回万宁。</p>
+                  <p className="change-badge">退房后直接前往下一家酒店；换宿日不叠加售票景区。</p>
                 </section>
-              )}
+              ); })()}
               <p className="weather-line"><b>天气退路</b>{activeDay.weatherPlan}</p>
             </>
           ) : (
             <>
               <p className="eyebrow">全程路线 · DAY 1—7</p>
-              <h1>一条线，<br />只换一次酒店</h1>
-              <p className="journey-lead">海口进、三亚出。前三晚住万宁，后三晚住三亚；默认先看完整路线，也可以在上方按天筛选。</p>
-              <div className="base-flow" aria-label="两个住宿基地">
+              <h1>一条线，<br />只换两次酒店</h1>
+              <p className="journey-lead">海口缓冲 1 晚、陵水海景连住 3 晚、三亚收尾 2 晚；每天只留一条主要活动线。</p>
+              <div className="base-flow" aria-label="三个住宿基地">
                 <HotelStory hotel={hotels[0]} base={1} />
                 <div className="hotel-change-bridge" role="note">
                   <span aria-hidden="true">⇄</span>
-                  <strong>DAY 4 唯一换宿</strong>
-                  <small>带行李沿东线南下，不折返</small>
+                  <strong>DAY 2 · 第一次换宿</strong>
+                  <small>海口 → 陵水海景基地</small>
                 </div>
                 <HotelStory hotel={hotels[1]} base={2} />
+                <div className="hotel-change-bridge" role="note">
+                  <span aria-hidden="true">⇄</span>
+                  <strong>DAY 5 · 第二次换宿</strong>
+                  <small>陵水 → 三亚海棠湾</small>
+                </div>
+                <HotelStory hotel={hotels[2]} base={3} />
               </div>
             </>
           )}
@@ -145,7 +159,7 @@ export default function Home() {
           </div>
 
           <div className="travel-basics" aria-label="吃穿提示">
-            <span><b>吃</b>{activeDay ? activeDay.meals.join(" · ") : "粉面 · 南洋风味 · 海边简餐"}</span>
+            <span><b>吃</b>{activeDay ? activeDay.meals.join(" · ") : "海南粉 · 陵水酸粉 · 海边简餐"}</span>
             <span><b>穿</b>九月怎么穿：速干短袖＋薄防晒衣＋可收纳雨壳</span>
           </div>
 
