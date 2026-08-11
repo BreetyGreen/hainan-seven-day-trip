@@ -122,6 +122,8 @@ const xhsPhoto = (src: string, alt: string, credit: string, creditUrl: string, n
 const xhsQilou = "https://www.xiaohongshu.com/search_result/6a689911000000000503abca";
 const xhsXincun = "https://www.xiaohongshu.com/search_result/6a71b3a50000000021020fc8";
 const xhsLuhuitou = "https://www.xiaohongshu.com/search_result/690489c200000000030373f2";
+const xhsSangem = "https://www.xiaohongshu.com/search_result/68a893f3000000001c032dad";
+const xhsSofitel = "https://www.xiaohongshu.com/search_result/69f853580000000038020c13";
 const sangemOfficial = "https://www.sangemmoon.com/";
 const sofitelOfficial = "https://all.accor.com/hotel/8167/index.zh.shtml";
 const atourCtrip = "https://hotels.ctrip.com/hotels/120750482.html";
@@ -225,7 +227,7 @@ export const places: Place[] = [
       weather: "台风或大浪时取消离店活动，使用室内设施。",
       source: { platform: "官网", author: "海南三正月酒店", title: "海南三正月酒店官网", url: sangemOfficial },
     },
-    image: officialPhoto("/hainan/sangem-moon-official.webp", "海南三正月酒店临海建筑与海景", "海南三正月酒店", sangemOfficial, "海南三正月酒店官网"),
+    image: xhsPhoto("/hainan/sangem-moon-xhs.webp", "海南三正月酒店蓝调时刻建筑外景", "肥欧OOOOOO", xhsSangem, "海南酒店攻略——陵水三正月，值得二刷"),
     sourceUrl: sangemOfficial,
     verifiedAt: "2026-08-11",
   },
@@ -286,7 +288,7 @@ export const places: Place[] = [
       weather: "台风预警时取消城市日，留在酒店。",
       source: { platform: "官网", author: "Accor", title: "三亚理文索菲特酒店", url: sofitelOfficial },
     },
-    image: officialPhoto("/hainan/sofitel-sanya-official.webp", "三亚理文索菲特酒店园林泳池与海岸", "Accor", sofitelOfficial, "三亚理文索菲特酒店"),
+    image: xhsPhoto("/hainan/sofitel-pool-xhs.webp", "三亚理文索菲特酒店泳池、椰林与海岸", "竹子动物园", xhsSofitel, "理文索菲特的公区给到一个夯"),
     sourceUrl: sofitelOfficial,
     verifiedAt: "2026-08-11",
   },
@@ -396,9 +398,9 @@ export const hotels: Hotel[] = [
     fit: "全程主要海景住宿；优先高楼层海景大床、独立阳台和双早。",
     reasons: ["土福湾一线海岸", "三晚有足够时间使用阳台、泳池和海滩"],
     cautions: ["亲子客群明显", "景观房、池景房不能替代真正海景房"],
-    image: officialPhoto("/hainan/sangem-moon-official.webp", "海南三正月酒店临海建筑与海景", "海南三正月酒店", sangemOfficial, "海南三正月酒店官网"),
+    image: xhsPhoto("/hainan/sangem-moon-xhs.webp", "海南三正月酒店蓝调时刻建筑外景", "肥欧OOOOOO", xhsSangem, "海南酒店攻略——陵水三正月，值得二刷"),
     officialUrl: sangemOfficial,
-    xhsSource: { author: "海南三正月酒店", title: "官网环境与房型图片", url: sangemOfficial },
+    xhsSource: { author: "肥欧OOOOOO", title: "海南酒店攻略——陵水三正月，值得二刷", url: xhsSangem },
   },
   {
     id: "sofitel-sanya",
@@ -410,9 +412,9 @@ export const hotels: Hotel[] = [
     fit: "园林和泳池完整；海景房仅在差价合理时升级。",
     reasons: ["从陵水南下顺路", "只用一天外出，仍有时间使用酒店设施"],
     cautions: ["酒店体量较大", "前往小东海与鹿回头需约一小时"],
-    image: officialPhoto("/hainan/sofitel-sanya-official.webp", "三亚理文索菲特酒店园林泳池与海岸", "Accor", sofitelOfficial, "三亚理文索菲特酒店"),
+    image: xhsPhoto("/hainan/sofitel-pool-xhs.webp", "三亚理文索菲特酒店泳池、椰林与海岸", "竹子动物园", xhsSofitel, "理文索菲特的公区给到一个夯"),
     officialUrl: sofitelOfficial,
-    xhsSource: { author: "Accor", title: "酒店环境与房型图片", url: sofitelOfficial },
+    xhsSource: { author: "竹子动物园", title: "理文索菲特的公区给到一个夯", url: xhsSofitel },
   },
 ];
 

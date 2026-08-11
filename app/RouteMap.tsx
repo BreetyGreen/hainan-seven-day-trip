@@ -7,6 +7,7 @@ import { days, getDayRoute, getHotel, places, type Place, type TravelLegMode } f
 import { getDayGuide, hotelBayGuide } from "./trip-details";
 import { getDayLegs, getLegAfter, modeLabel } from "./trip-legs";
 import { cameraForArrival, cameraForTravel, travelCameraFollow, travelStageProgress } from "./trip-camera";
+import { buildJourneyPhotoItems, type JourneyPhotoItem } from "./journey-photos";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -147,6 +148,77 @@ function JourneyStartGate({ ready, onStart }: { ready: boolean; onStart: () => v
   );
 }
 
+function JourneyPhotoRail({
+  items,
+  activeId,
+  onOpen,
+}: {
+  items: JourneyPhotoItem[];
+  activeId: string | null;
+  onOpen: (item: JourneyPhotoItem) => void;
+}) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const cardRefs = useRef(new Map<string, HTMLButtonElement>());
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (!activeId || collapsed) return;
+    cardRefs.current.get(activeId)?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [activeId, collapsed]);
+
+  const moveRail = (direction: -1 | 1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollBy({
+      left: direction * Math.max(220, track.clientWidth * 0.72),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+  };
+
+  return (
+    <section className={`journey-photo-rail ${collapsed ? "is-collapsed" : ""}`} aria-label="旅程图片概览">
+      <header className="journey-photo-header">
+        <div>
+          <span>XHS JOURNEY</span>
+          <strong>照片旅程</strong>
+          <small>点开照片，地图会回到对应地点</small>
+        </div>
+        <nav aria-label="图片概览控制">
+          <button type="button" onClick={() => moveRail(-1)}>上一组</button>
+          <button type="button" onClick={() => moveRail(1)}>下一组</button>
+          <button type="button" onClick={() => setCollapsed((value) => !value)}>{collapsed ? "展开照片" : "收起"}</button>
+        </nav>
+      </header>
+      <div ref={trackRef} className="journey-photo-track">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            ref={(node) => {
+              if (node) cardRefs.current.set(item.id, node);
+              else cardRefs.current.delete(item.id);
+            }}
+            className={`journey-photo-card ${item.id === activeId ? "is-active" : ""}`}
+            type="button"
+            aria-label={`查看 Day ${item.dayId} ${item.place.name}完整图文`}
+            aria-pressed={item.id === activeId}
+            onClick={() => onOpen(item)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" />
+            <span className="journey-photo-day">DAY {item.dayId}</span>
+            <span className={`journey-photo-source is-${item.photo.platform === "小红书" ? "xhs" : "official"}`}>{item.photo.platform}</span>
+            <span className="journey-photo-caption"><b>{item.place.shortName}</b><small>{item.kind === "hotel" ? "住宿基地" : item.place.city}</small></span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function PlaceDetailDialog({
   place,
   dayId,
@@ -168,6 +240,7 @@ function PlaceDetailDialog({
   const isSanyaBase = hotel?.id === "sofitel-sanya";
   const nextLeg = getLegAfter(dayId, routeContext.position - 1);
   const sourceLinks = [
+    ...(place.image ? [{ label: `图片来源 · ${place.image.platform} · ${place.image.credit}`, url: place.image.creditUrl }] : []),
     { label: `${place.activity.source.platform} · ${place.activity.source.title}`, url: place.activity.source.url },
     { label: "地点核验", url: place.sourceUrl },
     ...(dayGuide?.foodStops.map((stop) => ({ label: stop.sourceLabel, url: stop.sourceUrl })) ?? []),
@@ -346,6 +419,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
   const [travelPhase, setTravelPhase] = useState<"camera" | "moving" | null>(null);
   const [arrivalStageIndex, setArrivalStageIndex] = useState<number | null>(null);
   const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number; arrivalMode: boolean; stopIndex?: number } | null>(null);
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
 
   const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(place.id)) => {
     pausePlaybackRef.current();
@@ -400,6 +474,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     () => playbackPlan.reduce((total, day) => total + day.stops.length, 0),
     [playbackPlan],
   );
+  const journeyPhotoItems = useMemo(() => buildJourneyPhotoItems(days, places), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -957,6 +1032,14 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
   const stageKind: PlaybackKind = visibleStage?.type === "stop" ? visibleStage.stop.kind : "transport";
   const stageMeta = playbackMeta[stageKind];
   const stagePlace = visibleStage?.type === "stop" ? visibleStage.stop.place : visibleStage?.segment.to.place;
+  const activePhotoId = useMemo(() => {
+    if (placeDetail) return journeyPhotoItems.find((item) => item.place.id === placeDetail.place.id)?.id ?? null;
+    if (playbackStatus === "playing") {
+      return stagePlace ? journeyPhotoItems.find((item) => item.place.id === stagePlace.id)?.id ?? null : null;
+    }
+    if (selectedDay !== null) return journeyPhotoItems.find((item) => item.dayId === selectedDay)?.id ?? selectedPhotoId;
+    return selectedPhotoId;
+  }, [journeyPhotoItems, placeDetail, playbackStatus, selectedDay, selectedPhotoId, stagePlace]);
   const routeLabel = visibleStage && selectedDay === null
     ? visibleStage.type === "travel"
       ? `${routeModeGlyph(visibleStage.segment.mode)} ${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}${visibleLeg ? ` · ${visibleLeg.durationLabel}` : ""}`
@@ -977,6 +1060,15 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       {selectedDay === null && playbackStatus === "idle" && !placeDetail && (
         <JourneyStartGate ready={status === "ready"} onStart={() => startPlaybackRef.current(true)} />
       )}
+
+      <JourneyPhotoRail
+        items={journeyPhotoItems}
+        activeId={activePhotoId}
+        onOpen={(item) => {
+          setSelectedPhotoId(item.id);
+          openPlaceDetail(item.place, item.dayId);
+        }}
+      />
 
       {selectedDay === null && (
         <div className="playback-timeline-shell">
