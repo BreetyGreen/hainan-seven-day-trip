@@ -108,7 +108,10 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(routeMap, /openPlaceDetail/);
   assert.match(routeMap, /className="playback-day-button"/);
   assert.match(routeMap, /onClick=\{\(\) => openDayDetail/);
-  assert.match(routeMap, /journey-camera-lock/);
+  assert.doesNotMatch(routeMap, /journey-camera-lock/);
+  assert.match(routeMap, /traveler\.setLatLng\(position\)/);
+  assert.match(routeMap, /traveler\.setOpacity\(1\)/);
+  assert.match(routeMap, /map\.panTo\(position, \{ animate: false/);
   assert.match(routeMap, /播放|暂停/);
   assert.match(routeMap, /继续/);
   assert.match(routeMap, /重播/);
@@ -143,7 +146,7 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(css, /\.place-detail-panel/);
   assert.match(css, /\.playback-day-button/);
   assert.match(css, /\.leaflet-tooltip\s*\{[^}]*position:\s*absolute[^}]*white-space:\s*nowrap/s);
-  assert.match(css, /\.journey-camera-lock\s*\{[^}]*left:\s*50%[^}]*top:\s*50%[^}]*transform:\s*translate\(-50%,-50%\)/s);
+  assert.doesNotMatch(css, /\.journey-camera-lock/);
   assert.match(css, /data-playback-status="playing"[^}]*\.journey-card\s*\{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/s);
   assert.match(css, /data-playback-status="paused"[^}]*\.journey-card\s*\{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/s);
   assert.match(css, /\.activity-motion-transport/);

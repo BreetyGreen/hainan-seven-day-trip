@@ -2,7 +2,7 @@ import type { Place } from "./trip-data";
 import type { PlaybackSegment, RouteCoordinate } from "./trip-playback";
 
 export type CameraIntent = {
-  kind: "overview" | "intercity" | "suburban" | "local" | "arrival";
+  kind: "overview" | "intercity" | "island" | "suburban" | "local" | "arrival";
   zoom: number;
   duration: number;
 };
@@ -14,6 +14,7 @@ export type TravelStageProgress = {
 };
 
 const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
+const hainanIslandCities = new Set(["海口", "万宁", "陵水", "三亚"]);
 
 export function travelStageProgress(
   elapsedMs: number,
@@ -59,6 +60,9 @@ export function cameraForTravel(
   }
   if (endpointDistance(segment) <= 35) {
     return { kind: "suburban", zoom: 11, duration: 0.76 };
+  }
+  if (hainanIslandCities.has(segment.from.place.city) && hainanIslandCities.has(segment.to.place.city)) {
+    return { kind: "island", zoom: 10, duration: 0.8 };
   }
   return { kind: "intercity", zoom: 9, duration: 0.82 };
 }

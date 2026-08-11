@@ -19,7 +19,7 @@ function segment(mode, from, to) {
   };
 }
 
-test("uses overview, intercity, suburban, and city scales for travel", () => {
+test("uses overview, Hainan island, suburban, and city scales for travel", () => {
   const wuhan = place("wuhan-airport", "武汉", "transport", 30.7757, 114.2171);
   const haikou = place("haikou-airport", "海口", "transport", 19.9349, 110.4592);
   const wanning = place("wanning-hyatt", "万宁", "stay", 18.6780, 110.3479);
@@ -33,7 +33,11 @@ test("uses overview, intercity, suburban, and city scales for travel", () => {
     zoom: 6,
     duration: 0.9,
   });
-  assert.equal(cameraForTravel(segment("drive", wanning, lingshui)).zoom, 9);
+  assert.deepEqual(cameraForTravel(segment("drive", wanning, lingshui)), {
+    kind: "island",
+    zoom: 10,
+    duration: 0.8,
+  });
   assert.equal(cameraForTravel(segment("drive", wanning, nearCityEdge)).zoom, 11);
   assert.equal(cameraForTravel(segment("drive", dadonghai, luhuitou)).zoom, 13);
 });

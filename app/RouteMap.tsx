@@ -330,6 +330,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
   const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(place.id)) => {
     pausePlaybackRef.current();
+    travelerMarkerRef.current?.setOpacity(0);
     setPlaceDetail({ place, dayId, arrivalMode: false });
     const map = mapRef.current;
     if (!map) return;
@@ -747,14 +748,12 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
       const position = L.latLng(head[1], head[0]);
       traveler.setLatLng(position);
-      if (!reducedMotion && timestamp - lastCameraUpdate >= 280) {
+      traveler.setOpacity(1);
+      if (reducedMotion) {
+        map.setView(position, map.getZoom(), { animate: false });
+      } else if (timestamp - lastCameraUpdate >= 90) {
         lastCameraUpdate = timestamp;
-        map.panTo(position, {
-          animate: true,
-          duration: 0.42,
-          easeLinearity: 0.45,
-          noMoveStart: true,
-        });
+        map.panTo(position, { animate: false, noMoveStart: true });
       }
     };
 
@@ -888,16 +887,6 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
   const stageKind: PlaybackKind = visibleStage?.type === "stop" ? visibleStage.stop.kind : "transport";
   const stageMeta = playbackMeta[stageKind];
   const stagePlace = visibleStage?.type === "stop" ? visibleStage.stop.place : visibleStage?.segment.to.place;
-  const stopNextMode = visibleStage?.type === "stop"
-    ? playbackPlan[visibleStage.dayIndex].segments[visibleStage.stopIndex]?.mode
-    : undefined;
-  const cameraModeOrKind: PlaybackMode | PlaybackKind = visibleStage?.type === "travel"
-    ? visibleStage.segment.mode
-    : visibleStage?.type === "stop" && visibleStage.stop.kind === "transport" && stopNextMode
-      ? stopNextMode
-      : visibleStage?.type === "stop"
-        ? visibleStage.stop.kind
-        : "drive";
   const routeLabel = visibleStage && selectedDay === null
     ? visibleStage.type === "travel"
       ? `${visibleStage.segment.mode === "flight" ? "✈" : "🚙"} ${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}`
@@ -917,15 +906,6 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
       {selectedDay === null && playbackStatus === "idle" && !placeDetail && (
         <JourneyStartGate ready={status === "ready"} onStart={() => startPlaybackRef.current(true)} />
-      )}
-
-      {visibleStage && selectedDay === null && (playbackStatus === "playing" || playbackStatus === "paused") && (
-        <div className={`journey-camera-lock ${placeDetail ? "is-previewing" : ""}`} aria-hidden="true">
-          <span className={`journey-traveler journey-traveler-${cameraModeOrKind}`}>
-            <i />
-            <b>{travelerGlyph(cameraModeOrKind)}</b>
-          </span>
-        </div>
       )}
 
       {selectedDay === null && (
@@ -984,6 +964,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
             <button className="playback-detail-button" type="button" onClick={() => {
               const stopIndex = visibleStage.type === "stop" ? visibleStage.stopIndex : visibleStage.segmentIndex + 1;
               pausePlaybackRef.current();
+              travelerMarkerRef.current?.setOpacity(0);
               setPlaceDetail({ place: stagePlace, dayId: activeStageDay?.dayId ?? 1, arrivalMode: false, stopIndex });
               const camera = cameraForArrival(stagePlace);
               mapRef.current?.flyTo([stagePlace.coordinates.lat, stagePlace.coordinates.lng], camera.zoom, {

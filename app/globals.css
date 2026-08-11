@@ -133,8 +133,6 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .journey-traveler-rest { background: #294f6a; }
 .journey-traveler-meal { background: #a66b22; }
 .journey-traveler-explore { background: var(--coral-dark); }
-.journey-camera-lock { left: 50%; pointer-events: none; position: absolute; top: 50%; transform: translate(-50%,-50%); z-index: 980; }
-.journey-camera-lock .journey-traveler { animation: camera-lock-enter .24s cubic-bezier(.2,.8,.2,1); }
 .route-map-canvas.is-map-zooming .map-marker { box-shadow: none !important; transition: none !important; }
 .route-map-canvas.is-map-zooming .map-marker::after, .route-map-canvas.is-map-zooming .photo-flag { visibility: hidden; }
 .route-map-canvas.is-map-zooming .transport-icon-wrap, .route-map-canvas.is-map-zooming .hotel-change-marker-wrap, .route-map-canvas.is-map-zooming .leaflet-tooltip { visibility: hidden; }
@@ -167,7 +165,6 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .popup-weather b { color: var(--ink); margin-right: 6px; }
 .popup-body > a { color: var(--coral-dark); font-size: 9px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 @keyframes popup-enter { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes camera-lock-enter { from { opacity: 0; transform: scale(.72); } to { opacity: 1; transform: scale(1); } }
 @keyframes route-replay { from { opacity: .18; } 55% { opacity: .72; } to { opacity: 1; } }
 .route-replay { animation: route-replay .62s cubic-bezier(.2,.8,.2,1); }
 .map-layer::after { background: rgba(7,27,38,.06); content: ""; inset: 0; opacity: 0; pointer-events: none; position: absolute; transition: opacity .18s ease; z-index: 1050; }
@@ -306,7 +303,6 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .activity-motion-rest i:nth-of-type(3) { animation-delay: -1s; margin: 54px 0 0 68px; }
 .journey-shell:has(.leaflet-popup) .playback-stop-card { opacity: 0; pointer-events: none; transform: translateY(-8px) scale(.98); }
 
-.journey-camera-lock.is-previewing { opacity: 0; }
 .place-detail-backdrop { align-items: stretch; animation: detail-backdrop-enter .22s ease-out; background: rgba(7,27,38,.28); display: flex; inset: 0; justify-content: flex-end; padding: 14px; position: absolute; z-index: 1700; }
 .place-detail-panel { animation: detail-panel-enter .42s cubic-bezier(.16,1,.3,1); background: var(--white); border: 1px solid rgba(255,255,255,.72); border-radius: 22px; box-shadow: 0 26px 80px rgba(4,27,38,.34); max-width: 490px; overflow: hidden; position: relative; width: min(43vw,490px); }
 .place-detail-close { align-items: center; background: rgba(7,27,38,.9); border: 1px solid rgba(255,255,255,.22); border-radius: 50%; color: white; cursor: pointer; display: flex; font-size: 22px; height: 36px; justify-content: center; line-height: 1; padding: 0 0 2px; position: absolute; right: 14px; top: 14px; transition: background .18s ease, transform .22s cubic-bezier(.2,.8,.2,1); width: 36px; z-index: 3; }
