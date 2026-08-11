@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { cameraForArrival, cameraForTravel } from "../app/trip-camera.ts";
+import { cameraForArrival, cameraForTravel, travelStageProgress } from "../app/trip-camera.ts";
 
 function place(id, city, category, lat, lng) {
   return { id, city, category, coordinates: { lat, lng } };
@@ -45,3 +45,32 @@ test("zooms into meaningful arrivals without over-zooming hotels or airports", (
   assert.equal(cameraForArrival({ id: "sanya-airport", category: "transport" }).zoom, 9);
 });
 
+test("settles the camera before route movement begins", () => {
+  const dadonghai = place("dadonghai", "三亚", "coast", 18.2206, 109.5252);
+  const luhuitou = place("luhuitou", "三亚", "viewpoint", 18.2272, 109.4963);
+  const camera = cameraForTravel(segment("drive", dadonghai, luhuitou));
+
+  const whileZooming = travelStageProgress(600, 1200, camera);
+  assert.equal(whileZooming.phase, "camera");
+  assert.equal(whileZooming.routeProgress, 0);
+  assert.ok(whileZooming.totalProgress > 0);
+
+  const afterZoom = travelStageProgress(980, 1200, camera);
+  assert.equal(afterZoom.phase, "moving");
+  assert.ok(afterZoom.routeProgress > 0);
+
+  const completed = travelStageProgress(2200, 1200, camera);
+  assert.equal(completed.phase, "complete");
+  assert.equal(completed.routeProgress, 1);
+  assert.equal(completed.totalProgress, 1);
+});
+
+test("reduced motion skips the camera lead-in", () => {
+  const wuhan = place("wuhan-airport", "武汉", "transport", 30.7757, 114.2171);
+  const haikou = place("haikou-airport", "海口", "transport", 19.9349, 110.4592);
+  const camera = cameraForTravel(segment("flight", wuhan, haikou));
+
+  const timing = travelStageProgress(80, 160, camera, true);
+  assert.equal(timing.phase, "moving");
+  assert.equal(timing.routeProgress, 0.5);
+});

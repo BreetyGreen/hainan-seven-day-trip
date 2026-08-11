@@ -49,11 +49,20 @@ test("keeps animated travel segments connected, bounded, and mode-correct", () =
       const segment = playbackDay.segments[index];
       assert.ok(segment.coordinates.length >= 2);
       assert.ok(segment.coordinates.length <= 140, "animation must not redraw thousands of raw points per frame");
-      assert.ok(segment.durationMs >= 1200 && segment.durationMs <= 2800);
+      assert.ok(segment.durationMs >= 2400 && segment.durationMs <= 4200);
       assert.equal(segment.from.place.id, playbackDay.stops[index].place.id);
       assert.equal(segment.to.place.id, playbackDay.stops[index + 1].place.id);
     }
   }
+});
+
+test("gives visible movement enough time to read as travel rather than a jump", () => {
+  const segments = createPlaybackPlan(days, places, routeData.features).flatMap((day) => day.segments);
+  const firstFlight = segments.find((segment) => segment.mode === "flight");
+  const sanyaCityDrive = segments.find((segment) => segment.from.place.id === "dadonghai" && segment.to.place.id === "luhuitou");
+
+  assert.equal(firstFlight.durationMs, 4200);
+  assert.ok(sanyaCityDrive.durationMs >= 2400);
 });
 
 test("maps real itinerary places to transport, explore, meal, and rest choreography", () => {

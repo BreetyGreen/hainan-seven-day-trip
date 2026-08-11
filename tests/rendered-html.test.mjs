@@ -88,6 +88,9 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(routeMap, /requiresManualArrival/);
   assert.match(routeMap, /cameraForTravel/);
   assert.match(routeMap, /cameraForArrival/);
+  assert.match(routeMap, /travelStageProgress/);
+  assert.match(routeMap, /timing\.phase !== "camera"/);
+  assert.match(routeMap, /调整镜头/);
   assert.match(routeMap, /createRouteContext/);
   assert.match(routeMap, /arrivalStageIndex/);
   assert.match(routeMap, /继续前往下一站/);

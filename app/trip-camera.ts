@@ -7,6 +7,30 @@ export type CameraIntent = {
   duration: number;
 };
 
+export type TravelStageProgress = {
+  phase: "camera" | "moving" | "complete";
+  routeProgress: number;
+  totalProgress: number;
+};
+
+const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
+
+export function travelStageProgress(
+  elapsedMs: number,
+  movementDurationMs: number,
+  camera: Pick<CameraIntent, "duration">,
+  reducedMotion = false,
+): TravelStageProgress {
+  const cameraLeadMs = reducedMotion ? 0 : Math.round(camera.duration * 1000) + 160;
+  const safeMovementMs = Math.max(1, movementDurationMs);
+  const routeProgress = clampProgress((elapsedMs - cameraLeadMs) / safeMovementMs);
+  const totalProgress = clampProgress(elapsedMs / (cameraLeadMs + safeMovementMs));
+  const phase = elapsedMs < cameraLeadMs ? "camera"
+    : routeProgress >= 1 ? "complete"
+      : "moving";
+  return { phase, routeProgress, totalProgress };
+}
+
 function haversineKm(a: RouteCoordinate, b: RouteCoordinate) {
   const radians = (degrees: number) => degrees * Math.PI / 180;
   const lat1 = radians(a[1]);
@@ -50,4 +74,3 @@ export function cameraForArrival(
   }
   return { kind: "arrival", zoom: 15, duration: 0.76 };
 }
-

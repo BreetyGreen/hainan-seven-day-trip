@@ -5,7 +5,7 @@ import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
 import { days, getDayRoute, getHotel, places, type Place } from "./trip-data";
 import { getDayGuide, hotelBayGuide } from "./trip-details";
-import { cameraForArrival, cameraForTravel } from "./trip-camera";
+import { cameraForArrival, cameraForTravel, travelStageProgress } from "./trip-camera";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -324,6 +324,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
   const [visibleStage, setVisibleStage] = useState<PlaybackStage | null>(null);
   const [playbackProgress, setPlaybackProgress] = useState(0);
   const [activePlaybackDay, setActivePlaybackDay] = useState<number | null>(null);
+  const [travelPhase, setTravelPhase] = useState<"camera" | "moving" | null>(null);
   const [arrivalStageIndex, setArrivalStageIndex] = useState<number | null>(null);
   const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number; arrivalMode: boolean; stopIndex?: number } | null>(null);
 
@@ -620,12 +621,19 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     let lastTimestamp: number | null = null;
     let lastCameraUpdate = 0;
     let lastProgressUpdate = 0;
+    let currentTravelPhase: "camera" | "moving" | null = null;
     let completedLines: Record<PlaybackMode, RouteCoordinate[][]> = { drive: [], flight: [] };
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const updateStatus = (next: PlaybackStatus) => {
       playbackStatusRef.current = next;
       setPlaybackStatus(next);
+    };
+
+    const updateTravelPhase = (next: "camera" | "moving" | null) => {
+      if (currentTravelPhase === next) return;
+      currentTravelPhase = next;
+      setTravelPhase(next);
     };
 
     const setTravelerIcon = (modeOrKind: PlaybackMode | PlaybackKind) => {
@@ -650,6 +658,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       setVisibleStage(null);
       setActivePlaybackDay(null);
       setPlaybackProgress(0);
+      updateTravelPhase(null);
       arrivalStageIndexRef.current = null;
       setArrivalStageIndex(null);
     };
@@ -672,10 +681,12 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       stageIndex = nextIndex;
       stageElapsed = 0;
       lastTimestamp = null;
+      lastCameraUpdate = 0;
       setVisibleStage(stage);
       setActivePlaybackDay(playbackPlan[stage.dayIndex].dayId);
 
       if (stage.type === "stop") {
+        updateTravelPhase(null);
         focusStop(stage);
         const previouslyVisitedStayIds = new Set(
           playbackStages
@@ -699,6 +710,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
         }
       }
       else {
+        updateTravelPhase(reducedMotion ? "moving" : "camera");
         setTravelerIcon(stage.segment.mode);
         traveler.setOpacity(0);
         const camera = cameraForTravel(stage.segment);
@@ -779,12 +791,25 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
         const delta = Math.min(250, timestamp - lastTimestamp);
         lastTimestamp = timestamp;
         stageElapsed += delta;
-        const duration = reducedMotion
+        const movementDuration = reducedMotion
           ? stage.type === "travel" ? 160 : 650
           : stage.durationMs;
-        const progress = Math.min(1, stageElapsed / duration);
-
-        if (stage.type === "travel") renderTravel(stage, reducedMotion ? 1 : progress, timestamp);
+        let progress: number;
+        if (stage.type === "travel") {
+          const timing = travelStageProgress(
+            stageElapsed,
+            movementDuration,
+            cameraForTravel(stage.segment),
+            reducedMotion,
+          );
+          progress = timing.totalProgress;
+          updateTravelPhase(timing.phase === "camera" ? "camera" : "moving");
+          if (timing.phase !== "camera") {
+            renderTravel(stage, timing.routeProgress, timestamp);
+          }
+        } else {
+          progress = Math.min(1, stageElapsed / movementDuration);
+        }
         if (timestamp - lastProgressUpdate >= 120 || progress >= 1) {
           lastProgressUpdate = timestamp;
           setPlaybackProgress(((stageIndex + progress) / playbackStages.length) * 100);
@@ -944,11 +969,13 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
           <div className="playback-stop-body">
             <div className="playback-stop-kicker">
               <span>DAY {activeStageDay?.dayId} · {visibleStage.type === "travel" ? "行进中" : stageMeta.label}</span>
-              <span>{playbackStatus === "complete" ? "旅程完成" : visibleStage.type === "stop" ? `${visibleStage.stopNumber}/${totalPlaybackStops}` : "镜头跟随"}</span>
+              <span>{playbackStatus === "complete" ? "旅程完成" : visibleStage.type === "stop" ? `${visibleStage.stopNumber}/${totalPlaybackStops}` : travelPhase === "camera" ? "调整镜头" : "镜头跟随"}</span>
             </div>
             <h2>{visibleStage.type === "travel" ? `前往${stagePlace.shortName}` : stagePlace.name}</h2>
             <p>{visibleStage.type === "travel"
-              ? `${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}，路线正在实时绘制。`
+              ? travelPhase === "camera"
+                ? `${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}，先调整到适合这段路程的视野。`
+                : `${visibleStage.segment.from.place.shortName} → ${visibleStage.segment.to.place.shortName}，路线正在实时绘制。`
               : stagePlace.why}</p>
             <div className="playback-stop-facts">
               <span><b>{visibleStage.type === "travel" ? "方式" : "建议时间"}</b>{visibleStage.type === "travel" ? visibleStage.segment.mode === "flight" ? "航班" : "自驾" : stagePlace.activity.time}</span>

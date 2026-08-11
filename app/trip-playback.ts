@@ -179,8 +179,8 @@ function modeForSegment(ranges: ModeRange[], fromIndex: number, toIndex: number)
 }
 
 function durationForSegment(mode: PlaybackMode, coordinates: RouteCoordinate[]) {
-  if (mode === "flight") return 2800;
-  return Math.round(Math.min(2800, Math.max(1200, 1120 + routeDistanceKm(coordinates) * 15)));
+  if (mode === "flight") return 4200;
+  return Math.round(Math.min(4200, Math.max(2400, 2000 + routeDistanceKm(coordinates) * 18)));
 }
 
 export function createPlaybackPlan(
