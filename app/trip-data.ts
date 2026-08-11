@@ -90,18 +90,14 @@ const xhsLingshui = "https://www.xiaohongshu.com/search_result/6a79ad60000000002
 const xhsRaffles = "https://www.xiaohongshu.com/search_result/69e71f520000000023010dc3?xsec_token=ABQ2NO7zJeO7tcvzGnc6S-wd3xa-yI_ycmyBNtnBsede4=&xsec_source=";
 const xhsSanyaCity = "https://www.xiaohongshu.com/search_result/6a657af900000000010307a4?xsec_token=ABjP_9LUg4g5koaqlNXaxAnfNy0MdtakAWiSgcoDnPz0g=&xsec_source=";
 const xhsNanshan = "https://www.xiaohongshu.com/search_result/6a58f880000000000c016cc9?xsec_token=ABgVnlRa7lx1XJvA5igCtNbVyvMwGtTuUsOBXFxIU9o2A=&xsec_source=";
+const xhsNanshanPhoto = "https://www.xiaohongshu.com/search_result/6a7602c6000000002c002627?xsec_token=ABCg0dBzZKFyzOO8xVpXPfvcSRmJTGehwX4ode7mcqkZ4=&xsec_source=";
+const xhsLuhuitouPhoto = "https://www.xiaohongshu.com/search_result/690489c200000000030373f2?xsec_token=ABPYKECHKPDzn0BspJC6xktJcDQUK21_QaF6vwwgG5c5E=&xsec_source=";
 const xhsSanyaHyatt = "https://www.xiaohongshu.com/search_result/6a65848a000000001c00ec09?xsec_token=ABjP_9LUg4g5koaqlNXaxAnZqHAe5SfALxlTYOvBp4DB4=&xsec_source=";
+const xhsXinglongGarden = "https://www.xiaohongshu.com/search_result/6a786a36000000002202d176?xsec_token=ABIO4HwpNBtY6l6eMsts2GMRurtC85CNDkGP6x0YSnLgw=&xsec_source=";
+const xhsXinglongMarket = "https://www.xiaohongshu.com/search_result/68a31c74000000001d034617?xsec_token=ABunHxuUfqDwAh7GMtDNCNNm6pzUpzVsMMJkFeeaQYkkQ=&xsec_source=";
+const xhsXincunPort = "https://www.xiaohongshu.com/search_result/6a71b3a50000000021020fc8?xsec_token=ABNfxQl393g1AacquOmr5DSlmB3AvJ-BSJUQAbBh2PW98=&xsec_source=";
 
 export const routeResearchSource = xhsRoute;
-
-const mapActivity = (title: string, url: string): Activity => ({
-  time: "按航班时间",
-  duration: "交通节点",
-  steps: ["核对证件与行李", "按地图继续下一段"],
-  practical: ["预留交通与还车缓冲"],
-  weather: "航班或道路调整时，以当天官方通知为准。",
-  source: { platform: "地图", author: "地图核验", title, url },
-});
 
 export const places: Place[] = [
   {
@@ -112,7 +108,14 @@ export const places: Place[] = [
     category: "transport",
     coordinates: { lat: 30.7756632, lng: 114.2171149 },
     why: "七日完整路线的起点和终点。",
-    activity: mapActivity("武汉天河国际机场地图", "https://www.openstreetmap.org/way/128255090"),
+    activity: {
+      time: "起飞前约 2.5 小时到达",
+      duration: "约 2 小时 30 分出发缓冲",
+      steps: ["提前一天线上值机，核对航班、航站楼和托运行李额", "按航司通知到对应柜台托运，证件与充电宝随身携带", "完成安检后先确认登机口，再安排早餐与补水"],
+      practical: ["九月仍可能受雷雨影响，出门前再次看航司通知", "返程抵达武汉后再按当日交通选择地铁、出租车或接送"],
+      weather: "雷雨或航班调整时以航司和机场当日通知为准，不压缩值机与安检时间。",
+      source: { platform: "地图", author: "地图核验", title: "武汉天河国际机场出发与返程节点", url: "https://www.openstreetmap.org/way/128255090" },
+    },
     sourceUrl: "https://www.openstreetmap.org/way/128255090",
     verifiedAt: "2026-08-11",
   },
@@ -124,7 +127,14 @@ export const places: Place[] = [
     category: "transport",
     coordinates: { lat: 19.9442567, lng: 110.4592869 },
     why: "海口进、三亚出的北端入口；取车后不再回头。",
-    activity: mapActivity("海口美兰国际机场地图", "https://www.openstreetmap.org/relation/4452375"),
+    activity: {
+      time: "落地后约 45–75 分钟",
+      duration: "约 1 小时取行李与取车",
+      steps: ["落地后先取托运行李并确认随身物品齐全", "按租车订单前往正式柜台或指定接驳点，不跟临时揽客", "取车时拍全车视频，核对油量、电量、轮胎、划痕和 ETC 规则", "设置骑楼为可删短停；若落地晚，直接导航万宁酒店"],
+      practical: ["把租车订单、驾驶证和押金规则提前截屏", "正式驶离机场前由副驾完成导航和首段休息点设置"],
+      weather: "暴雨或航班晚点时取消骑楼，不在疲劳或视线差的状态下硬赶行程。",
+      source: { platform: "地图", author: "地图核验", title: "海口美兰国际机场落地取车节点", url: "https://www.openstreetmap.org/relation/4452375" },
+    },
     sourceUrl: "https://www.openstreetmap.org/relation/4452375",
     verifiedAt: "2026-08-11",
   },
@@ -197,7 +207,15 @@ export const places: Place[] = [
       steps: ["先走香料与饮料作物区域，辨认可可、咖啡和胡椒", "在科普点完成一次兴隆咖啡/可可风味对照"],
       practical: ["优先开园后进入，避开正午闷热", "穿防滑鞋并带驱蚊"],
       weather: "雷雨时只走有遮蔽的科普段，取消林下长线。",
-      source: { platform: "地图", author: "地图核验", title: "兴隆热带植物园", url: "https://www.openstreetmap.org/way/325533045" },
+      source: { platform: "小红书", author: "lelll", title: "万宁｜兴隆热带植物园", url: xhsXinglongGarden },
+    },
+    image: {
+      src: "/hainan/xinglong-garden-xhs.webp",
+      alt: "兴隆植物园椰林步道与浓密热带绿植",
+      platform: "小红书",
+      credit: "lelll",
+      creditUrl: xhsXinglongGarden,
+      noteTitle: "万宁｜兴隆热带植物园",
     },
     sourceUrl: "https://www.openstreetmap.org/way/325533045",
     verifiedAt: "2026-08-11",
@@ -216,7 +234,15 @@ export const places: Place[] = [
       steps: ["先看当季热带水果与香料摊位", "午饭选清晰标价的南洋粉面或糕点，少量多样"],
       practical: ["生鲜不长时间放在车内", "海鲜称重与做法必须下单前确认"],
       weather: "暴雨天可保留，避免市场外积水路段。",
-      source: { platform: "小红书", author: "逍遥", title: "万宁3天2晚旅行攻略｜头一次来这样玩不纠结", url: xhsWanningRoute },
+      source: { platform: "小红书", author: "小z小c", title: "万宁兴隆华侨农贸市场", url: xhsXinglongMarket },
+    },
+    image: {
+      src: "/hainan/xinglong-market-xhs.webp",
+      alt: "兴隆市场采购后加工上桌的龙虾、鲜虾和生蚝",
+      platform: "小红书",
+      credit: "小z小c",
+      creditUrl: xhsXinglongMarket,
+      noteTitle: "万宁兴隆华侨农贸市场",
     },
     sourceUrl: "https://www.amap.com/search?query=%E5%85%B4%E9%9A%86%E5%8D%8E%E4%BE%A8%E5%86%9C%E8%B4%B8%E5%B8%82%E5%9C%BA",
     verifiedAt: "2026-08-11",
@@ -236,6 +262,14 @@ export const places: Place[] = [
       practical: ["只从公共入口进出，不借酒店私属通道", "离水前确认潮位和救生提示"],
       weather: "大浪、雷电或红旗时不下水，只在安全步道停留。",
       source: { platform: "小红书", author: "逍遥", title: "万宁3天2晚旅行攻略｜头一次来这样玩不纠结", url: xhsWanningRoute },
+    },
+    image: {
+      src: "/hainan/shimei-bay-xhs.webp",
+      alt: "石梅湾海滩前的椰树与海边休息区",
+      platform: "小红书",
+      credit: "Coco妈咪",
+      creditUrl: xhsRoute,
+      noteTitle: "海南｜海口-万宁-陵水-三亚7天线路攻略",
     },
     sourceUrl: "https://www.openstreetmap.org/way/341370752",
     verifiedAt: "2026-08-11",
@@ -283,6 +317,14 @@ export const places: Place[] = [
       weather: "云厚可保留海岸散步；雷雨则直接回酒店。",
       source: { platform: "小红书", author: "卷卷心", title: "来了万宁才知道，之前看的攻略有多离谱", url: xhsWanningReality },
     },
+    image: {
+      src: "/hainan/shenzhou-peninsula-xhs.webp",
+      alt: "神州半岛海岸与远处灯塔的橙色日落",
+      platform: "小红书",
+      credit: "Coco妈咪",
+      creditUrl: xhsRoute,
+      noteTitle: "海南｜海口-万宁-陵水-三亚7天线路攻略",
+    },
     sourceUrl: "https://www.openstreetmap.org/way/281774543",
     verifiedAt: "2026-08-11",
   },
@@ -300,7 +342,15 @@ export const places: Place[] = [
       steps: ["在正规售票点确认当天客船班次与返程时间", "乘小客船穿过渔排，观察生活空间但不对居民近距离拍摄"],
       practical: ["船只容量小，人多时预留排队时间", "不跟无证揽客船、不购买或带走野生海洋生物"],
       weather: "大风、雷雨或停航时取消乘船，直接去清水湾。",
-      source: { platform: "小红书", author: "双双&豆包", title: "海南自驾游攻略第四站➡陵水 疍家 清水湾", url: xhsLingshui },
+      source: { platform: "小红书", author: "金属滚儿", title: "海陆之间：陵水新村的疍家文明与生命脉动", url: xhsXincunPort },
+    },
+    image: {
+      src: "/hainan/xincun-port-xhs.webp",
+      alt: "新村港海面上的疍家渔排、船只与远山",
+      platform: "小红书",
+      credit: "金属滚儿",
+      creditUrl: xhsXincunPort,
+      noteTitle: "海陆之间：陵水新村的疍家文明与生命脉动",
     },
     sourceUrl: "https://www.xiaohongshu.com/search_result/6a79ad60000000002202c3da",
     verifiedAt: "2026-08-11",
@@ -376,6 +426,14 @@ export const places: Place[] = [
       weather: "雷雨时取消海边长距离步行；高温时每 45–60 分钟补水休息。",
       source: { platform: "小红书", author: "Hs", title: "三亚行-南山寺 2026年1月6号行程", url: xhsNanshan },
     },
+    image: {
+      src: "/hainan/nanshan-xhs.webp",
+      alt: "南山寺塔楼与海上观音同框的金色日落",
+      platform: "小红书",
+      credit: "Taurus旅拍日记",
+      creditUrl: xhsNanshanPhoto,
+      noteTitle: "三亚·南山寺📍不是烟雨西湖，是南山日出",
+    },
     sourceUrl: "https://www.nanshan.com/www.nanshan.com/index.php/jqjj/index.html",
     verifiedAt: "2026-08-11",
   },
@@ -394,6 +452,14 @@ export const places: Place[] = [
       practical: ["不购买沙滩流动人员兜售的水上项目", "下水前确认更衣、贵重物品和返程停车位置"],
       weather: "红旗、雷电或离岸流提示时不下水。",
       source: { platform: "小红书", author: "拾渡", title: "三亚大东海顺路游玩一日游攻略", url: xhsSanyaCity },
+    },
+    image: {
+      src: "/hainan/dadonghai-xhs.webp",
+      alt: "大东海海边餐吧、椰树与沙滩",
+      platform: "小红书",
+      credit: "Coco妈咪",
+      creditUrl: xhsRoute,
+      noteTitle: "海南｜海口-万宁-陵水-三亚7天线路攻略",
     },
     sourceUrl: "https://www.amap.com/place/B0KUYYWVTS",
     verifiedAt: "2026-08-11",
@@ -414,6 +480,14 @@ export const places: Place[] = [
       weather: "雷雨或大风时取消高处观景，直接前往三亚湾。",
       source: { platform: "小红书", author: "拾渡", title: "三亚大东海顺路游玩一日游攻略", url: xhsSanyaCity },
     },
+    image: {
+      src: "/hainan/luhuitou-xhs.webp",
+      alt: "从鹿回头俯瞰三亚城市与游艇港湾",
+      platform: "小红书",
+      credit: "橙子",
+      creditUrl: xhsLuhuitouPhoto,
+      noteTitle: "三亚📍鹿回头🦌",
+    },
     sourceUrl: "https://www.openstreetmap.org/node/1943151461",
     verifiedAt: "2026-08-11",
   },
@@ -433,6 +507,14 @@ export const places: Place[] = [
       weather: "云厚仍可散步；雷雨时取消并直接回酒店。",
       source: { platform: "小红书", author: "Coco妈咪", title: "海南｜海口-万宁-陵水-三亚7天线路攻略", url: xhsRoute },
     },
+    image: {
+      src: "/hainan/coconut-corridor-xhs.webp",
+      alt: "椰梦长廊沿海椰林道路与橙色晚霞",
+      platform: "小红书",
+      credit: "Coco妈咪",
+      creditUrl: xhsRoute,
+      noteTitle: "海南｜海口-万宁-陵水-三亚7天线路攻略",
+    },
     sourceUrl: "https://www.amap.com/search?query=%E6%A4%B0%E6%A2%A6%E9%95%BF%E5%BB%8A",
     verifiedAt: "2026-08-11",
   },
@@ -444,7 +526,14 @@ export const places: Place[] = [
     category: "transport",
     coordinates: { lat: 18.3051519, lng: 109.4125351 },
     why: "异地还车后从南端离岛，路线不折返海口。",
-    activity: mapActivity("三亚凤凰国际机场地图", "https://www.openstreetmap.org/way/32079751"),
+    activity: {
+      time: "起飞前约 3 小时到达机场区域",
+      duration: "约 3 小时还车与登机缓冲",
+      steps: ["离开酒店前复核航班和租车公司的还车地址", "按车辆要求在机场附近正规油站补足油量，并保留凭证", "到订单指定地点验车还车，拍下车辆、油量和交接单", "乘正规接驳进入航站楼，完成托运、安检并确认登机口"],
+      practical: ["还车地址不一定等于航站楼落客点，导航必须使用订单内地址", "免税品提货、托运行李和还车各留独立缓冲，不把三项挤在一起"],
+      weather: "台风或雷雨季提前 72 小时和 24 小时复核航班；变更时同时联系航司与租车公司。",
+      source: { platform: "地图", author: "地图核验", title: "三亚凤凰国际机场还车离岛节点", url: "https://www.openstreetmap.org/way/32079751" },
+    },
     sourceUrl: "https://www.openstreetmap.org/way/32079751",
     verifiedAt: "2026-08-11",
   },

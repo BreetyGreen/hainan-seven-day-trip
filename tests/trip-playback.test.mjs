@@ -4,9 +4,11 @@ import test from "node:test";
 
 import { days, places } from "../app/trip-data.ts";
 import {
+  createRouteContext,
   createPlaybackPlan,
   createPlaybackStages,
   playbackKindForPlace,
+  requiresManualArrival,
 } from "../app/trip-playback.ts";
 
 const routeData = JSON.parse(await readFile(
@@ -79,4 +81,43 @@ test("creates an alternating stop and travel timeline for the animation loop", (
   assert.equal(stages.at(-1).type, "stop");
   assert.equal(stages.at(-1).stop.place.id, "wuhan-airport");
   assert.equal(stages.at(-1).stopNumber, stopCount);
+});
+
+test("pauses only at meaningful arrivals and the first visit to each hotel base", () => {
+  const byId = (id) => places.find((place) => place.id === id);
+
+  assert.equal(requiresManualArrival(byId("wuhan-airport"), new Set()), false);
+  assert.equal(requiresManualArrival(byId("riyue-bay"), new Set()), true);
+  assert.equal(requiresManualArrival(byId("xinglong-market"), new Set()), true);
+  assert.equal(requiresManualArrival(byId("wanning-hyatt"), new Set()), true);
+  assert.equal(requiresManualArrival(byId("wanning-hyatt"), new Set(["wanning-hyatt"])), false);
+  assert.equal(requiresManualArrival(byId("sanya-hyatt"), new Set(["wanning-hyatt"])), true);
+});
+
+test("builds exact previous-current-next context for a middle arrival", () => {
+  const day = createPlaybackPlan(days, places, routeData.features).find((item) => item.dayId === 6);
+  const context = createRouteContext(day, 2);
+
+  assert.equal(context.position, 3);
+  assert.equal(context.total, 5);
+  assert.equal(context.previous.place.id, "dadonghai");
+  assert.equal(context.current.place.id, "luhuitou");
+  assert.equal(context.next.place.id, "coconut-corridor");
+  assert.deepEqual(context.remaining.map((stop) => stop.place.id), ["coconut-corridor", "sanya-hyatt"]);
+  assert.equal(context.nextMode, "drive");
+});
+
+test("keeps repeated hotel occurrences and final stops unambiguous", () => {
+  const plan = createPlaybackPlan(days, places, routeData.features);
+  const dayTwo = plan.find((item) => item.dayId === 2);
+  const finalHotel = createRouteContext(dayTwo, 4);
+  const firstHotel = createRouteContext(dayTwo, 0);
+
+  assert.equal(firstHotel.current.place.id, "wanning-hyatt");
+  assert.equal(firstHotel.next.place.id, "xinglong-garden");
+  assert.equal(finalHotel.current.place.id, "wanning-hyatt");
+  assert.equal(finalHotel.previous.place.id, "shimei-bay");
+  assert.equal(finalHotel.next, null);
+  assert.deepEqual(finalHotel.remaining, []);
+  assert.equal(finalHotel.nextMode, null);
 });

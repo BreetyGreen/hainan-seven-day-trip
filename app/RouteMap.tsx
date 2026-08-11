@@ -5,11 +5,15 @@ import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
 import { days, getDayRoute, getHotel, places, type Place } from "./trip-data";
 import { getDayGuide, hotelBayGuide } from "./trip-details";
+import { cameraForArrival, cameraForTravel } from "./trip-camera";
 import {
+  createRouteContext,
   createPlaybackPlan,
   createPlaybackStages,
+  requiresManualArrival,
   type PlaybackKind,
   type PlaybackMode,
+  type RouteContext,
   type PlaybackStage,
   type RouteCoordinate,
 } from "./trip-playback";
@@ -111,7 +115,43 @@ function toLeafletLines(lines: RouteCoordinate[][]) {
   return lines.map((line) => line.map(([lng, lat]) => [lat, lng] as [number, number]));
 }
 
-function PlaceDetailDialog({ place, dayId, onClose }: { place: Place; dayId: number; onClose: () => void }) {
+function JourneyStartGate({ ready, onStart }: { ready: boolean; onStart: () => void }) {
+  return (
+    <section className="journey-start-gate" aria-labelledby="journey-start-title">
+      <div className="journey-start-route" aria-hidden="true">
+        <span>武汉</span><i>✈</i><span>海南东线</span><i>🚙</i><span>三亚</span>
+      </div>
+      <p>一张地图，慢慢走完</p>
+      <h2 id="journey-start-title">海南七日旅程</h2>
+      <div className="journey-start-facts">
+        <span><b>7</b>天 6 晚</span>
+        <span><b>2</b>个住宿基地</span>
+        <span><b>1</b>次换酒店</span>
+      </div>
+      <button type="button" onClick={onStart} disabled={!ready}>
+        <span>{ready ? "开始七日旅程" : "正在准备路线"}</span>
+        <i aria-hidden="true">→</i>
+      </button>
+      <small>到达关键地点会自动停下，等你看完再继续</small>
+    </section>
+  );
+}
+
+function PlaceDetailDialog({
+  place,
+  dayId,
+  routeContext,
+  arrivalMode,
+  onClose,
+  onContinue,
+}: {
+  place: Place;
+  dayId: number;
+  routeContext: RouteContext;
+  arrivalMode: boolean;
+  onClose: () => void;
+  onContinue: () => void;
+}) {
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const dayGuide = getDayGuide(dayId);
   const hotel = getHotel(place.hotelId);
@@ -155,6 +195,35 @@ function PlaceDetailDialog({ place, dayId, onClose }: { place: Place; dayId: num
         </div>
 
         <div className="place-detail-content">
+          <section className="place-detail-route-context" aria-label="当前地点在当天路线中的位置">
+            <div className="place-detail-route-heading">
+              <span>DAY {routeContext.dayId} · 第 {routeContext.position}/{routeContext.total} 站</span>
+              <strong>{routeContext.dayTitle}</strong>
+            </div>
+            <div className="place-detail-route-band">
+              <div className={!routeContext.previous ? "is-empty" : ""}>
+                <small>上一站</small>
+                <b>{routeContext.previous?.place.shortName ?? "当天起点"}</b>
+              </div>
+              <i aria-hidden="true">→</i>
+              <div className="is-current">
+                <small>现在</small>
+                <b>{routeContext.current.place.shortName}</b>
+              </div>
+              <i aria-hidden="true">→</i>
+              <div className={!routeContext.next ? "is-empty" : ""}>
+                <small>下一站</small>
+                <b>{routeContext.next?.place.shortName ?? "今日完成"}</b>
+                {routeContext.nextMode && <em>{routeContext.nextMode === "flight" ? "✈ 航班" : "🚙 自驾"}</em>}
+              </div>
+            </div>
+            <div className="place-detail-remaining">
+              <small>今日剩余</small>
+              <div>{routeContext.remaining.length > 0
+                ? routeContext.remaining.map((stop, index) => <span key={`${stop.place.id}-${index}`}>{stop.place.shortName}</span>)
+                : <span className="is-complete">今日路线已完成</span>}</div>
+            </div>
+          </section>
           <h2 id="place-detail-title">{place.name}</h2>
           <p className="place-detail-lead">{place.why}</p>
           <div className="place-detail-facts">
@@ -215,6 +284,14 @@ function PlaceDetailDialog({ place, dayId, onClose }: { place: Place; dayId: num
             <p>内容已整理在本页；以下链接仅用于复核原始资料。</p>
             <div>{sourceLinks.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>)}</div>
           </footer>
+          {arrivalMode && (
+            <div className="place-detail-continue-wrap">
+              <p><b>这一站已抵达</b><span>看完后，路线会从这里接着走。</span></p>
+              <button className="place-detail-continue" type="button" onClick={onContinue}>
+                继续前往下一站 <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          )}
         </div>
       </aside>
     </div>
@@ -232,13 +309,14 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
   const playbackFlightRef = useRef<Polyline | null>(null);
   const travelerMarkerRef = useRef<Marker | null>(null);
   const leafletRef = useRef<typeof import("leaflet") | null>(null);
-  const autoplayStartedRef = useRef(false);
-  const autoplayTimerRef = useRef<number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const playbackStatusRef = useRef<PlaybackStatus>("idle");
+  const arrivalStageIndexRef = useRef<number | null>(null);
+  const acknowledgedArrivalStagesRef = useRef<Set<number>>(new Set());
   const startPlaybackRef = useRef<(restart?: boolean) => void>(() => undefined);
   const pausePlaybackRef = useRef<() => void>(() => undefined);
   const resumePlaybackRef = useRef<() => void>(() => undefined);
+  const continueArrivalRef = useRef<() => void>(() => undefined);
   const [routeData, setRouteData] = useState<RouteCollection | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [tilesFailed, setTilesFailed] = useState(false);
@@ -246,17 +324,18 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
   const [visibleStage, setVisibleStage] = useState<PlaybackStage | null>(null);
   const [playbackProgress, setPlaybackProgress] = useState(0);
   const [activePlaybackDay, setActivePlaybackDay] = useState<number | null>(null);
-  const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number } | null>(null);
+  const [arrivalStageIndex, setArrivalStageIndex] = useState<number | null>(null);
+  const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number; arrivalMode: boolean; stopIndex?: number } | null>(null);
 
   const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(place.id)) => {
     pausePlaybackRef.current();
-    setPlaceDetail({ place, dayId });
+    setPlaceDetail({ place, dayId, arrivalMode: false });
     const map = mapRef.current;
     if (!map) return;
-    const zoom = place.id === "wuhan-airport" ? 8 : place.category === "transport" ? 9 : 10;
-    map.flyTo([place.coordinates.lat, place.coordinates.lng], zoom, {
+    const camera = cameraForArrival(place);
+    map.flyTo([place.coordinates.lat, place.coordinates.lng], camera.zoom, {
       animate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-      duration: 0.65,
+      duration: camera.duration,
       easeLinearity: 0.28,
     });
   }, []);
@@ -288,6 +367,14 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     [routeData],
   );
   const playbackStages = useMemo(() => createPlaybackStages(playbackPlan), [playbackPlan]);
+  const detailRouteContext = useMemo(() => {
+    if (!placeDetail) return null;
+    const day = playbackPlan.find((item) => item.dayId === placeDetail.dayId);
+    if (!day) return null;
+    const stopIndex = placeDetail.stopIndex
+      ?? day.stops.findIndex((stop) => stop.place.id === placeDetail.place.id);
+    return stopIndex >= 0 ? createRouteContext(day, stopIndex) : null;
+  }, [placeDetail, playbackPlan]);
   const totalPlaybackStops = useMemo(
     () => playbackPlan.reduce((total, day) => total + day.stops.length, 0),
     [playbackPlan],
@@ -563,6 +650,8 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       setVisibleStage(null);
       setActivePlaybackDay(null);
       setPlaybackProgress(0);
+      arrivalStageIndexRef.current = null;
+      setArrivalStageIndex(null);
     };
 
     const focusStop = (stage: Extract<PlaybackStage, { type: "stop" }>) => {
@@ -573,9 +662,9 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       traveler.setLatLng(position);
       traveler.setOpacity(0);
 
-      const zoom = place.id === "wuhan-airport" ? 8 : place.category === "transport" ? 9 : 10;
-      if (reducedMotion) map.setView(position, zoom, { animate: false });
-      else map.flyTo(position, zoom, { animate: true, duration: 0.82, easeLinearity: 0.24 });
+      const camera = cameraForArrival(place);
+      if (reducedMotion) map.setView(position, camera.zoom, { animate: false });
+      else map.flyTo(position, camera.zoom, { animate: true, duration: camera.duration, easeLinearity: 0.24 });
     };
 
     const enterStage = (nextIndex: number) => {
@@ -586,10 +675,41 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       setVisibleStage(stage);
       setActivePlaybackDay(playbackPlan[stage.dayIndex].dayId);
 
-      if (stage.type === "stop") focusStop(stage);
+      if (stage.type === "stop") {
+        focusStop(stage);
+        const previouslyVisitedStayIds = new Set(
+          playbackStages
+            .slice(0, nextIndex)
+            .filter((item): item is Extract<PlaybackStage, { type: "stop" }> => item.type === "stop" && item.stop.place.category === "stay")
+            .map((item) => item.stop.place.id),
+        );
+        const shouldWait = requiresManualArrival(stage.stop.place, previouslyVisitedStayIds)
+          && !acknowledgedArrivalStagesRef.current.has(nextIndex)
+          && playbackStatusRef.current === "playing";
+        if (shouldWait) {
+          arrivalStageIndexRef.current = nextIndex;
+          setArrivalStageIndex(nextIndex);
+          setPlaceDetail({
+            place: stage.stop.place,
+            dayId: playbackPlan[stage.dayIndex].dayId,
+            arrivalMode: true,
+            stopIndex: stage.stopIndex,
+          });
+          updateStatus("paused");
+        }
+      }
       else {
         setTravelerIcon(stage.segment.mode);
         traveler.setOpacity(0);
+        const camera = cameraForTravel(stage.segment);
+        const [lng, lat] = stage.segment.coordinates[0];
+        const position = L.latLng(lat, lng);
+        if (reducedMotion) map.setView(position, camera.zoom, { animate: false });
+        else map.flyTo(position, camera.zoom, {
+          animate: true,
+          duration: camera.duration,
+          easeLinearity: 0.28,
+        });
       }
     };
 
@@ -633,6 +753,8 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     };
 
     const finishPlayback = () => {
+      arrivalStageIndexRef.current = null;
+      setArrivalStageIndex(null);
       updateStatus("complete");
       setPlaybackProgress(100);
       const allBounds = L.latLngBounds(places.map((place) => [place.coordinates.lat, place.coordinates.lng]));
@@ -652,7 +774,9 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       if (playbackStatusRef.current === "playing") {
         const stage = playbackStages[stageIndex];
         if (lastTimestamp === null) lastTimestamp = timestamp;
-        const delta = Math.min(50, timestamp - lastTimestamp);
+        // Keep the journey clock moving when a browser briefly throttles animation
+        // frames, while still preventing a long-hidden tab from skipping whole days.
+        const delta = Math.min(250, timestamp - lastTimestamp);
         lastTimestamp = timestamp;
         stageElapsed += delta;
         const duration = reducedMotion
@@ -683,6 +807,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
         return;
       }
       setPlaceDetail(null);
+      acknowledgedArrivalStagesRef.current.clear();
       resetVisuals();
       enterStage(0);
       updateStatus("playing");
@@ -690,8 +815,21 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     pausePlaybackRef.current = () => {
       if (playbackStatusRef.current === "playing") updateStatus("paused");
     };
+    continueArrivalRef.current = () => {
+      const waitingAt = arrivalStageIndexRef.current;
+      if (waitingAt === null) return;
+      acknowledgedArrivalStagesRef.current.add(waitingAt);
+      arrivalStageIndexRef.current = null;
+      setArrivalStageIndex(null);
+      setPlaceDetail(null);
+      stageElapsed = playbackStages[waitingAt].durationMs;
+      lastTimestamp = null;
+      updateStatus("playing");
+    };
     resumePlaybackRef.current = () => {
-      if (playbackStatusRef.current === "paused") updateStatus("playing");
+      if (playbackStatusRef.current !== "paused") return;
+      if (arrivalStageIndexRef.current !== null) continueArrivalRef.current();
+      else updateStatus("playing");
     };
 
     const pauseForManualMap = () => pausePlaybackRef.current();
@@ -701,18 +839,13 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     if (selectedDay !== null) {
       resetVisuals();
       updateStatus("idle");
-    } else if (!reducedMotion && !autoplayStartedRef.current) {
-      autoplayStartedRef.current = true;
-      autoplayTimerRef.current = window.setTimeout(() => startPlaybackRef.current(true), 800);
     }
 
     return () => {
       cancelled = true;
       map.off("dragstart", pauseForManualMap);
       if (animationFrameRef.current !== null) window.cancelAnimationFrame(animationFrameRef.current);
-      if (autoplayTimerRef.current !== null) window.clearTimeout(autoplayTimerRef.current);
       animationFrameRef.current = null;
-      autoplayTimerRef.current = null;
     };
   }, [playbackPlan, playbackStages, selectedDay, status]);
 
@@ -756,6 +889,10 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
         role="region"
         aria-label={selectedDay === null ? "Day 1 到 Day 7 完整动态路线地图" : `Day ${selectedDay} 动态路线地图`}
       />
+
+      {selectedDay === null && playbackStatus === "idle" && !placeDetail && (
+        <JourneyStartGate ready={status === "ready"} onStart={() => startPlaybackRef.current(true)} />
+      )}
 
       {visibleStage && selectedDay === null && (playbackStatus === "playing" || playbackStatus === "paused") && (
         <div className={`journey-camera-lock ${placeDetail ? "is-previewing" : ""}`} aria-hidden="true">
@@ -817,12 +954,31 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
               <span><b>{visibleStage.type === "travel" ? "方式" : "建议时间"}</b>{visibleStage.type === "travel" ? visibleStage.segment.mode === "flight" ? "航班" : "自驾" : stagePlace.activity.time}</span>
               <span><b>{visibleStage.type === "travel" ? "下一站" : "停留"}</b>{visibleStage.type === "travel" ? stagePlace.shortName : stagePlace.activity.duration}</span>
             </div>
-            <button className="playback-detail-button" type="button" onClick={() => openPlaceDetail(stagePlace, activeStageDay?.dayId)}>查看完整图文 <span aria-hidden="true">↗</span></button>
+            <button className="playback-detail-button" type="button" onClick={() => {
+              const stopIndex = visibleStage.type === "stop" ? visibleStage.stopIndex : visibleStage.segmentIndex + 1;
+              pausePlaybackRef.current();
+              setPlaceDetail({ place: stagePlace, dayId: activeStageDay?.dayId ?? 1, arrivalMode: false, stopIndex });
+              const camera = cameraForArrival(stagePlace);
+              mapRef.current?.flyTo([stagePlace.coordinates.lat, stagePlace.coordinates.lng], camera.zoom, {
+                animate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+                duration: camera.duration,
+                easeLinearity: 0.28,
+              });
+            }}>查看完整图文 <span aria-hidden="true">↗</span></button>
           </div>
         </aside>
       )}
 
-      {placeDetail && <PlaceDetailDialog place={placeDetail.place} dayId={placeDetail.dayId} onClose={closePlaceDetail} />}
+      {placeDetail && detailRouteContext && (
+        <PlaceDetailDialog
+          place={placeDetail.place}
+          dayId={placeDetail.dayId}
+          routeContext={detailRouteContext}
+          arrivalMode={placeDetail.arrivalMode && arrivalStageIndex !== null}
+          onClose={closePlaceDetail}
+          onContinue={() => continueArrivalRef.current()}
+        />
+      )}
 
       <div className="map-route-label">
         <span>{activePlaybackDay && selectedDay === null ? `DAY ${activePlaybackDay}` : selectedDay === null ? "DAY 1—7" : `DAY ${selectedDay}`}</span>

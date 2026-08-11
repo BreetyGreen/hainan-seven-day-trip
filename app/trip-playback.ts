@@ -42,6 +42,18 @@ export type PlaybackDay = {
   segments: PlaybackSegment[];
 };
 
+export type RouteContext = {
+  dayId: number;
+  dayTitle: string;
+  position: number;
+  total: number;
+  previous: PlaybackStop | null;
+  current: PlaybackStop;
+  next: PlaybackStop | null;
+  remaining: PlaybackStop[];
+  nextMode: PlaybackMode | null;
+};
+
 export type PlaybackStage =
   | {
       type: "stop";
@@ -67,6 +79,24 @@ const holdByKind: Record<PlaybackKind, number> = {
   meal: 1500,
   rest: 1250,
 };
+
+const manualArrivalCategories = new Set<Place["category"]>([
+  "oldtown",
+  "coast",
+  "garden",
+  "food",
+  "culture",
+  "harbor",
+  "viewpoint",
+]);
+
+export function requiresManualArrival(
+  place: Pick<Place, "id" | "category">,
+  previouslyVisitedStayIds: ReadonlySet<string>,
+) {
+  if (place.category === "stay") return !previouslyVisitedStayIds.has(place.id);
+  return manualArrivalCategories.has(place.category);
+}
 
 export function playbackKindForPlace(place: Pick<Place, "category">): PlaybackKind {
   if (place.category === "transport") return "transport";
@@ -226,4 +256,20 @@ export function createPlaybackStages(plan: PlaybackDay[]): PlaybackStage[] {
   });
 
   return stages;
+}
+
+export function createRouteContext(day: PlaybackDay, stopIndex: number): RouteContext {
+  const current = day.stops[stopIndex];
+  if (!current) throw new RangeError(`Stop ${stopIndex} is outside Day ${day.dayId}`);
+  return {
+    dayId: day.dayId,
+    dayTitle: day.title,
+    position: stopIndex + 1,
+    total: day.stops.length,
+    previous: day.stops[stopIndex - 1] ?? null,
+    current,
+    next: day.stops[stopIndex + 1] ?? null,
+    remaining: day.stops.slice(stopIndex + 1),
+    nextMode: day.segments[stopIndex]?.mode ?? null,
+  };
 }

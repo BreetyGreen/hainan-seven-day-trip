@@ -43,6 +43,25 @@
 - Canis Major，《崖州丨海南三亚超冷门历史小城半日游》：<https://www.xiaohongshu.com/search_result/6a3e3f93000000000f006315?xsec_token=ABR69Gnfrkxwqg5uZuupf2iOHneJG-pG4zWy0af9oM3Ys=&xsec_source=>
   - 实走结论是保平村可看的开放建筑很少、崖州故城内容有限，不值得从海棠湾专程往返，因此本版不纳入。
 
+## 地点图片核验
+
+- lelll，《万宁｜兴隆热带植物园》：<https://www.xiaohongshu.com/search_result/6a786a36000000002202d176?xsec_token=ABIO4HwpNBtY6l6eMsts2GMRurtC85CNDkGP6x0YSnLgw=&xsec_source=>
+  - 正文写明兴隆热带植物园，并描述椰林大道、浓密绿意、池塘睡莲和雨林环境。
+  - 三张候选图逐张核验后选择椰林步道全景：它比椰子近景或单株睡莲更能说明活动发生的空间。
+- 小z小c，《万宁兴隆华侨农贸市场》：<https://www.xiaohongshu.com/search_result/68a31c74000000001d034617?xsec_token=ABunHxuUfqDwAh7GMtDNCNNm6pzUpzVsMMJkFeeaQYkkQ=&xsec_source=>
+  - 正文明确写到在兴隆华侨农贸市场购买海鲜后加工；页面采用加工上桌的龙虾、鲜虾、生蚝与蔬菜实景。
+  - 该图用来解释计划中的“先问称重与加工方式，再下单”，不是把某一摊位包装成固定推荐。
+- 金属滚儿，《海陆之间：陵水新村的疍家文明与生命脉动》：<https://www.xiaohongshu.com/search_result/6a71b3a50000000021020fc8?xsec_token=ABNfxQl393g1AacquOmr5DSlmB3AvJ-BSJUQAbBh2PW98=&xsec_source=>
+  - 正文与画面共同确认新村港疍家渔排；选用能同时看见水面、船只、渔排和远山关系的全景。
+- Coco妈咪，《海南|海口-万宁-陵水-三亚7️⃣天线路攻略》：<https://www.xiaohongshu.com/search_result/69c4017c0000000023021eb9?xsec_token=AB4JxORkYxfa1HXo3F0ea-suXVgj5PlSUBrAi833uvwm0=&xsec_source=>
+  - 正文按天明确串联日月湾、石梅湾、神州半岛、大东海和椰梦长廊；本地页面选用其中可由画面与正文共同确认的石梅湾海边休息区、神州半岛灯塔日落、大东海海边餐吧和椰梦长廊晚霞。
+- Taurus旅拍日记，《三亚·南山寺📍不是烟雨西湖，是南山日出》：<https://www.xiaohongshu.com/search_result/6a7602c6000000002c002627?xsec_token=ABCg0dBzZKFyzOO8xVpXPfvcSRmJTGehwX4ode7mcqkZ4=&xsec_source=>
+  - 笔记正文明确地点为南山文化旅游区内的南山寺；选用塔楼与海上观音同框的日落照片。
+- 橙子，《三亚📍鹿回头🦌》：<https://www.xiaohongshu.com/search_result/690489c200000000030373f2?xsec_token=ABPYKECHKPDzn0BspJC6xktJcDQUK21_QaF6vwwgG5c5E=&xsec_source=>
+  - 笔记正文与画面均对应鹿回头高处视角；选用能清楚看见三亚城市与游艇港湾空间关系的照片。
+
+图片均保留平台、作者、笔记标题和原笔记链接；不把无法由正文或画面确认地点的图片混入路线。
+
 ## 住宿结论
 
 - 会飞的椰子树，《三亚下楼就是海景的酒店已整理好（四大湾区）》：<https://xhslink.cn/o/6gqXrkMD9Zk>

@@ -94,7 +94,7 @@ test("every activity point contains specific playable instructions", () => {
 
 test("ships local Xiaohongshu images with attribution", async () => {
   const imageStops = places.filter((place) => place.image);
-  assert.ok(imageStops.length >= 5);
+  assert.ok(imageStops.length >= 11, `expected at least 11 matched place images, got ${imageStops.length}`);
 
   for (const place of imageStops) {
     assert.match(place.image.src, /^\/hainan\/.+\.webp$/i);
@@ -105,11 +105,36 @@ test("ships local Xiaohongshu images with attribution", async () => {
   }
 });
 
+test("every meaningful activity stop has a matching local image", async () => {
+  const activityStops = places.filter((place) => !["transport", "stay"].includes(place.category));
+  const missing = activityStops.filter((place) => !place.image).map((place) => place.id);
+  assert.deepEqual(missing, []);
+
+  for (const place of activityStops) {
+    assert.match(place.image.alt, new RegExp(place.shortName.slice(0, 2)));
+    await access(new URL(`../public${place.image.src}`, import.meta.url));
+  }
+});
+
+test("each airport contains distinct executable travel instructions", () => {
+  const airports = places.filter((place) => place.category === "transport");
+  assert.equal(airports.length, 3);
+  assert.equal(new Set(airports.map((place) => place.activity.source.title)).size, 3);
+
+  for (const airport of airports) {
+    assert.notEqual(airport.activity.duration, "交通节点");
+    assert.ok(airport.activity.steps.length >= 3, `${airport.id} needs at least three airport steps`);
+    assert.ok(airport.activity.practical.length >= 2, `${airport.id} needs airport-specific reminders`);
+  }
+});
+
 test("locality photos stay attached to the matching real place", () => {
   const xincun = places.find((place) => place.id === "xincun-port");
   const clearwater = places.find((place) => place.id === "clearwater-bay");
 
-  assert.equal(xincun?.image, undefined, "新村港不能误用清水湾酒店景观图");
+  assert.match(xincun?.image?.src ?? "", /xincun-port-xhs\.webp$/);
+  assert.match(xincun?.image?.alt ?? "", /新村港/);
+  assert.doesNotMatch(xincun?.image?.src ?? "", /raffles-hainan/);
   assert.match(clearwater?.image?.src ?? "", /raffles-hainan-xhs\.webp$/);
   assert.match(clearwater?.image?.alt ?? "", /清水湾/);
 });
