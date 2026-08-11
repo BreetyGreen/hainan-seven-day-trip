@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "普洱七日慢行｜武汉出发的真实自驾路线",
+  title: "海南东线七日地图｜武汉出发的真实自驾路线",
   description:
-    "2026 年 9 月武汉出发，普洱 7 天 6 晚；包含单人和双人预算、吃穿住行、真实地点与动态路线。",
+    "2026 年 9 月武汉出发，海口进、三亚出的海南 7 天 6 晚地图；串联真实地点、小红书实景与酒店实住笔记。",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

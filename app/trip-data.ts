@@ -1,382 +1,601 @@
 export type TravelMode = "solo" | "duo";
+
 export type PlaceCategory =
   | "transport"
+  | "oldtown"
+  | "coast"
+  | "garden"
+  | "stay"
   | "food"
-  | "coffee"
-  | "forest"
-  | "tea"
-  | "village"
-  | "stay";
+  | "culture"
+  | "harbor"
+  | "viewpoint";
 
-export type Coordinates = { lat: number; lng: number };
+export type Source = {
+  platform: "小红书" | "官网" | "地图";
+  author: string;
+  title: string;
+  url: string;
+};
+
+export type PhotoSource = {
+  src: string;
+  alt: string;
+  platform: "小红书";
+  credit: string;
+  creditUrl: string;
+  noteTitle: string;
+};
+
+export type Activity = {
+  time: string;
+  duration: string;
+  steps: string[];
+  practical: string[];
+  weather: string;
+  source: Source;
+};
 
 export type Place = {
   id: string;
   name: string;
   shortName: string;
+  city: string;
   category: PlaceCategory;
-  coordinates: Coordinates;
+  coordinates: { lat: number; lng: number };
   why: string;
-  visitNote: string;
-  sourceLabel: string;
+  activity: Activity;
+  image?: PhotoSource;
+  hotelId?: string;
   sourceUrl: string;
-  verifiedAt: string;
+  verifiedAt: "2026-08-11";
 };
 
 export type Day = {
   id: number;
-  dateLabel: string;
   title: string;
-  area: string;
+  dateLabel: string;
+  pace: string;
   summary: string;
   placeIds: string[];
   distanceLabel: string;
   driveLabel: string;
   sleep: string;
   meals: string[];
-  pace: "转场" | "松弛" | "步行" | "山路";
   weatherPlan: string;
+  isHotelChange?: boolean;
 };
 
-export type BudgetItem = {
-  label: string;
-  min: number;
-  max: number;
-  note: string;
+export type Hotel = {
+  id: string;
+  name: string;
+  shortName: string;
+  city: string;
+  checkInDay: number;
+  nights: string;
+  fit: string;
+  reasons: string[];
+  cautions: string[];
+  image: PhotoSource;
+  officialUrl: string;
+  xhsSource: { author: string; title: string; url: string };
 };
 
-export type Budget = {
-  people: number;
-  items: BudgetItem[];
-  total: { min: number; max: number };
-};
+const xhsRoute = "https://www.xiaohongshu.com/search_result/69c4017c0000000023021eb9?xsec_token=AB4JxORkYxfa1HXo3F0ea-suXVgj5PlSUBrAi833uvwm0=&xsec_source=";
+const xhsQilou = "https://www.xiaohongshu.com/search_result/6a689911000000000503abca?xsec_token=ABdf33JswOKIC4iSEXGes5kGL2ah87BZ8a-DzXBAmWUTc=&xsec_source=";
+const xhsWanningRoute = "https://www.xiaohongshu.com/search_result/6a2b733d000000000802544e?xsec_token=ABnAMbQdECihFgwj8XFK7U-wCbpQ1J-wwoBEVnkv4Jffg=&xsec_source=";
+const xhsWanningReality = "https://www.xiaohongshu.com/search_result/69abee14000000000e03ce43?xsec_token=ABSflyHtUNEkaYDtjgaPlX72PUFu45v99A9k63R-lj7BI=&xsec_source=";
+const xhsWanningHyatt = "https://www.xiaohongshu.com/search_result/6a33dac0000000002100add2?xsec_token=ABxBP-QYOL2RMGCXByh_h_JucQ66XGtj6lw-ASfyLlvFw=&xsec_source=";
+const xhsLingshui = "https://www.xiaohongshu.com/search_result/6a79ad60000000002202c3da?xsec_token=ABEYVGrdadig7lhyus-gD04BkuOPVf-Hy6-qwIwe-hTrE=&xsec_source=";
+const xhsRaffles = "https://www.xiaohongshu.com/search_result/69e71f520000000023010dc3?xsec_token=ABQ2NO7zJeO7tcvzGnc6S-wd3xa-yI_ycmyBNtnBsede4=&xsec_source=";
+const xhsSanyaCity = "https://www.xiaohongshu.com/search_result/6a657af900000000010307a4?xsec_token=ABjP_9LUg4g5koaqlNXaxAnfNy0MdtakAWiSgcoDnPz0g=&xsec_source=";
+const xhsNanshan = "https://www.xiaohongshu.com/search_result/6a58f880000000000c016cc9?xsec_token=ABgVnlRa7lx1XJvA5igCtNbVyvMwGtTuUsOBXFxIU9o2A=&xsec_source=";
+const xhsSanyaHyatt = "https://www.xiaohongshu.com/search_result/6a65848a000000001c00ec09?xsec_token=ABjP_9LUg4g5koaqlNXaxAnZqHAe5SfALxlTYOvBp4DB4=&xsec_source=";
 
-const verifiedAt = "2026-08-10";
+export const routeResearchSource = xhsRoute;
+
+const mapActivity = (title: string, url: string): Activity => ({
+  time: "按航班时间",
+  duration: "交通节点",
+  steps: ["核对证件与行李", "按地图继续下一段"],
+  practical: ["预留交通与还车缓冲"],
+  weather: "航班或道路调整时，以当天官方通知为准。",
+  source: { platform: "地图", author: "地图核验", title, url },
+});
 
 export const places: Place[] = [
   {
     id: "wuhan-airport",
     name: "武汉天河国际机场",
     shortName: "武汉天河",
+    city: "武汉",
     category: "transport",
     coordinates: { lat: 30.7756632, lng: 114.2171149 },
-    why: "武汉出发的推荐航空起点。",
-    visitNote: "9 月具体航班和价格以航空公司出票页为准。",
-    sourceLabel: "OpenStreetMap 实体",
-    sourceUrl: "https://www.openstreetmap.org/search?query=%E6%AD%A6%E6%B1%89%E5%A4%A9%E6%B2%B3%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA",
-    verifiedAt,
+    why: "七日完整路线的起点和终点。",
+    activity: mapActivity("武汉天河国际机场地图", "https://www.openstreetmap.org/way/128255090"),
+    sourceUrl: "https://www.openstreetmap.org/way/128255090",
+    verifiedAt: "2026-08-11",
   },
   {
-    id: "kunming-airport",
-    name: "昆明长水国际机场",
-    shortName: "昆明长水",
+    id: "haikou-airport",
+    name: "海口美兰国际机场",
+    shortName: "海口美兰",
+    city: "海口",
     category: "transport",
-    coordinates: { lat: 25.1087786, lng: 102.9397246 },
-    why: "衔接武汉航班与昆明南站的稳定中转点。",
-    visitNote: "机场到昆明南站需预留市内交通和安检缓冲。",
-    sourceLabel: "OpenStreetMap 实体",
-    sourceUrl: "https://www.openstreetmap.org/search?query=%E6%98%86%E6%98%8E%E9%95%BF%E6%B0%B4%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA",
-    verifiedAt,
+    coordinates: { lat: 19.9442567, lng: 110.4592869 },
+    why: "海口进、三亚出的北端入口；取车后不再回头。",
+    activity: mapActivity("海口美兰国际机场地图", "https://www.openstreetmap.org/relation/4452375"),
+    sourceUrl: "https://www.openstreetmap.org/relation/4452375",
+    verifiedAt: "2026-08-11",
   },
   {
-    id: "kunming-south",
-    name: "昆明南站",
-    shortName: "昆明南",
-    category: "transport",
-    coordinates: { lat: 24.8733628, lng: 102.8603804 },
-    why: "乘中老铁路动车前往普洱。",
-    visitNote: "动车班次仅作交通结构，不在网页写死时刻。",
-    sourceLabel: "OpenStreetMap 实体",
-    sourceUrl: "https://www.openstreetmap.org/search?query=%E6%98%86%E6%98%8E%E5%8D%97%E7%AB%99",
-    verifiedAt,
+    id: "qilou",
+    name: "海口骑楼老街",
+    shortName: "骑楼老街",
+    city: "海口",
+    category: "oldtown",
+    coordinates: { lat: 20.0447272, lng: 110.3376498 },
+    why: "把第一顿饭放在真实街区，而不是机场商场；只做短停，不拖晚到万宁。",
+    activity: {
+      time: "11:30–13:15",
+      duration: "约 1 小时 45 分",
+      steps: ["从中山路入口步行看骑楼立面", "在街区内选一家粉面或清补凉完成午饭"],
+      practical: ["若航班 13:30 后落地，直接跳过此站前往万宁", "只在正规停车场停车，不跟街边揽客"],
+      weather: "暴雨时缩短为午饭，不在湿滑骑楼台阶久留。",
+      source: { platform: "小红书", author: "好运狗🍀", title: "海口·骑楼老街的夜景真的美爆了", url: xhsQilou },
+    },
+    image: {
+      src: "/hainan/qilou-night-xhs.webp",
+      alt: "海口骑楼老街夜间建筑与街头生活",
+      platform: "小红书",
+      credit: "好运狗🍀",
+      creditUrl: xhsQilou,
+      noteTitle: "海口·骑楼老街的夜景真的美爆了",
+    },
+    sourceUrl: "https://www.openstreetmap.org/way/1121710510",
+    verifiedAt: "2026-08-11",
   },
   {
-    id: "puer-station",
-    name: "普洱站",
-    shortName: "普洱站",
-    category: "transport",
-    coordinates: { lat: 22.7784879, lng: 100.9412056 },
-    why: "进入思茅城区并开始当地自驾的落地点。",
-    visitNote: "建议次日白天取车，抵达晚时不赶山路。",
-    sourceLabel: "OpenStreetMap 铁路站点",
-    sourceUrl: "https://www.openstreetmap.org/node/8359782369",
-    verifiedAt,
-  },
-  {
-    id: "wuyi-market",
-    name: "思茅五一集贸市场",
-    shortName: "五一市场",
-    category: "food",
-    coordinates: { lat: 22.7854, lng: 100.9731 },
-    why: "先从本地人的早市认识野菜、米干和当季食材。",
-    visitNote: "早上去，尊重摊主，不把市场当摄影棚。",
-    sourceLabel: "普洱日报：五一农贸市场",
-    sourceUrl: "https://www.puerw.cn/perb/html/2022-01/06/content_6310.htm",
-    verifiedAt,
-  },
-  {
-    id: "simao-old-street",
-    name: "思茅老街与戴家巷",
-    shortName: "戴家巷",
-    category: "food",
-    coordinates: { lat: 22.7868, lng: 100.9722 },
-    why: "老城区生活、茶咖小店与晚饭可以自然串在一起。",
-    visitNote: "工作日下午比节假日晚间更安静。",
-    sourceLabel: "云南网：思茅老街与戴家巷",
-    sourceUrl: "https://m.yunnan.cn/system/2026/05/04/033993822.shtml",
-    verifiedAt,
-  },
-  {
-    id: "xiaoaozi-coffee",
-    name: "小凹子咖啡庄园",
-    shortName: "小凹子咖啡",
-    category: "coffee",
-    coordinates: { lat: 22.6610788, lng: 100.9578162 },
-    why: "三代种植者经营的原产地庄园，重点是种植、处理和杯测。",
-    visitNote: "九月不是鲜果主采季；务必提前电话确认参观与讲解。",
-    sourceLabel: "文化和旅游部乡村旅游线路",
-    sourceUrl: "https://zhuanti.mct.gov.cn/xcsshfghlxj/jpxl/detail/9148.html",
-    verifiedAt,
-  },
-  {
-    id: "rhinoceros-plain",
-    name: "普洱太阳河森林公园犀牛坪景区",
-    shortName: "太阳河·犀牛坪",
-    category: "forest",
-    coordinates: { lat: 22.6200425, lng: 101.0889865 },
-    why: "完整的季风常绿阔叶林环境与科普步道，承担雨林和动物体验。",
-    visitNote: "只走开放步道；人工照护动物不等于野外偶遇。",
-    sourceLabel: "云南省林业和草原局",
-    sourceUrl: "https://lcj.yn.gov.cn/special/2025/0508/6583.html",
-    verifiedAt,
-  },
-  {
-    id: "huimin-town",
-    name: "澜沧县惠民镇",
-    shortName: "惠民镇",
+    id: "wanning-hyatt",
+    name: "万宁神州半岛君悦酒店",
+    shortName: "万宁君悦",
+    city: "万宁",
     category: "stay",
-    coordinates: { lat: 22.2622, lng: 100.079 },
-    why: "进入景迈山前的住宿与补给节点，避免夜驾村寨山路。",
-    visitNote: "油量过半再上山，雨天先问民宿当日道路情况。",
-    sourceLabel: "联合国教科文组织遗产地位置说明",
-    sourceUrl: "https://whc.unesco.org/en/list/1665/",
-    verifiedAt,
+    coordinates: { lat: 18.673544, lng: 110.340735 },
+    why: "前三晚固定基地，覆盖兴隆、石梅湾、日月湾与神州半岛，不反复搬行李。",
+    hotelId: "grand-hyatt-wanning",
+    activity: {
+      time: "Day 1–3",
+      duration: "连住 3 晚",
+      steps: ["Day 1 傍晚一次性入住", "Day 2–3 每天从同一停车位出发并返回"],
+      practical: ["高峰时段接驳车可能等待", "把海况差的时段留给酒店泳池与公共区域"],
+      weather: "台风预警时取消跨湾活动，留在酒店并听从管理安排。",
+      source: { platform: "小红书", author: "熠民", title: "万宁 staycation｜神州半岛君悦真实入住测评", url: xhsWanningHyatt },
+    },
+    image: {
+      src: "/hainan/grand-hyatt-wanning-xhs.webp",
+      alt: "万宁神州半岛君悦热带公共区域与水景",
+      platform: "小红书",
+      credit: "熠民",
+      creditUrl: xhsWanningHyatt,
+      noteTitle: "万宁 staycation｜神州半岛君悦真实入住测评",
+    },
+    sourceUrl: "https://www.hyatt.com/en-US/hotel/china/grand-hyatt-shenzhou-peninsula/shhgh",
+    verifiedAt: "2026-08-11",
   },
   {
-    id: "nuogang",
-    name: "糯岗古寨",
-    shortName: "糯岗",
-    category: "village",
-    coordinates: { lat: 22.2166836, lng: 99.9998707 },
-    why: "保存完整的傣族村落空间，是理解茶林与村寨关系的一站。",
-    visitNote: "慢走、低声，不进入未开放民居。",
-    sourceLabel: "UNESCO：糯岗傣族村寨",
-    sourceUrl: "https://whc.unesco.org/en/documents/200162",
-    verifiedAt,
+    id: "xinglong-garden",
+    name: "兴隆热带植物园",
+    shortName: "兴隆植物园",
+    city: "万宁",
+    category: "garden",
+    coordinates: { lat: 18.7327905, lng: 110.1962942 },
+    why: "用一段有讲解的热带植物观察替代纯拍照园区。",
+    activity: {
+      time: "08:30–10:45",
+      duration: "约 2 小时 15 分",
+      steps: ["先走香料与饮料作物区域，辨认可可、咖啡和胡椒", "在科普点完成一次兴隆咖啡/可可风味对照"],
+      practical: ["优先开园后进入，避开正午闷热", "穿防滑鞋并带驱蚊"],
+      weather: "雷雨时只走有遮蔽的科普段，取消林下长线。",
+      source: { platform: "地图", author: "地图核验", title: "兴隆热带植物园", url: "https://www.openstreetmap.org/way/325533045" },
+    },
+    sourceUrl: "https://www.openstreetmap.org/way/325533045",
+    verifiedAt: "2026-08-11",
   },
   {
-    id: "wengji",
-    name: "翁基古寨",
-    shortName: "翁基",
-    category: "village",
-    coordinates: { lat: 22.1736769, lng: 99.99894 },
-    why: "布朗族村寨与古茶林紧密相连，适合预约茶农坐下来聊。",
-    visitNote: "停车服从现场管理；不追逐日落机位。",
-    sourceLabel: "UNESCO：翁基古茶树",
-    sourceUrl: "https://whc.unesco.org/en/documents/200172",
-    verifiedAt,
-  },
-  {
-    id: "mangjing",
-    name: "芒景村",
-    shortName: "芒景",
-    category: "tea",
-    coordinates: { lat: 22.1599536, lng: 100.0163233 },
-    why: "布朗族茶祖信仰与古茶林生活传统的重要组成部分。",
-    visitNote: "宗教和祭祀空间先询问再拍摄。",
-    sourceLabel: "UNESCO：芒景古茶林景观",
-    sourceUrl: "https://whc.unesco.org/en/documents/200168",
-    verifiedAt,
-  },
-  {
-    id: "jingmai-tea-forest",
-    name: "景迈山古茶林开放游览区",
-    shortName: "景迈古茶林",
-    category: "tea",
-    coordinates: { lat: 22.1841667, lng: 100.0075 },
-    why: "世界遗产的核心不是一棵网红古树，而是茶林、森林、村寨和治理体系。",
-    visitNote: "提前一个月通过“景迈山预约服务”核验入园；不进入非开放茶林。",
-    sourceLabel: "UNESCO 世界遗产中心",
-    sourceUrl: "https://whc.unesco.org/en/list/1665/",
-    verifiedAt,
-  },
-  {
-    id: "lancang-county",
-    name: "澜沧拉祜族自治县县城",
-    shortName: "澜沧县城",
-    category: "stay",
-    coordinates: { lat: 22.6720893, lng: 99.9312377 },
-    why: "思茅与景迈山之间的休息、午餐和补给节点。",
-    visitNote: "不要为了多塞景点跳过补给和驾驶休息。",
-    sourceLabel: "OpenStreetMap 行政实体",
-    sourceUrl: "https://www.openstreetmap.org/search?query=%E6%BE%9C%E6%B2%A7%E6%8B%89%E7%A5%9C%E6%97%8F%E8%87%AA%E6%B2%BB%E5%8E%BF",
-    verifiedAt,
-  },
-  {
-    id: "xinxing-street",
-    name: "思茅区新兴街",
-    shortName: "新兴街",
+    id: "xinglong-market",
+    name: "兴隆华侨农贸市场",
+    shortName: "兴隆市场",
+    city: "万宁",
     category: "food",
-    coordinates: { lat: 22.7816, lng: 100.9748 },
-    why: "本地夜间烧烤较集中的生活街区，适合返程前轻松吃一顿。",
-    visitNote: "按人数少点、先问辣度和份量，不追榜单店。",
-    sourceLabel: "云南网：新兴街餐饮外摆区",
-    sourceUrl: "https://puer.yunnan.cn/system/2026/07/24/034094296.shtml",
-    verifiedAt,
+    coordinates: { lat: 18.73747, lng: 110.19691 },
+    why: "南洋风味落到市场和午饭，不追网红餐厅排队。",
+    activity: {
+      time: "11:05–12:20",
+      duration: "约 1 小时 15 分",
+      steps: ["先看当季热带水果与香料摊位", "午饭选清晰标价的南洋粉面或糕点，少量多样"],
+      practical: ["生鲜不长时间放在车内", "海鲜称重与做法必须下单前确认"],
+      weather: "暴雨天可保留，避免市场外积水路段。",
+      source: { platform: "小红书", author: "逍遥", title: "万宁3天2晚旅行攻略｜头一次来这样玩不纠结", url: xhsWanningRoute },
+    },
+    sourceUrl: "https://www.amap.com/search?query=%E5%85%B4%E9%9A%86%E5%8D%8E%E4%BE%A8%E5%86%9C%E8%B4%B8%E5%B8%82%E5%9C%BA",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "shimei-bay",
+    name: "万宁石梅湾",
+    shortName: "石梅湾",
+    city: "万宁",
+    category: "coast",
+    coordinates: { lat: 18.661922, lng: 110.27209 },
+    why: "比日月湾安静，用来完成沿海步行和午后休息。",
+    activity: {
+      time: "14:00–16:20",
+      duration: "约 2 小时 20 分",
+      steps: ["从公共海滩入口沿水线慢走 30–40 分钟", "找阴凉处休息，看海况而不是追逐拍照机位"],
+      practical: ["只从公共入口进出，不借酒店私属通道", "离水前确认潮位和救生提示"],
+      weather: "大浪、雷电或红旗时不下水，只在安全步道停留。",
+      source: { platform: "小红书", author: "逍遥", title: "万宁3天2晚旅行攻略｜头一次来这样玩不纠结", url: xhsWanningRoute },
+    },
+    sourceUrl: "https://www.openstreetmap.org/way/341370752",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "riyue-bay",
+    name: "万宁日月湾",
+    shortName: "日月湾",
+    city: "万宁",
+    category: "coast",
+    coordinates: { lat: 18.6296934, lng: 110.2148756 },
+    why: "把冲浪变成一节有资质教练的课程，而不是只在商业街打卡。",
+    activity: {
+      time: "08:00–12:00",
+      duration: "约 4 小时",
+      steps: ["08:00 先在公共海滩看浪况和警示旗", "09:00 参加约 2 小时的正规入门课，课程应含救生衣、热身和岸上讲解"],
+      practical: ["主街停车紧张，把车停在正规停车区后步行", "不会游泳或海况不稳时改为看浪与咖啡休息"],
+      weather: "九月台风与涌浪变化快，教练停课就取消，不自行下水。",
+      source: { platform: "小红书", author: "逍遥", title: "万宁3天2晚旅行攻略｜头一次来这样玩不纠结", url: xhsWanningRoute },
+    },
+    image: {
+      src: "/hainan/riyue-bay-xhs.webp",
+      alt: "日月湾蓝天下的海岸与椰树",
+      platform: "小红书",
+      credit: "Coco妈咪",
+      creditUrl: xhsRoute,
+      noteTitle: "海南｜海口-万宁-陵水-三亚7天线路攻略",
+    },
+    sourceUrl: "https://www.openstreetmap.org/way/844022320",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "shenzhou-peninsula",
+    name: "神州半岛海岸与灯塔段",
+    shortName: "神州半岛",
+    city: "万宁",
+    category: "viewpoint",
+    coordinates: { lat: 18.6779739, lng: 110.3479262 },
+    why: "离住宿基地近，适合把灯塔、海岸和日落合成不赶路的半日。",
+    activity: {
+      time: "15:40–18:25",
+      duration: "约 2 小时 45 分",
+      steps: ["先走公共海岸步道，再根据现场交通到灯塔方向", "日落前 40 分钟回到开阔海岸，不摸黑赶路"],
+      practical: ["2026 年 4 月笔记评论称椰林大道以观光车为主，出发前向酒店确认", "不把车驶入封闭或居民通道"],
+      weather: "云厚可保留海岸散步；雷雨则直接回酒店。",
+      source: { platform: "小红书", author: "卷卷心", title: "来了万宁才知道，之前看的攻略有多离谱", url: xhsWanningReality },
+    },
+    sourceUrl: "https://www.openstreetmap.org/way/281774543",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "xincun-port",
+    name: "陵水新村港旅游码头",
+    shortName: "新村港",
+    city: "陵水",
+    category: "harbor",
+    coordinates: { lat: 18.41519, lng: 109.997 },
+    why: "从水上看疍家渔排与真实通勤船，比增加一座拍照岛更有内容。",
+    activity: {
+      time: "10:20–12:20",
+      duration: "约 2 小时",
+      steps: ["在正规售票点确认当天客船班次与返程时间", "乘小客船穿过渔排，观察生活空间但不对居民近距离拍摄"],
+      practical: ["船只容量小，人多时预留排队时间", "不跟无证揽客船、不购买或带走野生海洋生物"],
+      weather: "大风、雷雨或停航时取消乘船，直接去清水湾。",
+      source: { platform: "小红书", author: "双双&豆包", title: "海南自驾游攻略第四站➡陵水 疍家 清水湾", url: xhsLingshui },
+    },
+    sourceUrl: "https://www.xiaohongshu.com/search_result/6a79ad60000000002202c3da",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "clearwater-bay",
+    name: "陵水清水湾公共海滩",
+    shortName: "清水湾",
+    city: "陵水",
+    category: "coast",
+    coordinates: { lat: 18.3920123, lng: 109.87799 },
+    why: "唯一换宿日的慢停，沙细且适合长距离步行。",
+    activity: {
+      time: "14:00–16:10",
+      duration: "约 2 小时 10 分",
+      steps: ["从公共入口沿干沙区向西慢走", "只在有救生提示的区域涉水，留 30 分钟冲洗与换衣"],
+      practical: ["赶海必须查潮汐并听现场管理，不捕捉海星海胆", "16:20 前离开，留足时间抵达三亚办理入住"],
+      weather: "大浪或雷雨时取消涉水，改为短走后提前入住。",
+      source: { platform: "小红书", author: "双双&豆包", title: "海南自驾游攻略第四站➡陵水 疍家 清水湾", url: xhsLingshui },
+    },
+    image: {
+      src: "/hainan/raffles-hainan-xhs.webp",
+      alt: "清水湾莱佛士附近的椰林、草坪与海岸景观",
+      platform: "小红书",
+      credit: "一只张在在",
+      creditUrl: xhsRaffles,
+      noteTitle: "清水湾莱佛士｜掏心窝子真实感受",
+    },
+    sourceUrl: "https://www.openstreetmap.org/way/1124007058",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "sanya-hyatt",
+    name: "三亚海棠湾君悦酒店",
+    shortName: "三亚君悦",
+    city: "三亚",
+    category: "stay",
+    coordinates: { lat: 18.3458391, lng: 109.7357906 },
+    why: "后三晚固定基地，陵水、南山与三亚城市日都从这里往返。",
+    hotelId: "grand-hyatt-sanya",
+    activity: {
+      time: "Day 4–6",
+      duration: "连住 3 晚",
+      steps: ["Day 4 完成全程唯一一次换宿", "Day 5–6 用同一房间和停车位做东西两方向日游"],
+      practical: ["到市区与南山距离长，Day 5–6 只各安排一条主线", "早餐和接驳高峰可能排队"],
+      weather: "台风预警时取消跨区自驾，使用酒店公共设施。",
+      source: { platform: "小红书", author: "如意烧仙草", title: "三亚｜海棠湾君悦入住真实体验", url: xhsSanyaHyatt },
+    },
+    image: {
+      src: "/hainan/grand-hyatt-sanya-xhs.webp",
+      alt: "三亚海棠湾君悦泳池、椰林与海景",
+      platform: "小红书",
+      credit: "如意烧仙草",
+      creditUrl: xhsSanyaHyatt,
+      noteTitle: "三亚｜海棠湾君悦入住真实体验",
+    },
+    sourceUrl: "https://www.hyatt.com/grand-hyatt/en-US/syxgh-grand-hyatt-sanya-haitang-bay-resort-and-spa",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "nanshan",
+    name: "三亚南山文化旅游区",
+    shortName: "南山",
+    city: "三亚",
+    category: "culture",
+    coordinates: { lat: 18.3000907, lng: 109.2066329 },
+    why: "用一个完整半日理解南山园区，不把它压缩成海上观音拍照点。",
+    activity: {
+      time: "10:30–16:45",
+      duration: "约 6 小时 15 分",
+      steps: ["从正式检票口进入，先确认免费接驳与观光车站点", "按海上观音—南山寺—园林步道顺序走，至少留一次室内降温休息"],
+      practical: ["九月默认不排队登顶抱佛脚：暴晒、狭窄楼梯和冷热切换风险高", "拒绝入口外收费揽客车，只用景区正式交通"],
+      weather: "雷雨时取消海边长距离步行；高温时每 45–60 分钟补水休息。",
+      source: { platform: "小红书", author: "Hs", title: "三亚行-南山寺 2026年1月6号行程", url: xhsNanshan },
+    },
+    sourceUrl: "https://www.nanshan.com/www.nanshan.com/index.php/jqjj/index.html",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "dadonghai",
+    name: "三亚大东海海水浴场",
+    shortName: "大东海",
+    city: "三亚",
+    category: "coast",
+    coordinates: { lat: 18.2205905, lng: 109.5251825 },
+    why: "公共海水浴场，能把游泳、步行和海况判断放在正规管理区域。",
+    activity: {
+      time: "09:00–11:00",
+      duration: "约 2 小时",
+      steps: ["从大东海广场公共入口进入并先看警示旗", "沿沙滩向东步行，只有在开放且有救生管理时游泳"],
+      practical: ["不购买沙滩流动人员兜售的水上项目", "下水前确认更衣、贵重物品和返程停车位置"],
+      weather: "红旗、雷电或离岸流提示时不下水。",
+      source: { platform: "小红书", author: "拾渡", title: "三亚大东海顺路游玩一日游攻略", url: xhsSanyaCity },
+    },
+    sourceUrl: "https://www.amap.com/place/B0KUYYWVTS",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "luhuitou",
+    name: "三亚鹿回头风景区",
+    shortName: "鹿回头",
+    city: "三亚",
+    category: "viewpoint",
+    coordinates: { lat: 18.2271541, lng: 109.4962752 },
+    why: "在一个正规观景区读懂三亚湾、大东海和城市的空间关系。",
+    activity: {
+      time: "15:10–17:00",
+      duration: "约 1 小时 50 分",
+      steps: ["从景区入口按开放路线上行到主观景平台", "在平台辨认大东海、三亚湾和凤凰岛方向后原路下行"],
+      practical: ["不为看日落拖到拥挤末班时段", "带水，选择防滑鞋，不走未开放小路"],
+      weather: "雷雨或大风时取消高处观景，直接前往三亚湾。",
+      source: { platform: "小红书", author: "拾渡", title: "三亚大东海顺路游玩一日游攻略", url: xhsSanyaCity },
+    },
+    sourceUrl: "https://www.openstreetmap.org/node/1943151461",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "coconut-corridor",
+    name: "三亚湾椰梦长廊",
+    shortName: "椰梦长廊",
+    city: "三亚",
+    category: "coast",
+    coordinates: { lat: 18.274342, lng: 109.475754 },
+    why: "把城市日收在三亚湾日落，而不是再增加一个收费景点。",
+    activity: {
+      time: "17:25–18:45",
+      duration: "约 1 小时 20 分",
+      steps: ["导航到三亚湾公共停车区域后步行进椰林", "日落前 30 分钟到海边，日落后立即离开避免夜间长途疲劳"],
+      practical: ["椰梦长廊很长，不用追逐所谓唯一机位", "停车只用正规车位，拒绝摄影拉客"],
+      weather: "云厚仍可散步；雷雨时取消并直接回酒店。",
+      source: { platform: "小红书", author: "Coco妈咪", title: "海南｜海口-万宁-陵水-三亚7天线路攻略", url: xhsRoute },
+    },
+    sourceUrl: "https://www.amap.com/search?query=%E6%A4%B0%E6%A2%A6%E9%95%BF%E5%BB%8A",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "sanya-airport",
+    name: "三亚凤凰国际机场",
+    shortName: "三亚凤凰",
+    city: "三亚",
+    category: "transport",
+    coordinates: { lat: 18.3051519, lng: 109.4125351 },
+    why: "异地还车后从南端离岛，路线不折返海口。",
+    activity: mapActivity("三亚凤凰国际机场地图", "https://www.openstreetmap.org/way/32079751"),
+    sourceUrl: "https://www.openstreetmap.org/way/32079751",
+    verifiedAt: "2026-08-11",
+  },
+];
+
+export const hotels: Hotel[] = [
+  {
+    id: "grand-hyatt-wanning",
+    name: "万宁神州半岛君悦酒店",
+    shortName: "万宁基地",
+    city: "万宁",
+    checkInDay: 1,
+    nights: "Day 1–3 · 连住 3 晚",
+    fit: "覆盖万宁三条日游线，不为了看不同海湾每天搬行李。",
+    reasons: ["房间与热带公共区域完成度较好", "神州半岛比日月湾夜间更安静，停车和返程清楚"],
+    cautions: ["高峰时接驳车可能等待", "周边夜间活动有限，适合安静基地而非夜生活"],
+    image: {
+      src: "/hainan/grand-hyatt-wanning-xhs.webp",
+      alt: "万宁神州半岛君悦热带公共区域与水景",
+      platform: "小红书",
+      credit: "熠民",
+      creditUrl: xhsWanningHyatt,
+      noteTitle: "万宁 staycation｜神州半岛君悦真实入住测评",
+    },
+    officialUrl: "https://www.hyatt.com/en-US/hotel/china/grand-hyatt-shenzhou-peninsula/shhgh",
+    xhsSource: { author: "熠民", title: "万宁 staycation｜神州半岛君悦真实入住测评", url: xhsWanningHyatt },
+  },
+  {
+    id: "grand-hyatt-sanya",
+    name: "三亚海棠湾君悦酒店",
+    shortName: "三亚基地",
+    city: "三亚",
+    checkInDay: 4,
+    nights: "Day 4–6 · 连住 3 晚",
+    fit: "Day 4 仅换这一次，之后陵水、南山和三亚城市日都返回同一房间。",
+    reasons: ["公共区域、早餐与海景稳定", "靠近海棠湾高速入口，Day 4 从陵水抵达顺路"],
+    cautions: ["去南山和三亚湾车程较长", "入住与接驳高峰可能排队"],
+    image: {
+      src: "/hainan/grand-hyatt-sanya-xhs.webp",
+      alt: "三亚海棠湾君悦泳池与海棠湾景观",
+      platform: "小红书",
+      credit: "如意烧仙草",
+      creditUrl: xhsSanyaHyatt,
+      noteTitle: "三亚｜海棠湾君悦入住真实体验",
+    },
+    officialUrl: "https://www.hyatt.com/grand-hyatt/en-US/syxgh-grand-hyatt-sanya-haitang-bay-resort-and-spa",
+    xhsSource: { author: "如意烧仙草", title: "三亚｜海棠湾君悦入住真实体验", url: xhsSanyaHyatt },
   },
 ];
 
 export const days: Day[] = [
   {
     id: 1,
+    title: "武汉 → 海口 → 万宁",
     dateLabel: "抵达日",
-    title: "武汉 → 昆明 → 普洱",
-    area: "航空＋中老铁路",
-    summary: "把第一天留给转场。抵达思茅后只入住，不在夜里熟悉陌生车辆或赶山路。",
-    placeIds: ["wuhan-airport", "kunming-airport", "kunming-south", "puer-station"],
-    distanceLabel: "跨省转场",
-    driveLabel: "当地不驾车",
-    sleep: "思茅城区舒适型酒店",
-    meals: ["机场简餐", "抵达后清淡米线或汤锅"],
-    pace: "转场",
-    weatherPlan: "若航班晚点导致动车无法衔接，当晚住昆明，不冒险压缩后续换乘。",
+    pace: "一次到位",
+    summary: "早班机落地海口；时间足够才短停骑楼，傍晚直接住进万宁，之后三天不搬。",
+    placeIds: ["wuhan-airport", "haikou-airport", "qilou", "wanning-hyatt"],
+    distanceLabel: "岛内约 185 km",
+    driveLabel: "约 2.5–3 h",
+    sleep: "万宁神州半岛君悦酒店",
+    meals: ["骑楼粉面", "服务区补水", "酒店晚饭"],
+    weatherPlan: "晚点或暴雨时删除骑楼，机场取车后直达万宁。",
   },
   {
     id: 2,
-    dateLabel: "城市慢走",
-    title: "早市、老街与咖啡庄园",
-    area: "思茅城区＋南屏镇",
-    summary: "先用半天认识当地人的日常，再去咖啡产地听种植者讲一杯咖啡如何长出来。",
-    placeIds: ["wuyi-market", "simao-old-street", "xiaoaozi-coffee"],
-    distanceLabel: "约 48 km",
-    driveLabel: "约 1.5 h，分段驾驶",
-    sleep: "思茅城区舒适型酒店",
-    meals: ["五一市场米干/豆汤", "庄园简餐需预约", "戴家巷附近晚饭"],
-    pace: "松弛",
-    weatherPlan: "大雨时先走市场和老街，把庄园调整到雨势较小的半天。",
+    title: "兴隆植物与石梅湾",
+    dateLabel: "万宁基地",
+    pace: "植物＋南洋味＋海岸",
+    summary: "上午看热带作物，中午进兴隆市场，下午只留石梅湾一段安静海岸。",
+    placeIds: ["wanning-hyatt", "xinglong-garden", "xinglong-market", "shimei-bay", "wanning-hyatt"],
+    distanceLabel: "约 52 km 环线",
+    driveLabel: "约 1 h 路上",
+    sleep: "万宁神州半岛君悦酒店",
+    meals: ["兴隆咖啡", "南洋粉面", "石梅湾或酒店晚饭"],
+    weatherPlan: "雷雨保留市场，植物园与海岸按现场关闭情况删减。",
   },
   {
     id: 3,
-    dateLabel: "雨林日",
-    title: "太阳河森林与犀牛坪",
-    area: "思茅东南",
-    summary: "走开放森林步道，留足时间观察植物与动物，不把一天塞成景点竞速。",
-    placeIds: ["puer-station", "rhinoceros-plain"],
-    distanceLabel: "往返约 90 km",
-    driveLabel: "约 2 h",
-    sleep: "思茅城区舒适型酒店",
-    meals: ["酒店早餐", "景区内简餐/自带轻食", "新兴街本地烧烤"],
-    pace: "步行",
-    weatherPlan: "雷雨、暴雨预警或步道临时关闭时，改为普洱市博物馆与城区茶咖日。",
+    title: "日月湾冲浪与神州日落",
+    dateLabel: "万宁基地",
+    pace: "一动一静",
+    summary: "上午只做一节正规冲浪课，下午回神州半岛慢走与看日落。",
+    placeIds: ["wanning-hyatt", "riyue-bay", "shenzhou-peninsula", "wanning-hyatt"],
+    distanceLabel: "约 44 km 环线",
+    driveLabel: "约 50 min 路上",
+    sleep: "万宁神州半岛君悦酒店",
+    meals: ["酒店早餐", "日月湾简餐", "神州半岛晚饭"],
+    weatherPlan: "涌浪或雷雨取消冲浪，改为酒店半日与海况安全时的短走。",
   },
   {
     id: 4,
-    dateLabel: "进山日",
-    title: "思茅 → 澜沧 → 惠民",
-    area: "普洱西南山路",
-    summary: "白天完成长距离转场，在澜沧县城吃午饭和补给，天黑前到惠民镇。",
-    placeIds: ["puer-station", "lancang-county", "huimin-town"],
-    distanceLabel: "约 263 km",
-    driveLabel: "约 4.5–5.5 h",
-    sleep: "惠民镇品质民宿",
-    meals: ["思茅早餐", "澜沧县城午饭", "民宿晚饭提前确认"],
-    pace: "山路",
-    weatherPlan: "连续强降雨时不进景迈山，在澜沧县城住一晚并询问次日道路。",
+    title: "万宁 → 新村港 → 三亚",
+    dateLabel: "唯一换宿日",
+    pace: "唯一换宿＋渔排",
+    summary: "退掉万宁房间，沿新村港和清水湾南下，傍晚一次性换到三亚住三晚。",
+    placeIds: ["wanning-hyatt", "xincun-port", "clearwater-bay", "sanya-hyatt"],
+    distanceLabel: "约 130 km",
+    driveLabel: "约 2 h 路上",
+    sleep: "三亚海棠湾君悦酒店",
+    meals: ["酒店早餐", "新村镇午饭", "三亚酒店晚饭"],
+    weatherPlan: "客船停航就删新村港乘船，清水湾大浪则直接入住。",
+    isHotelChange: true,
   },
   {
     id: 5,
-    dateLabel: "茶山日",
-    title: "糯岗、翁基、芒景与古茶林",
-    area: "景迈山世界遗产地",
-    summary: "理解茶林、村寨与居民生活的关系；只走开放区域，把品茶时间留给提前约好的茶农。",
-    placeIds: ["huimin-town", "nuogang", "wengji", "mangjing", "jingmai-tea-forest"],
-    distanceLabel: "山内约 69 km",
-    driveLabel: "约 2.5 h＋多段步行",
-    sleep: "惠民镇或开放住宿区品质民宿",
-    meals: ["民宿早餐", "村寨午餐提前预约", "民宿晚饭"],
-    pace: "步行",
-    weatherPlan: "浓雾时减少村寨之间往返，选一个古茶林和一个村寨深度停留。",
+    title: "南山完整半日",
+    dateLabel: "三亚基地",
+    pace: "人文主线",
+    summary: "不塞天涯镇或崖州古城，只给南山一段完整时间，并明确避开暴晒登顶。",
+    placeIds: ["sanya-hyatt", "nanshan", "sanya-hyatt"],
+    distanceLabel: "约 133 km 往返",
+    driveLabel: "约 1 h 50 min 路上",
+    sleep: "三亚海棠湾君悦酒店",
+    meals: ["酒店早餐", "景区内简餐", "返程晚饭"],
+    weatherPlan: "高温降低步行量；雷雨或台风预警则改为酒店留白日。",
   },
   {
     id: 6,
-    dateLabel: "回城日",
-    title: "景迈山 → 澜沧 → 思茅",
-    area: "原路白天返程",
-    summary: "上午留作茶山补偿时段，午前下山，避免疲劳和夜间驾驶；回思茅吃最后一顿本地晚饭。",
-    placeIds: ["huimin-town", "lancang-county", "xinxing-street"],
-    distanceLabel: "约 268 km",
-    driveLabel: "约 4.5–5.5 h",
-    sleep: "思茅城区舒适型酒店",
-    meals: ["民宿早餐", "澜沧县城午饭", "新兴街晚饭"],
-    pace: "山路",
-    weatherPlan: "若道路状态不佳，放弃上午活动，尽早下山；必要时澜沧过夜并顺延返程。",
+    title: "大东海 → 鹿回头 → 三亚湾",
+    dateLabel: "三亚城市日",
+    pace: "海浴场＋城市视角＋日落",
+    summary: "从正规公共海滩开始，在鹿回头读懂城市方向，最后到三亚湾收日落。",
+    placeIds: ["sanya-hyatt", "dadonghai", "luhuitou", "coconut-corridor", "sanya-hyatt"],
+    distanceLabel: "约 88 km 环线",
+    driveLabel: "约 1 h 35 min 路上",
+    sleep: "三亚海棠湾君悦酒店",
+    meals: ["酒店早餐", "大东海午饭", "三亚湾晚饭"],
+    weatherPlan: "红旗不游泳、雷雨不上高处；只保留安全的城市段。",
   },
   {
     id: 7,
+    title: "三亚 → 武汉",
     dateLabel: "返程日",
-    title: "普洱 → 昆明 → 武汉",
-    area: "中老铁路＋航空",
-    summary: "白天还车，动车到昆明后预留至少 4 小时转场缓冲，再乘机回武汉。",
-    placeIds: ["puer-station", "kunming-south", "kunming-airport", "wuhan-airport"],
-    distanceLabel: "跨省转场",
-    driveLabel: "仅还车",
-    sleep: "回家；衔接不理想则昆明一晚",
-    meals: ["思茅早餐", "动车简餐", "机场晚餐"],
-    pace: "转场",
-    weatherPlan: "若没有安全衔接的同日航班，增加昆明过夜，不购买极限联程。",
+    pace: "还车离岛",
+    summary: "退房、加油、异地还车，从三亚凤凰机场飞回武汉。",
+    placeIds: ["sanya-hyatt", "sanya-airport", "wuhan-airport"],
+    distanceLabel: "岛内约 42 km",
+    driveLabel: "约 50 min＋航班",
+    sleep: "回家",
+    meals: ["酒店早餐", "机场简餐"],
+    weatherPlan: "台风季提前 72 小时和 24 小时分别复核航班与还车安排。",
   },
 ];
-
-function makeBudget(people: number, items: BudgetItem[]): Budget {
-  return {
-    people,
-    items,
-    total: {
-      min: items.reduce((sum, item) => sum + item.min, 0),
-      max: items.reduce((sum, item) => sum + item.max, 0),
-    },
-  };
-}
-
-export const budgets: Record<TravelMode, Budget> = {
-  solo: makeBudget(1, [
-    { label: "武汉往返大交通", min: 1800, max: 2400, note: "机票＋昆明至普洱动车" },
-    { label: "小型自动挡租车", min: 1100, max: 1500, note: "约 5 天，含基础保障估算" },
-    { label: "6 晚住宿", min: 1200, max: 1600, note: "单人独享房间" },
-    { label: "餐食与茶咖", min: 550, max: 800, note: "小份菜、庄园体验另确认" },
-    { label: "门票与体验", min: 350, max: 550, note: "不写死实时票价" },
-    { label: "油费、停车、路桥", min: 350, max: 500, note: "按约 700–800 km 估算" },
-    { label: "机动金", min: 300, max: 500, note: "天气改签或临时补给" },
-  ]),
-  duo: makeBudget(2, [
-    { label: "两人往返大交通", min: 3600, max: 4800, note: "机票＋昆明至普洱动车" },
-    { label: "紧凑型 SUV / 轿车", min: 1300, max: 1800, note: "约 5 天，费用两人共享" },
-    { label: "6 晚住宿", min: 1500, max: 2200, note: "大床或双床房" },
-    { label: "两人餐食与茶咖", min: 1200, max: 1800, note: "共享菜更适合尝本地风味" },
-    { label: "两人门票与体验", min: 700, max: 1100, note: "不写死实时票价" },
-    { label: "油费、停车、路桥", min: 450, max: 650, note: "按约 700–800 km 估算" },
-    { label: "共同机动金", min: 800, max: 1500, note: "雨季改签、住宿升级或道路调整" },
-  ]),
-};
-
-export function getBudget(mode: TravelMode): Budget {
-  return budgets[mode];
-}
 
 export function getDayRoute(dayId: number): Place[] {
   const day = days.find((item) => item.id === dayId);
   if (!day) return [];
-  return day.placeIds
-    .map((placeId) => places.find((place) => place.id === placeId))
-    .filter((place): place is Place => Boolean(place));
+  return day.placeIds.map((placeId) => places.find((place) => place.id === placeId)).filter((place): place is Place => Boolean(place));
+}
+
+export function getHotel(hotelId?: string): Hotel | undefined {
+  return hotels.find((hotel) => hotel.id === hotelId);
 }
