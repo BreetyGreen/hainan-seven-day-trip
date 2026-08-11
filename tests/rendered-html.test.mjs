@@ -111,7 +111,10 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.doesNotMatch(routeMap, /journey-camera-lock/);
   assert.match(routeMap, /traveler\.setLatLng\(position\)/);
   assert.match(routeMap, /traveler\.setOpacity\(1\)/);
-  assert.match(routeMap, /map\.panTo\(position, \{ animate: false/);
+  assert.match(routeMap, /travelCameraFollow\.intervalMs/);
+  assert.match(routeMap, /animate:\s*true/);
+  assert.match(routeMap, /duration:\s*travelCameraFollow\.duration/);
+  assert.doesNotMatch(routeMap, /timestamp - lastCameraUpdate >= 90/);
   assert.match(routeMap, /播放|暂停/);
   assert.match(routeMap, /继续/);
   assert.match(routeMap, /重播/);

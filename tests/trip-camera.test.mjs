@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { cameraForArrival, cameraForTravel, travelStageProgress } from "../app/trip-camera.ts";
+import {
+  cameraForArrival,
+  cameraForTravel,
+  travelCameraFollow,
+  travelStageProgress,
+} from "../app/trip-camera.ts";
 
 function place(id, city, category, lat, lng) {
   return { id, city, category, coordinates: { lat, lng } };
@@ -77,4 +82,11 @@ test("reduced motion skips the camera lead-in", () => {
   const timing = travelStageProgress(80, 160, camera, true);
   assert.equal(timing.phase, "moving");
   assert.equal(timing.routeProgress, 0.5);
+});
+
+test("uses a continuous non-overlapping camera follow animation", () => {
+  assert.equal(travelCameraFollow.intervalMs, 120);
+  assert.equal(travelCameraFollow.duration, 0.12);
+  assert.equal(travelCameraFollow.easeLinearity, 1);
+  assert.equal(travelCameraFollow.duration * 1000, travelCameraFollow.intervalMs);
 });

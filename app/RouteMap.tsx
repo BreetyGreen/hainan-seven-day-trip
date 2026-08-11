@@ -5,7 +5,7 @@ import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
 import { days, getDayRoute, getHotel, places, type Place } from "./trip-data";
 import { getDayGuide, hotelBayGuide } from "./trip-details";
-import { cameraForArrival, cameraForTravel, travelStageProgress } from "./trip-camera";
+import { cameraForArrival, cameraForTravel, travelCameraFollow, travelStageProgress } from "./trip-camera";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -751,9 +751,14 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       traveler.setOpacity(1);
       if (reducedMotion) {
         map.setView(position, map.getZoom(), { animate: false });
-      } else if (timestamp - lastCameraUpdate >= 90) {
+      } else if (timestamp - lastCameraUpdate >= travelCameraFollow.intervalMs) {
         lastCameraUpdate = timestamp;
-        map.panTo(position, { animate: false, noMoveStart: true });
+        map.panTo(position, {
+          animate: true,
+          duration: travelCameraFollow.duration,
+          easeLinearity: travelCameraFollow.easeLinearity,
+          noMoveStart: true,
+        });
       }
     };
 

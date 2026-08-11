@@ -16,6 +16,12 @@ export type TravelStageProgress = {
 const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
 const hainanIslandCities = new Set(["海口", "万宁", "陵水", "三亚"]);
 
+export const travelCameraFollow = {
+  intervalMs: 120,
+  duration: 0.12,
+  easeLinearity: 1,
+} as const;
+
 export function travelStageProgress(
   elapsedMs: number,
   movementDurationMs: number,
