@@ -6,8 +6,15 @@ import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "le
 import { days, getDayRoute, getHotel, places, type Place, type TravelLegMode } from "./trip-data";
 import { getDayGuide, hotelBayGuide } from "./trip-details";
 import { getDayLegs, getLegAfter, modeLabel } from "./trip-legs";
-import { cameraForArrival, cameraForTravel, travelCameraFollow, travelStageProgress } from "./trip-camera";
+import {
+  cameraForArrival,
+  cameraForTravel,
+  pointOutsideCameraComfortZone,
+  travelCameraFollow,
+  travelStageProgress,
+} from "./trip-camera";
 import { buildJourneyPhotoItems, type JourneyPhotoItem } from "./journey-photos";
+import { sampleRouteAtProgress } from "./trip-motion";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -869,33 +876,25 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       timestamp: number,
     ) => {
       const coordinates = stage.segment.coordinates;
-      const scaled = Math.min(1, progress) * (coordinates.length - 1);
-      const lowerIndex = Math.floor(scaled);
-      const upperIndex = Math.min(coordinates.length - 1, lowerIndex + 1);
-      const fraction = scaled - lowerIndex;
-      const from = coordinates[lowerIndex];
-      const to = coordinates[upperIndex];
-      const head: RouteCoordinate = [
-        from[0] + (to[0] - from[0]) * fraction,
-        from[1] + (to[1] - from[1]) * fraction,
-      ];
-      const partial = coordinates.slice(0, lowerIndex + 1);
-      if (upperIndex !== lowerIndex) partial.push(head);
-      setModeLine(stage.segment.mode, partial);
+      const sample = sampleRouteAtProgress(coordinates, progress);
+      setModeLine(stage.segment.mode, sample.visibleCoordinates);
 
-      const position = L.latLng(head[1], head[0]);
+      const position = L.latLng(sample.point[1], sample.point[0]);
       traveler.setLatLng(position);
       traveler.setOpacity(1);
       if (reducedMotion) {
         map.setView(position, map.getZoom(), { animate: false });
       } else if (timestamp - lastCameraUpdate >= travelCameraFollow.intervalMs) {
         lastCameraUpdate = timestamp;
-        map.panTo(position, {
-          animate: true,
-          duration: travelCameraFollow.duration,
-          easeLinearity: travelCameraFollow.easeLinearity,
-          noMoveStart: true,
-        });
+        const screenPoint = map.latLngToContainerPoint(position);
+        if (pointOutsideCameraComfortZone(screenPoint, map.getSize())) {
+          map.panTo(position, {
+            animate: true,
+            duration: travelCameraFollow.duration,
+            easeLinearity: travelCameraFollow.easeLinearity,
+            noMoveStart: true,
+          });
+        }
       }
     };
 

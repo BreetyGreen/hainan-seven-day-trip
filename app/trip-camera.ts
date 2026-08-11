@@ -17,10 +17,24 @@ const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
 const hainanIslandCities = new Set(["海口", "万宁", "陵水", "三亚"]);
 
 export const travelCameraFollow = {
-  intervalMs: 120,
-  duration: 0.12,
-  easeLinearity: 1,
+  intervalMs: 220,
+  duration: 0.42,
+  easeLinearity: 0.22,
 } as const;
+
+type ScreenPoint = { x: number; y: number };
+
+export function pointOutsideCameraComfortZone(
+  point: ScreenPoint,
+  viewport: ScreenPoint,
+  minimum = 0.3,
+  maximum = 0.7,
+) {
+  return point.x < viewport.x * minimum
+    || point.x > viewport.x * maximum
+    || point.y < viewport.y * minimum
+    || point.y > viewport.y * maximum;
+}
 
 export function travelStageProgress(
   elapsedMs: number,
@@ -60,6 +74,9 @@ export function cameraForTravel(
 ): CameraIntent {
   if (segment.mode === "flight") {
     return { kind: "overview", zoom: 6, duration: 0.9 };
+  }
+  if (segment.mode === "walk") {
+    return { kind: "local", zoom: 16, duration: 0.72 };
   }
   if (segment.from.place.city === segment.to.place.city) {
     return { kind: "local", zoom: 13, duration: 0.72 };

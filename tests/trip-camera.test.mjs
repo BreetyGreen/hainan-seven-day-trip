@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   cameraForArrival,
   cameraForTravel,
+  pointOutsideCameraComfortZone,
   travelCameraFollow,
   travelStageProgress,
 } from "../app/trip-camera.ts";
@@ -45,6 +46,22 @@ test("uses overview, Hainan island, suburban, and city scales for travel", () =>
   });
   assert.equal(cameraForTravel(segment("drive", wanning, nearCityEdge)).zoom, 11);
   assert.equal(cameraForTravel(segment("drive", dadonghai, luhuitou)).zoom, 13);
+  assert.deepEqual(cameraForTravel(segment("walk", dadonghai, luhuitou)), {
+    kind: "local",
+    zoom: 16,
+    duration: 0.72,
+  });
+});
+
+test("follows only after the traveler leaves the central comfort zone", () => {
+  const viewport = { x: 1000, y: 600 };
+
+  assert.equal(pointOutsideCameraComfortZone({ x: 500, y: 300 }, viewport), false);
+  assert.equal(pointOutsideCameraComfortZone({ x: 300, y: 180 }, viewport), false);
+  assert.equal(pointOutsideCameraComfortZone({ x: 299, y: 300 }, viewport), true);
+  assert.equal(pointOutsideCameraComfortZone({ x: 701, y: 300 }, viewport), true);
+  assert.equal(pointOutsideCameraComfortZone({ x: 500, y: 179 }, viewport), true);
+  assert.equal(pointOutsideCameraComfortZone({ x: 500, y: 421 }, viewport), true);
 });
 
 test("zooms into meaningful arrivals without over-zooming hotels or airports", () => {
@@ -84,9 +101,8 @@ test("reduced motion skips the camera lead-in", () => {
   assert.equal(timing.routeProgress, 0.5);
 });
 
-test("uses a continuous non-overlapping camera follow animation", () => {
-  assert.equal(travelCameraFollow.intervalMs, 120);
-  assert.equal(travelCameraFollow.duration, 0.12);
-  assert.equal(travelCameraFollow.easeLinearity, 1);
-  assert.equal(travelCameraFollow.duration * 1000, travelCameraFollow.intervalMs);
+test("checks the comfort zone at a restrained cadence and pans gently", () => {
+  assert.equal(travelCameraFollow.intervalMs, 220);
+  assert.equal(travelCameraFollow.duration, 0.42);
+  assert.equal(travelCameraFollow.easeLinearity, 0.22);
 });
