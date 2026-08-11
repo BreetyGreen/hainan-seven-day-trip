@@ -36,6 +36,8 @@ Replace coordinate-index interpolation in `renderTravel` with the route motion s
 
 This fix does not replace the Hainan itinerary or visual content. Existing detailed OSRM geometry remains in use. The very small Day 4 hotel walk is allowed to stay schematic, because distance-based interpolation and walking zoom make its three-point route legible without introducing fabricated roads.
 
+Stops are mapped onto each ordered day route as one globally monotonic sequence rather than by repeatedly choosing the nearest remaining coordinate. This preserves distinct outward and return occurrences when the same hotel appears more than once, including the Day 1 hotel → Qilou → hotel loop.
+
 ## Verification
 
 - Focused tests first fail for distance-based sampling, comfort-zone behavior, and walking zoom 16.

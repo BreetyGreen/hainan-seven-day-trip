@@ -65,6 +65,23 @@ test("gives visible movement enough time to read as travel rather than a jump", 
   assert.ok(sanyaCityDrive.durationMs >= 2400);
 });
 
+test("keeps the Haikou hotel visit, Qilou stop, and hotel return on distinct route positions", () => {
+  const dayOne = createPlaybackPlan(days, places, routeData.features).find((day) => day.dayId === 1);
+  const localStops = dayOne.stops.slice(2);
+  const localSegments = dayOne.segments.slice(2);
+
+  assert.deepEqual(localStops.map((stop) => stop.place.id), [
+    "haikou-qilou-atour",
+    "qilou",
+    "haikou-qilou-atour",
+  ]);
+  assert.ok(localStops[0].routeIndex < localStops[1].routeIndex);
+  assert.ok(localStops[1].routeIndex < localStops[2].routeIndex);
+  for (const segment of localSegments) {
+    assert.notDeepEqual(segment.coordinates[0], segment.coordinates.at(-1));
+  }
+});
+
 test("maps real itinerary places to transport, explore, meal, and rest choreography", () => {
   const kinds = new Set(places.map(playbackKindForPlace));
   assert.deepEqual([...kinds].sort(), ["explore", "rest", "transport"]);

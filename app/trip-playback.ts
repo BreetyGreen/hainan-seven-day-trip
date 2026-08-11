@@ -131,17 +131,48 @@ function squaredDistance(point: RouteCoordinate, place: Place) {
   return lngDelta * lngDelta + latDelta * latDelta;
 }
 
-function nearestForwardIndex(coordinates: RouteCoordinate[], place: Place, start: number) {
-  let bestIndex = Math.min(start, coordinates.length - 1);
-  let bestDistance = Number.POSITIVE_INFINITY;
-  for (let index = bestIndex; index < coordinates.length; index += 1) {
-    const distance = squaredDistance(coordinates[index], place);
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestIndex = index;
-    }
+function routeIndicesForPlaces(coordinates: RouteCoordinate[], routePlaces: Place[]) {
+  if (coordinates.length < routePlaces.length) {
+    throw new Error("A playback route needs at least one coordinate per stop");
   }
-  return bestIndex;
+
+  const backtrack = routePlaces.map(() => Array(coordinates.length).fill(-1));
+  let previousCosts = coordinates.map((coordinate) => squaredDistance(coordinate, routePlaces[0]));
+
+  for (let placeIndex = 1; placeIndex < routePlaces.length; placeIndex += 1) {
+    const currentCosts = Array(coordinates.length).fill(Number.POSITIVE_INFINITY);
+    let bestPreviousCost = Number.POSITIVE_INFINITY;
+    let bestPreviousIndex = -1;
+
+    for (let coordinateIndex = 0; coordinateIndex < coordinates.length; coordinateIndex += 1) {
+      const candidateIndex = coordinateIndex - 1;
+      if (candidateIndex >= 0 && previousCosts[candidateIndex] < bestPreviousCost) {
+        bestPreviousCost = previousCosts[candidateIndex];
+        bestPreviousIndex = candidateIndex;
+      }
+      if (bestPreviousIndex < 0) continue;
+      currentCosts[coordinateIndex] = bestPreviousCost
+        + squaredDistance(coordinates[coordinateIndex], routePlaces[placeIndex]);
+      backtrack[placeIndex][coordinateIndex] = bestPreviousIndex;
+    }
+
+    previousCosts = currentCosts;
+  }
+
+  let coordinateIndex = previousCosts.reduce(
+    (bestIndex, cost, index) => cost < previousCosts[bestIndex] ? index : bestIndex,
+    0,
+  );
+  if (!Number.isFinite(previousCosts[coordinateIndex])) {
+    throw new Error("Could not map itinerary stops onto the playback route");
+  }
+
+  const indices = Array(routePlaces.length).fill(0);
+  for (let placeIndex = routePlaces.length - 1; placeIndex >= 0; placeIndex -= 1) {
+    indices[placeIndex] = coordinateIndex;
+    coordinateIndex = backtrack[placeIndex][coordinateIndex];
+  }
+  return indices;
 }
 
 function downsample(coordinates: RouteCoordinate[], limit = 140) {
@@ -196,14 +227,15 @@ export function createPlaybackPlan(
     const { coordinates, ranges } = joinDayFeatures(dayFeatures);
     if (coordinates.length < 2) throw new Error(`Day ${day.id} needs a connected route`);
 
-    let cursor = 0;
-    const stops = day.placeIds.map((placeId, order) => {
+    const routePlaces = day.placeIds.map((placeId) => {
       const place = placeById.get(placeId);
       if (!place) throw new Error(`Unknown playback place: ${placeId}`);
-      const routeIndex = nearestForwardIndex(coordinates, place, cursor);
-      cursor = routeIndex;
+      return place;
+    });
+    const routeIndices = routeIndicesForPlaces(coordinates, routePlaces);
+    const stops = routePlaces.map((place, order) => {
       const kind = playbackKindForPlace(place);
-      return { dayId: day.id, order, place, kind, holdMs: holdByKind[kind], routeIndex };
+      return { dayId: day.id, order, place, kind, holdMs: holdByKind[kind], routeIndex: routeIndices[order] };
     });
 
     const segments = stops.slice(0, -1).map((from, order) => {
