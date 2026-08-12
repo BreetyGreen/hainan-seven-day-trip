@@ -447,6 +447,10 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .social-video-gallery > nav button { align-items: center; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); border-radius: 999px; color: rgba(255,255,255,.68); cursor: pointer; display: flex; font-size: 8px; font-weight: 850; gap: 5px; padding: 6px 9px; }
 .social-video-gallery > nav button span { align-items: center; background: rgba(255,255,255,.1); border-radius: 50%; display: flex; font-size: 7px; height: 16px; justify-content: center; min-width: 16px; }
 .social-video-gallery > nav button.is-active { background: #f26053; border-color: #f26053; color: white; }
+.social-video-gallery > .social-video-platform-filter { margin-bottom: 7px; }
+.social-video-gallery > .social-video-theme-filter { margin: 0 -17px 12px; overflow-x: auto; padding: 0 17px 3px; scrollbar-width: none; }
+.social-video-theme-filter::-webkit-scrollbar { display: none; }
+.social-video-theme-filter button { flex: 0 0 auto; }
 .social-video-viewer-backdrop { align-items: center; background: rgba(2,12,17,.82); backdrop-filter: blur(16px); display: flex; justify-content: center; padding: 22px; position: fixed; inset: 0; z-index: 3600; }
 .social-video-viewer { background: #020c11; border: 1px solid rgba(255,255,255,.16); border-radius: 22px; box-shadow: 0 30px 90px rgba(0,0,0,.5); color: white; display: grid; grid-template-rows: auto minmax(0,1fr) auto; max-height: min(780px,calc(100dvh - 44px)); overflow: hidden; width: min(920px,calc(100vw - 44px)); }
 .social-video-viewer-header { align-items: center; background: #0a2028; border-bottom: 1px solid rgba(255,255,255,.09); display: flex; justify-content: space-between; min-height: 62px; padding: 11px 14px 11px 18px; }
@@ -490,6 +494,8 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .social-video-copy { min-width: 0; }
 .social-video-copy strong { display: -webkit-box; font-size: 10px; line-height: 1.45; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .social-video-copy small { color: rgba(255,255,255,.54); display: -webkit-box; font-size: 7px; line-height: 1.45; margin-top: 5px; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.social-video-expand { align-items: center; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; color: white; cursor: pointer; display: flex; font-size: 9px; font-weight: 900; justify-content: center; margin-top: 10px; min-height: 44px; transition: background .2s ease,border-color .2s ease; width: 100%; }
+.social-video-expand:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.22); }
 .social-inspiration-gallery { background: #f0f2ee; border: 1px solid rgba(15,48,54,.08); border-radius: 18px; margin: 18px 0 22px; overflow: hidden; padding: 16px; }
 .social-inspiration-gallery > header { align-items: flex-end; display: flex; justify-content: space-between; }
 .social-inspiration-gallery > header span { color: var(--coral-dark); display: block; font-size: 8px; font-weight: 900; letter-spacing: .14em; }

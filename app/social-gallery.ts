@@ -1,3 +1,5 @@
+import { socialVideos } from "./social-videos";
+
 export type SocialCity = "海口" | "万宁" | "陵水" | "三亚";
 export type SocialPlatform = "小红书" | "抖音";
 
@@ -17,7 +19,7 @@ type SocialCollection = Omit<SocialImage, "id" | "src" | "alt"> & {
   altPrefix: string;
 };
 
-const collections: SocialCollection[] = [
+const xhsCollections: SocialCollection[] = [
   {
     city: "三亚", platform: "小红书", collection: "下周三亚行前清单", sourceTitle: "下周出发去三亚！！！",
     sourceUrl: "https://xhslink.cn/o/6QybMpO8y3I", altPrefix: "小红书三亚行前清单",
@@ -50,37 +52,21 @@ const collections: SocialCollection[] = [
       "/hainan/social-xhs-wanning-food-01.webp", "/hainan/social-xhs-wanning-food-02.webp", "/hainan/social-xhs-wanning-food-03.webp", "/hainan/social-xhs-wanning-food-04.webp",
     ],
   },
-  {
-    city: "海口", platform: "抖音", collection: "海口 Citywalk", sourceTitle: "开车跨海，只为这口老爸茶！海口一日 Citywalk",
-    sourceUrl: "https://www.douyin.com/video/7510185927597149500", altPrefix: "抖音海口 Citywalk 视频封面",
-    files: ["/hainan/social-douyin-haikou-guide.webp"],
-  },
-  {
-    city: "万宁", platform: "抖音", collection: "万宁海岸慢游", sourceTitle: "一天半解锁万宁海岸线与兴隆咖啡",
-    sourceUrl: "https://www.douyin.com/video/7536046961461710137", altPrefix: "抖音万宁海岸与兴隆攻略视频封面",
-    files: ["/hainan/social-douyin-wanning-guide.webp"],
-  },
-  {
-    city: "陵水", platform: "抖音", collection: "陵水三天慢游", sourceTitle: "陵水不是三亚平替，它值得一场单独旅行",
-    sourceUrl: "https://www.douyin.com/video/7528654669166546233", altPrefix: "抖音陵水三天慢游视频封面",
-    files: ["/hainan/social-douyin-lingshui-guide.webp"],
-  },
-  {
-    city: "陵水", platform: "抖音", collection: "陵水地图攻略", sourceTitle: "海南环岛游——陵水景点大全",
-    sourceUrl: "https://www.douyin.com/video/7589580983788260617", altPrefix: "抖音陵水景点地图攻略视频封面",
-    files: ["/hainan/social-douyin-lingshui-overview.webp"],
-  },
-  {
-    city: "陵水", platform: "抖音", collection: "清水湾酒店实住", sourceTitle: "陵水清水湾一线海景酒店与儿童泳池公区盘点",
-    sourceUrl: "https://www.douyin.com/video/7524031678776446246", altPrefix: "抖音清水湾海景酒店实住盘点视频封面",
-    files: ["/hainan/social-douyin-clearwater-hotels.webp"],
-  },
-  {
-    city: "三亚", platform: "抖音", collection: "三亚湾区总览", sourceTitle: "海南环岛游——三亚景点与湾区酒店怎么选",
-    sourceUrl: "https://www.douyin.com/video/7595562347549166854", altPrefix: "抖音三亚景点与湾区酒店攻略视频封面",
-    files: ["/hainan/social-douyin-sanya-overview.webp"],
-  },
 ];
+
+const douyinCollections: SocialCollection[] = socialVideos.filter((video) => video.platform === "抖音").flatMap((video) => (
+  (video.city === "全程" ? ["海口", "万宁", "陵水", "三亚"] : [video.city]) as SocialCity[]
+).map((city) => ({
+  city,
+  platform: "抖音",
+  collection: `抖音 · ${video.theme}`,
+  sourceTitle: video.title,
+  sourceUrl: video.sourceUrl,
+  altPrefix: `抖音${video.city}${video.theme}视频封面`,
+  files: [video.poster],
+})));
+
+const collections: SocialCollection[] = [...xhsCollections, ...douyinCollections];
 
 export const socialImages: SocialImage[] = collections.flatMap((collection) => collection.files.map((src, index) => ({
   id: `${collection.platform}-${collection.city}-${collection.collection}-${index + 1}`,

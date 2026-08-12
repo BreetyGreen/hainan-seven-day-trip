@@ -3,20 +3,25 @@ import { access, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 test("ships a large sourced Xiaohongshu and Douyin inspiration library", async () => {
-  const source = await readFile(new URL("../app/social-gallery.ts", import.meta.url), "utf8");
-  const imageMatches = [...source.matchAll(/"(\/hainan\/social-[^"]+\.webp)"/g)];
+  const [source, videos] = await Promise.all([
+    readFile(new URL("../app/social-gallery.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/social-videos.ts", import.meta.url), "utf8"),
+  ]);
+  const imageMatches = [
+    ...source.matchAll(/"(\/hainan\/social-[^"]+\.webp)"/g),
+    ...videos.matchAll(/poster:\s*"(\/hainan\/social-[^"]+\.webp)"/g),
+  ];
   const xhsMatches = imageMatches.filter((match) => match[1].includes("social-xhs-"));
-  const douyinMatches = imageMatches.filter((match) => match[1].includes("social-douyin-"));
+  const douyinMatches = imageMatches.filter((match) => match[1].includes("social-douyin-") || match[1].includes("social-video-douyin-"));
 
-  assert.ok(imageMatches.length >= 35, `expected at least 35 social images, got ${imageMatches.length}`);
+  assert.ok(imageMatches.length >= 55, `expected at least 55 social images, got ${imageMatches.length}`);
   assert.ok(xhsMatches.length >= 29, `expected the 29 user-supplied Xiaohongshu images, got ${xhsMatches.length}`);
-  assert.ok(douyinMatches.length >= 6, `expected at least 6 Douyin covers, got ${douyinMatches.length}`);
-  assert.match(source, /city:\s*"海口"/);
-  assert.match(source, /city:\s*"万宁"/);
-  assert.match(source, /city:\s*"陵水"/);
-  assert.match(source, /city:\s*"三亚"/);
+  assert.ok(douyinMatches.length >= 26, `expected at least 26 Douyin covers, got ${douyinMatches.length}`);
+  assert.match(source, /socialVideos\.filter\(\(video\) => video\.platform === "抖音"\)\.flatMap/);
+  assert.match(source, /export type SocialCity = "海口" \| "万宁" \| "陵水" \| "三亚"/);
+  assert.match(source, /\["海口", "万宁", "陵水", "三亚"\]/);
   assert.match(source, /xhslink\.cn|xiaohongshu\.com/);
-  assert.match(source, /douyin\.com\/video/);
+  assert.match(videos, /douyin\.com\/video/);
 
   for (const match of imageMatches) {
     const asset = new URL(`../public${match[1]}`, import.meta.url);

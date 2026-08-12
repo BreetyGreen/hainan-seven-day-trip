@@ -70,6 +70,70 @@ const douyinCovers = [
     output: "social-douyin-sanya-overview.webp",
     url: "https://p3-pc-sign.douyinpic.com/tos-cn-p-0015/o4IWQRBpAgoQRz9IWE1efFwARAiDaF2jNDitQA~tplv-dy-360p.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_AWEME_DETAIL&sc=origin_cover&se=false&x-expires=1787734800&x-signature=%2BmTvMO6jc0A5yLEYqdjlL709tDs%3D",
   },
+  {
+    output: "social-douyin-haikou-food-six-meals.webp",
+    url: "https://p9-pc-sign.douyinpic.com/image-cut-tos-priv/07c7f5784c1cbab2da7474f96d10a390~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=SFUENiFyWXp9ECptjgTvhT8afa8%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-haikou-cafe-vlog.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/81485603f81f80b70a8cd7ef54e5e68d~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=x%2FIXO%2FAvDbyg%2Fu%2FmibB166Y7O%2FI%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-haikou-dessert-hotpot.webp",
+    url: "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIHA5IABMFooACDAEoou9lgAXEI7fAzDQA6e4a~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=nZPNnqalST6Ka6rI7ig8QLDcGus%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-wanning-two-days.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/71e3d8561d944b371987e2db9d72dd3b~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=u%2BQ3n7Hd0B%2FnYTMdEFjNxC4Oxf8%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-wanning-hotel-vlog.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/321443dbc2a01edacc65392bf8a565dc~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=qTyZdd8rxBpO7Eu536aBGx0URn4%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-wanning-overview.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/151277ce8edda91cec88fa4fcfd2b014~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=Sk5Cgy2KxXPKIHEawdSKxNiXZE4%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-lingshui-seaview-hotels.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/ecdc434d0d9f5248cd4f6f7db514e0e7~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=GnKpqEkTcMuizjhJgP1Wy26TE%2FY%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-lingshui-family-four-days.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/4da76502d78e23da23daf8ed5542d786~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=asAuwDTJKTYGOrmjtwDIC41cB2Y%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-clearwater-slow-vibe.webp",
+    url: "https://p9-pc-sign.douyinpic.com/image-cut-tos-priv/63e9c24ba8b3152eaa2f6ef81b558bd1~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=Z4xtY5vSE9HFfz3uerDyIrKpef8%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-lingshui-tidepool.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/9b700157e6d600368aabfa33909d04d7~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=3zHwzDJold%2F7RT5hxmboD2laxdk%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-sanya-beginner-regions.webp",
+    url: "https://p9-pc-sign.douyinpic.com/image-cut-tos-priv/0701a64408386f78ebf4cf47f2bc8ff8~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=ehOq4SRncbJbyvExrP6MHz%2FRn20%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-sanya-duty-free.webp",
+    url: "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c000-ce/oEnDLA3AECvAIGFwpskAI0df2Be9CrAv9EE7o7~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=LAUAowQ8jG3VqJfsCePCt1toDP0%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-sanya-three-days.webp",
+    url: "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/ooiAINdfmmJEHiAexzF17AicJAFBwAgAAExPsC~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=FDR9VUoxIIu6HUD0hBSKHOk5ZCQ%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-sanya-family-hotel-budget.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/14406a3edf6f08208fe8a14af58ef95a~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=aML7eghQqA6dtg%2F5hmiLS3eqgiw%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-sanya-haitang-hotel-budget.webp",
+    url: "https://p9-pc-sign.douyinpic.com/image-cut-tos-priv/f782b91303c7e42d17a7bf6827a46ef8~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=k1KJObqzwcaBiEh%2BgeVR7vv3wbw%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
+  {
+    output: "social-douyin-hainan-island-roadtrip.webp",
+    url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/81f6715ebebbc519f24f84aa65965df3~tplv-dy-resize-origshort-autoq-75:330.jpeg?lk3s=138a59ce&x-expires=2101892400&x-signature=M4P1LsiNfLaWt3yBDEu%2BscqZ584%3D&from=327834062&s=PackSourceEnum_AWEME_DETAIL&se=false&sc=cover&biz_tag=pcweb_cover",
+  },
 ];
 
 const browserHeaders = {
