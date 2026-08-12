@@ -59,6 +59,9 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(page, /aria-live/);
   assert.match(page, /aria-pressed/);
   assert.match(page, /<RouteMap/);
+  assert.match(routeMap, /小红书高互动/);
+  assert.match(routeMap, /避雷\/核验/);
+  assert.match(routeMap, /地图导航/);
   assert.match(page, /useState<number \| null>\(null\)/);
   assert.match(page, /journey-shell/);
   assert.match(page, /selectedDay/);

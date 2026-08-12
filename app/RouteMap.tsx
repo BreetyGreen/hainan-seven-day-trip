@@ -345,13 +345,19 @@ function PlaceDetailDialog({
               <div className="place-detail-heading"><span>03</span><h3>这一天怎么串起来</h3></div>
               <h4>{dayGuide.headline}</h4>
               <div className="day-rhythm">{dayGuide.rhythm.map((item, index) => <span key={item}><b>{index + 1}</b>{item}</span>)}</div>
-              <h4>顺路吃，不追店</h4>
+              <h4>顺路吃 · 小红书高互动与位置双核验</h4>
               <div className="food-stop-list">
                 {dayGuide.foodStops.map((stop) => (
                   <article key={stop.name} className="food-stop-card">
                     <div><strong>{stop.name}</strong><span>{stop.area} · {stop.when}</span></div>
+                    <em className={`food-evidence is-${stop.evidence.kind}`}>{stop.evidence.label}</em>
                     <p>{stop.reason}</p>
                     <small>建议点：{stop.order.join(" · ")}</small>
+                    <p className="food-caution"><b>避雷/核验</b>{stop.caution}</p>
+                    <nav className="food-stop-actions" aria-label={`${stop.name}资料`}>
+                      <a href={stop.sourceUrl} target="_blank" rel="noreferrer">查看笔记依据 ↗</a>
+                      <a href={stop.mapUrl} target="_blank" rel="noreferrer">地图导航 ↗</a>
+                    </nav>
                   </article>
                 ))}
               </div>

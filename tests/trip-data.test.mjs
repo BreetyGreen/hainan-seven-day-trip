@@ -201,13 +201,24 @@ test("turns the four user-supplied Xiaohongshu notes into structured in-page gui
       assert.ok(stop.order.length >= 1);
       assert.ok(stop.reason.length > 0);
       assert.match(stop.sourceUrl, /^https:\/\//);
+      assert.ok(["high-engagement", "user-note", "map-verified", "hotel-plan"].includes(stop.evidence.kind));
+      assert.ok(stop.evidence.label.length > 0);
+      assert.ok(stop.caution.length > 0);
+      assert.match(stop.mapUrl, /^https:\/\//);
     }
   }
+
+  const xhsStops = dayGuides
+    .flatMap((guide) => guide.foodStops)
+    .filter((stop) => stop.evidence.kind === "high-engagement");
+  assert.ok(xhsStops.length >= 2);
+  assert.ok(xhsStops.every((stop) => /小红书/.test(stop.evidence.label)));
+  assert.ok(xhsStops.every((stop) => Number.isInteger(stop.evidence.engagement) && stop.evidence.engagement > 0));
 
   const lingshuiNames = dayGuides
     .filter((guide) => [3, 4].includes(guide.dayId))
     .flatMap((guide) => guide.foodStops.map((stop) => stop.name));
-  assert.ok(lingshuiNames.includes("新村镇明码标价午饭"));
+  assert.ok(lingshuiNames.includes("英姐酸粉热粉"));
   assert.ok(lingshuiNames.includes("酒店或土福湾附近简餐"));
 
   const sanyaNames = dayGuides
