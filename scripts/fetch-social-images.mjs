@@ -4,6 +4,7 @@ import sharp from "sharp";
 
 const outputDirectory = new URL("../public/hainan/", import.meta.url);
 await mkdir(fileURLToPath(outputDirectory), { recursive: true });
+const douyinOnly = process.argv.includes("--douyin-only");
 
 const xhsCollections = [
   {
@@ -29,6 +30,22 @@ const xhsCollections = [
 ];
 
 const douyinCovers = [
+  {
+    output: "social-video-douyin-haikou-overview.webp",
+    url: "https://p3-pc-sign.douyinpic.com/tos-cn-p-0015/ocn5gDmjAHp2AQLSkCQhFrtQDfCHM94eEfDeY4~tplv-dy-360p.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_AWEME_DETAIL&sc=origin_cover&se=false&x-expires=1787738400&x-signature=kwCVetlXpRXYZTyPBR1IO9wQPHo%3D",
+  },
+  {
+    output: "social-video-douyin-eastline-family.webp",
+    url: "https://p3-pc-sign.douyinpic.com/tos-cn-p-0015/owAwIi7IyTIVA3BgcQ3a4dPCbmqjQ0tdCIiPh~tplv-dy-360p.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_AWEME_DETAIL&sc=origin_cover&se=false&x-expires=1787738400&x-signature=tK47KI05SjzQLZhFZ0dnOTZNF30%3D",
+  },
+  {
+    output: "social-video-douyin-sanya-lingshui.webp",
+    url: "https://p3-pc-sign.douyinpic.com/tos-cn-p-0015/o4AQCuIgC8AFgE8zdj95hYfpTvDgABOIeDFocj~tplv-dy-360p.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_AWEME_DETAIL&sc=origin_cover&se=false&x-expires=1787738400&x-signature=CiKk92wLXRsHoQRyH0%2FB3vluen0%3D",
+  },
+  {
+    output: "social-video-douyin-lingshui-hotel-family.webp",
+    url: "https://p3-pc-sign.douyinpic.com/tos-cn-p-0015c000-ce/oMiX984zoQeMANEvhCyF6OMEQWDHOvAtJwfey2~tplv-dy-360p.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_AWEME_DETAIL&sc=origin_cover&se=false&x-expires=1787738400&x-signature=xF6oaYGTDrC8E5%2FJFOvK8FkkWSs%3D",
+  },
   {
     output: "social-douyin-haikou-guide.webp",
     url: "https://p3-pc-sign.douyinpic.com/image-cut-tos-priv/9e23dd7cb44f3517415ee0a177e2a125~tplv-dy-resize-origshort-autoq-75:330.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_MIX_AWEME&sc=cover&se=false&x-expires=2101885200&x-signature=vqFgkhrHABqAtQ%2FbL1EdWC4NnJk%3D",
@@ -75,7 +92,7 @@ async function writePreview(buffer, outputName) {
   console.log(outputName, `${result.width}x${result.height}`, `${result.size} bytes`);
 }
 
-for (const collection of xhsCollections) {
+for (const collection of douyinOnly ? [] : xhsCollections) {
   const pageResponse = await fetch(collection.url, { headers: browserHeaders, redirect: "follow" });
   if (!pageResponse.ok) throw new Error(`${pageResponse.status} while fetching ${collection.url}`);
   const html = await pageResponse.text();

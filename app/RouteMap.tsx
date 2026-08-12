@@ -18,6 +18,7 @@ import { sampleRouteAtProgress } from "./trip-motion";
 import { withBasePath } from "./site-paths";
 import { PlacePhotoGallery } from "./PlacePhotoGallery";
 import { SocialInspirationGallery } from "./SocialInspirationGallery";
+import { SocialVideoGallery } from "./SocialVideoGallery";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -338,6 +339,7 @@ function PlaceDetailDialog({
             <span><b>停留</b>{place.activity.duration}</span>
           </div>
 
+          <SocialVideoGallery city={place.city} />
           <SocialInspirationGallery city={place.city} />
 
           <section className="place-detail-section">
