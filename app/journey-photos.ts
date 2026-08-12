@@ -16,14 +16,17 @@ export function buildJourneyPhotoItems(days: Day[], places: Place[]): JourneyPho
   for (const day of days) {
     for (const placeId of day.placeIds) {
       const place = placeById.get(placeId);
-      if (!place?.image || place.category === "transport" || usedPhotos.has(place.image.src)) continue;
-      usedPhotos.add(place.image.src);
-      items.push({
-        id: `day-${day.id}-${place.id}`,
-        dayId: day.id,
-        kind: place.category === "stay" ? "hotel" : "place",
-        place,
-        photo: place.image,
+      if (!place?.image || place.category === "transport") continue;
+      [place.image, ...(place.gallery ?? [])].forEach((photo, photoIndex) => {
+        if (usedPhotos.has(photo.src)) return;
+        usedPhotos.add(photo.src);
+        items.push({
+          id: `day-${day.id}-${place.id}-${photoIndex + 1}`,
+          dayId: day.id,
+          kind: place.category === "stay" ? "hotel" : "place",
+          place,
+          photo,
+        });
       });
     }
   }

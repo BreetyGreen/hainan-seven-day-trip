@@ -67,7 +67,7 @@ test("follows only after the traveler leaves the central comfort zone", () => {
 test("zooms into meaningful arrivals without over-zooming hotels or airports", () => {
   assert.equal(cameraForArrival({ id: "dadonghai", category: "coast" }).zoom, 15);
   assert.equal(cameraForArrival({ id: "luhuitou", category: "viewpoint" }).zoom, 15);
-  assert.equal(cameraForArrival({ id: "sofitel-sanya", category: "stay" }).zoom, 13);
+  assert.equal(cameraForArrival({ id: "clearwater-indigo", category: "stay" }).zoom, 13);
   assert.equal(cameraForArrival({ id: "sanya-airport", category: "transport" }).zoom, 9);
 });
 

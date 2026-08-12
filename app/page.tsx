@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { RouteMap } from "./RouteMap";
-import { itineraryPlans, type Hotel, type TravelMode } from "./trip-data";
+import { calculatePlanBudget, itineraryPlans, type Hotel, type ItineraryPlan, type TravelMode } from "./trip-data";
 import { researchSummary } from "./trip-details";
 import { withBasePath } from "./site-paths";
 
@@ -18,6 +18,38 @@ const modeNotes: Record<TravelMode, { label: string; subtitle: string; guidance:
     guidance: "主驾与副驾在长段换位；副驾负责停车、潮汐和天气，仍然不为多看一个点延后返程。",
   },
 };
+
+const money = new Intl.NumberFormat("zh-CN", { style: "currency", currency: "CNY", maximumFractionDigits: 0 });
+
+function BudgetSummary({ plan, mode }: { plan: ItineraryPlan; mode: TravelMode }) {
+  const estimate = calculatePlanBudget(plan, mode);
+  const peopleLabel = estimate.travelers === 1 ? "一人总额" : "二人总额";
+
+  return (
+    <section className="budget-summary" aria-label={`${plan.name} ${peopleLabel}旅行预算`}>
+      <div className="budget-summary-head">
+        <div>
+          <span>旅行预算 · {peopleLabel}</span>
+          <strong>{money.format(estimate.total.min)}–{money.format(estimate.total.max)}</strong>
+        </div>
+        <p>{estimate.travelers === 2 ? `人均 ${money.format(estimate.perPerson.min)}–${money.format(estimate.perPerson.max)}` : plan.budget.period}</p>
+      </div>
+      <p className="budget-target">相对 {money.format(plan.budget.target)} 目标，至少还需增加 {money.format(estimate.overTarget.min)}。</p>
+      <details>
+        <summary>查看六类费用怎么组成</summary>
+        <dl>
+          {estimate.items.map((item) => (
+            <div key={item.id}>
+              <dt><b>{item.label}</b><small>{item.note} · {item.sharing === "shared" ? "同行共享" : "按人数"}</small></dt>
+              <dd>{money.format(item.calculatedRange.min)}–{money.format(item.calculatedRange.max)}</dd>
+            </div>
+          ))}
+        </dl>
+        <p>{plan.budget.period} · {plan.budget.disclaimer}</p>
+      </details>
+    </section>
+  );
+}
 
 function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
   return (
@@ -165,7 +197,8 @@ export default function Home() {
               <h1>万宁住两晚，<br />整条东线慢下来</h1>
               <p className="plan-day-kicker">{activePlan.name}</p>
               <p className="journey-lead">{activePlan.description}</p>
-              <div className="base-flow" aria-label="四个住宿基地">
+              <BudgetSummary plan={activePlan} mode={mode} />
+              <div className="base-flow" aria-label="三个住宿基地与两次换宿">
                 {activeHotels.map((hotel, index) => (
                   <div key={hotel.id} className="base-flow-group">
                     {index > 0 && (

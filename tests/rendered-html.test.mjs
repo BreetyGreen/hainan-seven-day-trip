@@ -39,13 +39,17 @@ test("server-renders the Hainan map-first trip", async () => {
   assert.match(html, /点击地图节点/);
   assert.match(html, /九月怎么穿/);
   assert.match(html, /小红书原笔记/);
-  assert.match(html, /Day 2 \/ 4 \/ 6 换宿/);
+  assert.match(html, /Day 2 \/ 4 换宿/);
   assert.match(html, /为什么选它/);
   assert.match(html, /入住提醒/);
   assert.match(html, /万宁神州半岛君悦酒店/);
   assert.match(html, /海南清水湾英迪格酒店/);
-  assert.match(html, /三亚理文索菲特酒店/);
-  assert.doesNotMatch(html, /预算账本|预算|普洱|景迈山/);
+  assert.doesNotMatch(html, /三亚理文索菲特酒店/);
+  assert.match(html, /旅行预算/);
+  assert.match(html, /2026 年 9 月估算/);
+  assert.match(html, /不含免税购物/);
+  assert.match(html, /¥8,000/);
+  assert.doesNotMatch(html, /预算账本|普洱|景迈山/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Codex is working/i);
 });
 

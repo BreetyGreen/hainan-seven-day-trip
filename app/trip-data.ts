@@ -25,7 +25,7 @@ export type Source = {
 export type PhotoSource = {
   src: string;
   alt: string;
-  platform: "小红书" | "官网";
+  platform: "小红书" | "官网" | "携程";
   credit: string;
   creditUrl: string;
   noteTitle: string;
@@ -50,6 +50,7 @@ export type Place = {
   why: string;
   activity: Activity;
   image?: PhotoSource;
+  gallery?: PhotoSource[];
   hotelId?: string;
   sourceUrl: string;
   verifiedAt: "2026-08-11";
@@ -105,6 +106,31 @@ export type PlanDay = {
   fallback: string;
 };
 
+export type BudgetRange = { min: number; max: number };
+
+export type BudgetItem = {
+  id: "flights" | "hotels" | "car" | "food" | "activities" | "buffer";
+  label: string;
+  note: string;
+  sharing: "shared" | "per-person";
+  range: BudgetRange;
+};
+
+export type BudgetEstimate = {
+  target: number;
+  period: string;
+  disclaimer: string;
+  items: BudgetItem[];
+};
+
+export type CalculatedBudget = {
+  travelers: number;
+  total: BudgetRange;
+  perPerson: BudgetRange;
+  overTarget: BudgetRange;
+  items: Array<BudgetItem & { calculatedRange: BudgetRange }>;
+};
+
 export type ItineraryPlan = {
   id: "A" | "B";
   name: string;
@@ -114,6 +140,7 @@ export type ItineraryPlan = {
   days: PlanDay[];
   schedule: Day[];
   hotels: Hotel[];
+  budget: BudgetEstimate;
   routePath: `/routes/${string}.geojson`;
 };
 
@@ -142,17 +169,24 @@ const xhsPhoto = (src: string, alt: string, credit: string, creditUrl: string, n
   noteTitle,
 });
 
+const ctripPhoto = (src: string, alt: string, credit: string, creditUrl: string, noteTitle: string): PhotoSource => ({
+  src: withBasePath(src),
+  alt,
+  platform: "携程",
+  credit,
+  creditUrl,
+  noteTitle,
+});
+
 const xhsQilou = "https://www.xiaohongshu.com/search_result/6a689911000000000503abca";
 const xhsXincun = "https://www.xiaohongshu.com/search_result/6a71b3a50000000021020fc8";
 const xhsLuhuitou = "https://www.xiaohongshu.com/search_result/690489c200000000030373f2";
 const xhsSangem = "https://www.xiaohongshu.com/search_result/68a893f3000000001c032dad";
-const xhsSofitel = "https://www.xiaohongshu.com/search_result/69f853580000000038020c13";
 const xhsWanningRoute = "https://www.xiaohongshu.com/search_result/6a2b733d000000000802544e";
 const xhsWanningReality = "https://www.xiaohongshu.com/search_result/69abee14000000000e03ce43";
 const xhsWanningHyatt = "https://www.xiaohongshu.com/search_result/6a33dac0000000002100add2";
 const xhsWanningFood = "https://www.xiaohongshu.com/search_result?keyword=%E4%B8%87%E5%AE%81%E7%BA%AF%E5%9C%9F%E8%91%97%E5%BF%85%E5%90%8318%E5%AE%B6%E8%80%81%E5%BA%97";
 const sangemOfficial = "https://www.sangemmoon.com/";
-const sofitelOfficial = "https://all.accor.com/hotel/8167/index.zh.shtml";
 const atourCtrip = "https://hotels.ctrip.com/hotels/120750482.html";
 const wanningHyattOfficial = "https://www.hyatt.com/grand-hyatt/zh-CN/shhgh-grand-hyatt-shenzhou-peninsula";
 const indigoOfficial = "https://www.ihg.com.cn/hotelindigo/hotels/cn/zh/lingshui/lqswb/hoteldetail";
@@ -162,6 +196,7 @@ const haikouWestCoastHolidayOfficial = "https://www.ihg.com.cn/holidayinn/hotels
 const wanningHolidayOfficial = "https://www.ihg.com.cn/holidayinnresorts/hotels/cn/zh/wanning/wxjsh/hoteldetail";
 const xhsHaikouWestCoast = "https://www.xiaohongshu.com/search_result?keyword=%E6%B5%B7%E5%8F%A3%E8%A5%BF%E6%B5%B7%E5%B2%B8%E6%B5%B7%E6%99%AF%E9%85%92%E5%BA%97";
 const xhsWanningHoliday = "https://www.xiaohongshu.com/search_result?keyword=%E4%B8%87%E5%AE%81%E7%A5%9E%E5%B7%9E%E5%8D%8A%E5%B2%9B%E5%81%87%E6%97%A5%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97";
+const ctripWanningHoliday = "https://hotels.ctrip.com/hotels/132011313.html";
 const xhsXinglongGarden = "https://www.xiaohongshu.com/search_result?keyword=%E5%85%B4%E9%9A%86%E7%83%AD%E5%B8%A6%E6%A4%8D%E7%89%A9%E5%9B%AD";
 
 export const routeResearchSource = "https://www.visitsanya.com/zh";
@@ -222,7 +257,8 @@ export const places: Place[] = [
       weather: "暴雨时在酒店完成晚饭和休息，不进市中心。",
       source: { platform: "官网", author: "Marriott", title: "海口万豪酒店", url: haikouMarriottOfficial },
     },
-    image: officialPhoto("/hainan/haikou-marriott-official.webp", "海口万豪酒店西海岸建筑与海景", "Marriott 官方", haikouMarriottOfficial, "海口万豪酒店西海岸外观"),
+    image: officialPhoto("/hainan/haikou-marriott-pool-official.webp", "海口万豪酒店临海热带园林与泳池", "Marriott 官方", haikouMarriottOfficial, "海口万豪酒店室外泳池"),
+    gallery: [officialPhoto("/hainan/haikou-marriott-official.webp", "海口万豪酒店月色下的中式建筑", "Marriott 官方", haikouMarriottOfficial, "海口万豪酒店西海岸夜景")],
     sourceUrl: haikouMarriottOfficial,
     verifiedAt: "2026-08-11",
   },
@@ -263,7 +299,7 @@ export const places: Place[] = [
       weather: "航班晚点、雷雨或大风时直接删除。",
       source: { platform: "小红书", author: "海口西海岸实住合集", title: "海口西海岸海景酒店与日落", url: xhsHaikouWestCoast },
     },
-    image: officialPhoto("/hainan/haikou-marriott-official.webp", "海口西海岸酒店与临海景观", "Marriott 官方", haikouMarriottOfficial, "海口西海岸酒店海景"),
+    image: officialPhoto("/hainan/haikou-west-coast-holiday-official.webp", "海口西海岸海湾、椰林与滨海视野", "IHG 官方", haikouWestCoastHolidayOfficial, "海口西海岸海景"),
     sourceUrl: "https://www.openstreetmap.org/search?query=Haikou%20West%20Coast",
     verifiedAt: "2026-08-11",
   },
@@ -325,7 +361,7 @@ export const places: Place[] = [
       weather: "雷雨时不追海湾，改用酒店公区、泳池和兴隆午饭。",
       source: { platform: "小红书", author: "熠民", title: "万宁 staycation｜神州半岛君悦真实入住测评", url: xhsWanningHyatt },
     },
-    image: xhsPhoto("/hainan/grand-hyatt-wanning-xhs.webp", "万宁神州半岛君悦热带公共区域与水景", "熠民", xhsWanningHyatt, "万宁 staycation｜神州半岛君悦真实入住测评"),
+    image: officialPhoto("/hainan/grand-hyatt-wanning-pool-official.webp", "万宁神州半岛君悦临海泳池与热带花园", "Hyatt 官方", wanningHyattOfficial, "万宁神州半岛君悦室外泳池"),
     sourceUrl: wanningHyattOfficial,
     verifiedAt: "2026-08-11",
   },
@@ -346,7 +382,8 @@ export const places: Place[] = [
       weather: "大雨时留在酒店；短时阵雨后再去兴隆。",
       source: { platform: "官网", author: "IHG", title: "万宁神州半岛假日度假酒店", url: wanningHolidayOfficial },
     },
-    image: officialPhoto("/hainan/wanning-holiday-inn-official.webp", "万宁神州半岛假日度假酒店海岸建筑", "IHG 官方", wanningHolidayOfficial, "万宁神州半岛假日度假酒店"),
+    image: ctripPhoto("/hainan/wanning-holiday-inn-pool-ctrip.webp", "万宁神州半岛假日度假酒店无边泳池与园林", "携程酒店公开页", ctripWanningHoliday, "万宁神州半岛假日度假酒店泳池"),
+    gallery: [officialPhoto("/hainan/wanning-holiday-inn-official.webp", "万宁神州半岛假日度假酒店蓝调海岸建筑", "IHG 官方", wanningHolidayOfficial, "万宁神州半岛假日度假酒店外观")],
     sourceUrl: wanningHolidayOfficial,
     verifiedAt: "2026-08-11",
   },
@@ -478,7 +515,7 @@ export const places: Place[] = [
     city: "三亚",
     category: "culture",
     coordinates: { lat: 18.3548, lng: 109.7487 },
-    why: "把采购集中在换宿日下午，离海棠湾酒店近，不额外占用返程日上午。",
+    why: "把采购集中在 Day 6 下午，从陵水基地往返，不换酒店，也不额外占用返程日上午。",
     activity: {
       time: "14:30–18:30",
       duration: "约 4 小时",
@@ -508,7 +545,8 @@ export const places: Place[] = [
       weather: "台风或大浪时取消离店活动，使用室内设施。",
       source: { platform: "官网", author: "海南三正月酒店", title: "海南三正月酒店官网", url: sangemOfficial },
     },
-    image: xhsPhoto("/hainan/sangem-moon-xhs.webp", "海南三正月酒店蓝调时刻建筑外景", "肥欧OOOOOO", xhsSangem, "海南酒店攻略——陵水三正月，值得二刷"),
+    image: officialPhoto("/hainan/sangem-moon-official.webp", "海南三正月酒店、土福湾海岸与蓝调全景", "海南三正月酒店", sangemOfficial, "海南三正月酒店土福湾全景"),
+    gallery: [xhsPhoto("/hainan/sangem-moon-xhs.webp", "海南三正月酒店蓝调时刻建筑外景", "肥欧OOOOOO", xhsSangem, "海南酒店攻略——陵水三正月，值得二刷")],
     sourceUrl: sangemOfficial,
     verifiedAt: "2026-08-11",
   },
@@ -550,27 +588,6 @@ export const places: Place[] = [
     },
     image: officialPhoto("/hainan/sangem-beach-official.webp", "三正月酒店土福湾海岸与泳池", "海南三正月酒店", sangemOfficial, "酒店海岸与双空中泳池"),
     sourceUrl: sangemOfficial,
-    verifiedAt: "2026-08-11",
-  },
-  {
-    id: "sofitel-sanya",
-    name: "三亚理文索菲特酒店",
-    shortName: "海棠湾索菲特",
-    city: "三亚",
-    category: "stay",
-    coordinates: { lat: 18.3329, lng: 109.7137 },
-    why: "最后一晚靠近免税城收尾；次日直接去机场，不再横穿三亚市区。",
-    hotelId: "sofitel-sanya",
-    activity: {
-      time: "Day 6",
-      duration: "住 1 晚",
-      steps: ["免税采购后办理入住", "先确认早餐与次日退房", "睡前复核还车点和航班"],
-      practical: ["基础园景或池景也可接受", "不为海景房压缩返程机动金"],
-      weather: "台风预警时缩短免税时间并提前复核航班。",
-      source: { platform: "官网", author: "Accor", title: "三亚理文索菲特酒店", url: sofitelOfficial },
-    },
-    image: xhsPhoto("/hainan/sofitel-pool-xhs.webp", "三亚理文索菲特酒店泳池、椰林与海岸", "竹子动物园", xhsSofitel, "理文索菲特的公区给到一个夯"),
-    sourceUrl: sofitelOfficial,
     verifiedAt: "2026-08-11",
   },
   {
@@ -665,7 +682,7 @@ const planAHotels: Hotel[] = [
     fit: "西海岸、海景阳台、远离市中心；抵达后不再进城折腾。",
     reasons: ["官方明确位于西海岸并提供 180° 海景阳台房", "次日直接南下万宁，不用穿过老城区"],
     cautions: ["只住一晚，先比较基础海景房而不是套房", "机场到西海岸约 50–70 分钟，晚航班需直接入住"],
-    image: officialPhoto("/hainan/haikou-marriott-official.webp", "海口万豪酒店西海岸建筑与海景", "Marriott 官方", haikouMarriottOfficial, "海口万豪酒店"),
+    image: officialPhoto("/hainan/haikou-marriott-pool-official.webp", "海口万豪酒店临海热带园林与泳池", "Marriott 官方", haikouMarriottOfficial, "海口万豪酒店室外泳池"),
     officialUrl: haikouMarriottOfficial,
     xhsSource: { author: "海口西海岸实住合集", title: "海口西海岸海景酒店实住与房型", url: xhsHaikouWestCoast },
   },
@@ -679,7 +696,7 @@ const planAHotels: Hotel[] = [
     fit: "海景和安静兼顾；把万宁真正住下来，而不是匆匆路过。",
     reasons: ["酒店海岸相对独立", "石梅湾、兴隆与神州半岛都能当天短线往返"],
     cautions: ["真海景房需确认朝向与遮挡", "若差价明显可换同半岛假日度假酒店"],
-    image: xhsPhoto("/hainan/grand-hyatt-wanning-xhs.webp", "万宁神州半岛君悦热带公共区域与水景", "熠民", xhsWanningHyatt, "万宁 staycation｜神州半岛君悦真实入住测评"),
+    image: officialPhoto("/hainan/grand-hyatt-wanning-pool-official.webp", "万宁神州半岛君悦临海泳池与热带花园", "Hyatt 官方", wanningHyattOfficial, "万宁神州半岛君悦室外泳池"),
     officialUrl: wanningHyattOfficial,
     xhsSource: { author: "熠民", title: "万宁 staycation｜神州半岛君悦真实入住测评", url: xhsWanningHyatt },
   },
@@ -689,27 +706,13 @@ const planAHotels: Hotel[] = [
     shortName: "陵水清水湾基地",
     city: "陵水",
     checkInDay: 4,
-    nights: "Day 4–5 · 连住 2 晚",
-    fit: "位置比土福湾更顺：新村港结束后一路向南入住，次日海景留白。",
-    reasons: ["清水湾海岸氛围安静", "减少新村港往返和第二天跨区车程"],
+    nights: "Day 4–6 · 连住 3 晚",
+    fit: "新村港结束后一路向南入住，连续三晚不再搬行李；Day 6 往返免税城。",
+    reasons: ["清水湾海岸氛围安静", "连续三晚覆盖陵水慢住与免税城往返"],
     cautions: ["2025 年新开，服务稳定度看近期评价", "海景房须核对侧海景、楼层与遮挡"],
     image: officialPhoto("/hainan/clearwater-indigo-official.webp", "海南清水湾英迪格酒店海岸建筑与泳池", "IHG 官方", indigoOfficial, "海南清水湾英迪格酒店"),
     officialUrl: indigoOfficial,
     xhsSource: { author: "小红书清水湾实住合集", title: "清水湾海景酒店实住与房型对比", url: "https://www.xiaohongshu.com/search_result?keyword=%E6%B5%B7%E5%8D%97%E6%B8%85%E6%B0%B4%E6%B9%BE%E8%8B%B1%E8%BF%AA%E6%A0%BC%E9%85%92%E5%BA%97" },
-  },
-  {
-    id: "sofitel-sanya",
-    name: "三亚理文索菲特酒店",
-    shortName: "三亚收尾基地",
-    city: "三亚",
-    checkInDay: 6,
-    nights: "Day 6 · 住 1 晚",
-    fit: "靠近三亚国际免税城与机场方向；最后一晚不再横穿市区。",
-    reasons: ["距免税城约 5 km", "次日直接去凤凰机场，不补景点"],
-    cautions: ["只住一晚不必为海景高价升级", "免税店营业与提货时限出发周再核对"],
-    image: xhsPhoto("/hainan/sofitel-pool-xhs.webp", "三亚理文索菲特酒店泳池、椰林与海岸", "竹子动物园", xhsSofitel, "理文索菲特的公区给到一个夯"),
-    officialUrl: sofitelOfficial,
-    xhsSource: { author: "竹子动物园", title: "理文索菲特的公区给到一个夯", url: xhsSofitel },
   },
 ];
 
@@ -738,7 +741,7 @@ const planBHotels: Hotel[] = [
     fit: "保留神州半岛海岸位置，以更轻预算的假日度假品牌替代君悦。",
     reasons: ["官方地址在神州半岛凤凰路南侧", "去兴隆植物园与市场可以连成一条短线"],
     cautions: ["新开业阶段优先看近期服务评价", "海景餐厅不代表基础房全部正海景"],
-    image: officialPhoto("/hainan/wanning-holiday-inn-official.webp", "万宁神州半岛假日度假酒店海岸建筑", "IHG 官方", wanningHolidayOfficial, "万宁神州半岛假日度假酒店"),
+    image: ctripPhoto("/hainan/wanning-holiday-inn-pool-ctrip.webp", "万宁神州半岛假日度假酒店无边泳池与园林", "携程酒店公开页", ctripWanningHoliday, "万宁神州半岛假日度假酒店泳池"),
     officialUrl: wanningHolidayOfficial,
     xhsSource: { author: "神州半岛实住合集", title: "万宁神州半岛假日度假酒店房型与公区", url: xhsWanningHoliday },
   },
@@ -748,15 +751,14 @@ const planBHotels: Hotel[] = [
     shortName: "陵水土福湾安静基地",
     city: "陵水",
     checkInDay: 4,
-    nights: "Day 4–5 · 连住 2 晚",
-    fit: "Plan B 不去新村港，直接住土福湾两晚，用海景房、海岸与泳池替代奔波。",
-    reasons: ["官方定位为土福湾热带海岸秘境", "现有小红书实住图能核对公区与海景"],
+    nights: "Day 4–6 · 连住 3 晚",
+    fit: "Plan B 不去新村港，直接在土福湾住三晚，用海景房、海岸与泳池替代奔波。",
+    reasons: ["官方定位为土福湾热带海岸秘境", "连续三晚后 Day 6 往返免税城也无需搬行李"],
     cautions: ["不适合再折返新村港，Plan B 已彻底删除该点", "真海景仍要确认楼层、朝向与遮挡"],
-    image: xhsPhoto("/hainan/sangem-moon-xhs.webp", "海南三正月酒店蓝调时刻建筑外景", "肥欧OOOOOO", xhsSangem, "海南酒店攻略——陵水三正月，值得二刷"),
+    image: officialPhoto("/hainan/sangem-moon-official.webp", "海南三正月酒店、土福湾海岸与蓝调全景", "海南三正月酒店", sangemOfficial, "海南三正月酒店土福湾全景"),
     officialUrl: sangemOfficial,
     xhsSource: { author: "肥欧OOOOOO", title: "海南酒店攻略——陵水三正月，值得二刷", url: xhsSangem },
   },
-  planAHotels[3],
 ];
 
 export const hotels: Hotel[] = planAHotels;
@@ -870,22 +872,21 @@ const planASchedule: Day[] = [
   },
   {
     id: 6,
-    city: "三亚",
-    title: "清水湾 → 三亚免税城 → 海棠湾",
-    dateLabel: "9 月 17 日 · 换宿日",
-    pace: "第三次换宿",
-    summary: "上午慢退房，约一小时到海棠湾；免税采购集中在下午，结束后 10–15 分钟入住。",
-    placeIds: ["clearwater-indigo", "cdf-sanya", "sofitel-sanya"],
+    city: "陵水",
+    title: "清水湾 ↔ 三亚免税城",
+    dateLabel: "9 月 17 日 · 陵水基地",
+    pace: "免税往返日",
+    summary: "不退房、不搬行李；午后从清水湾去免税城，集中采购后回同一家酒店住第三晚。",
+    placeIds: ["clearwater-indigo", "cdf-sanya", "clearwater-indigo"],
     legs: [
       leg(0, 1, "drive", "约 45–60 分钟", "暴雨时推迟退房后出发。", "约 45 km"),
-      leg(1, 2, "drive", "约 10–15 分钟", "免税不买也可直接入住。", "约 5 km"),
+      leg(1, 2, "drive", "约 45–60 分钟", "不购物则整天留在清水湾。", "约 45 km"),
     ],
-    distanceLabel: "约 50 km 单向南下",
-    driveLabel: "约 1–1.25 h，分两段",
-    sleep: "三亚理文索菲特酒店",
-    meals: ["清水湾早餐", "免税城内简餐", "索菲特或海棠湾晚饭"],
+    distanceLabel: "往返约 90 km",
+    driveLabel: "单程约 45–60 分钟",
+    sleep: "海南清水湾英迪格酒店",
+    meals: ["清水湾早餐", "免税城内简餐", "回酒店安静晚饭"],
     weatherPlan: "雨天免税城优先；营业时间、购买资格与机场提货时限出发周再核对。",
-    isHotelChange: true,
   },
   {
     id: 7,
@@ -893,14 +894,14 @@ const planASchedule: Day[] = [
     title: "三亚 → 武汉",
     dateLabel: "9 月 18 日 · 返程日",
     pace: "还车离岛",
-    summary: "早餐、退房、还车和登机，不用返程日上午补景点。",
-    placeIds: ["sofitel-sanya", "sanya-airport", "wuhan-airport"],
+    summary: "从清水湾退房后直接去凤凰机场；预留跨区、还车和登机时间，不补景点。",
+    placeIds: ["clearwater-indigo", "sanya-airport", "wuhan-airport"],
     legs: [
-      leg(0, 1, "drive", "约 45–60 分钟", "台风或道路积水时再提前出发。", "约 40 km", "还车时间另计"),
+      leg(0, 1, "drive", "约 60–80 分钟", "台风或道路积水时再提前出发。", "约 65 km", "还车时间另计"),
       leg(1, 2, "flight", "约 2 小时 30 分", "航班调整时同步联系航司与租车公司。", undefined, "以最终航班为准"),
     ],
-    distanceLabel: "岛内约 40 km",
-    driveLabel: "约 45–60 分钟＋航班",
+    distanceLabel: "岛内约 65 km",
+    driveLabel: "约 60–80 分钟＋航班",
     sleep: "回家",
     meals: ["酒店早餐", "机场简餐"],
     weatherPlan: "提前 72 小时和 24 小时复核航班与还车安排。",
@@ -1005,22 +1006,21 @@ const planBSchedule: Day[] = [
   },
   {
     id: 6,
-    city: "三亚",
-    title: "土福湾 → 三亚免税城 → 海棠湾",
-    dateLabel: "9 月 17 日 · 换宿日",
-    pace: "第三次换宿",
-    summary: "三正月退房后 20–30 分钟到免税城，集中采购，再去索菲特完成最后一晚。",
-    placeIds: ["sangem-moon", "cdf-sanya", "sofitel-sanya"],
+    city: "陵水",
+    title: "土福湾 ↔ 三亚免税城",
+    dateLabel: "9 月 17 日 · 陵水基地",
+    pace: "免税往返日",
+    summary: "不退房、不搬行李；从三正月短程去免税城，集中采购后回土福湾住第三晚。",
+    placeIds: ["sangem-moon", "cdf-sanya", "sangem-moon"],
     legs: [
-      leg(0, 1, "drive", "约 20–30 分钟", "暴雨时延迟退房后出发。", "约 22 km"),
-      leg(1, 2, "drive", "约 10–15 分钟", "不购物可直接入住。", "约 5 km"),
+      leg(0, 1, "drive", "约 20–30 分钟", "暴雨时延迟出发。", "约 22 km"),
+      leg(1, 2, "drive", "约 20–30 分钟", "不购物则整天留在酒店。", "约 22 km"),
     ],
-    distanceLabel: "约 27 km",
-    driveLabel: "约 30–45 分钟，分两段",
-    sleep: "三亚理文索菲特酒店",
-    meals: ["三正月早餐", "免税城内简餐", "索菲特晚饭"],
+    distanceLabel: "往返约 44 km",
+    driveLabel: "单程约 20–30 分钟",
+    sleep: "海南三正月酒店",
+    meals: ["三正月早餐", "免税城内简餐", "回酒店安静晚饭"],
     weatherPlan: "雨天优先免税城，营业与提货时限出发周复核。",
-    isHotelChange: true,
   },
   {
     id: 7,
@@ -1028,13 +1028,13 @@ const planBSchedule: Day[] = [
     title: "三亚 → 武汉",
     dateLabel: "9 月 18 日 · 返程日",
     pace: "还车离岛",
-    summary: "早餐、退房、还车与登机；Plan B 同样不在返程日补景点。",
-    placeIds: ["sofitel-sanya", "sanya-airport", "wuhan-airport"],
+    summary: "从土福湾退房后直接去凤凰机场；Plan B 同样不在返程日补景点。",
+    placeIds: ["sangem-moon", "sanya-airport", "wuhan-airport"],
     legs: [
-      leg(0, 1, "drive", "约 45–60 分钟", "积水时再提前出发。", "约 40 km", "还车时间另计"),
+      leg(0, 1, "drive", "约 45–60 分钟", "积水时再提前出发。", "约 48 km", "还车时间另计"),
       leg(1, 2, "flight", "约 2 小时 30 分", "航班调整时同步联系航司与租车公司。", undefined, "以最终航班为准"),
     ],
-    distanceLabel: "岛内约 40 km",
+    distanceLabel: "岛内约 48 km",
     driveLabel: "约 45–60 分钟＋航班",
     sleep: "回家",
     meals: ["酒店早餐", "机场简餐"],
@@ -1043,6 +1043,34 @@ const planBSchedule: Day[] = [
 ];
 
 export const days: Day[] = planASchedule;
+
+const budgetA: BudgetEstimate = {
+  target: 8000,
+  period: "2026 年 9 月估算",
+  disclaimer: "不含免税购物；机票、海景房型与异地还车费以付款页为准。",
+  items: [
+    { id: "flights", label: "往返机票", note: "武汉→海口、三亚→武汉", sharing: "per-person", range: { min: 1100, max: 1800 } },
+    { id: "hotels", label: "6 晚酒店", note: "万豪 1 晚＋君悦 2 晚＋英迪格 3 晚", sharing: "shared", range: { min: 6350, max: 9000 } },
+    { id: "car", label: "租车交通", note: "7 天租车、保险、异地还车、油费与停车", sharing: "shared", range: { min: 2200, max: 3200 } },
+    { id: "food", label: "餐饮", note: "酒店早餐外的正餐与小吃", sharing: "per-person", range: { min: 1100, max: 1700 } },
+    { id: "activities", label: "活动", note: "新村港与少量现场项目", sharing: "per-person", range: { min: 250, max: 500 } },
+    { id: "buffer", label: "机动金", note: "天气、房型差价与临时接驳", sharing: "shared", range: { min: 500, max: 800 } },
+  ],
+};
+
+const budgetB: BudgetEstimate = {
+  target: 8000,
+  period: "2026 年 9 月估算",
+  disclaimer: "不含免税购物；机票、海景房型与异地还车费以付款页为准。",
+  items: [
+    { id: "flights", label: "往返机票", note: "武汉→海口、三亚→武汉", sharing: "per-person", range: { min: 1100, max: 1800 } },
+    { id: "hotels", label: "6 晚酒店", note: "西海岸假日 1 晚＋万宁假日 2 晚＋三正月 3 晚", sharing: "shared", range: { min: 4600, max: 6500 } },
+    { id: "car", label: "租车交通", note: "7 天租车、保险、异地还车、油费与停车", sharing: "shared", range: { min: 2200, max: 3200 } },
+    { id: "food", label: "餐饮", note: "酒店早餐外的正餐与小吃", sharing: "per-person", range: { min: 1100, max: 1700 } },
+    { id: "activities", label: "活动", note: "植物园与少量现场项目", sharing: "per-person", range: { min: 150, max: 350 } },
+    { id: "buffer", label: "机动金", note: "天气、房型差价与临时接驳", sharing: "shared", range: { min: 500, max: 800 } },
+  ],
+};
 
 export const itineraryPlans: ItineraryPlan[] = [
   {
@@ -1053,6 +1081,7 @@ export const itineraryPlans: ItineraryPlan[] = [
     color: "#e86f5c",
     schedule: planASchedule,
     hotels: planAHotels,
+    budget: budgetA,
     routePath: "/routes/hainan-plan-a.geojson",
     days: [
       { dayId: 1, title: "西海岸落地缓冲", summary: "直接住海口西海岸，不进市中心；只在酒店海岸看日落。", highlights: ["西海岸海景房", "不进老城区"], fallback: "航班晚点直接入住。" },
@@ -1060,8 +1089,8 @@ export const itineraryPlans: ItineraryPlan[] = [
       { dayId: 3, title: "万宁慢海岸", summary: "石梅湾慢走、兴隆午饭，再回神州半岛；不追网红咖啡店。", highlights: ["石梅湾", "兴隆市场", "万宁连住第 2 晚"], fallback: "海况差切换 Plan B。" },
       { dayId: 4, title: "顺路进入陵水", summary: "万宁退房后去新村港，结束后一路向南入住清水湾。", highlights: ["不走回头路", "新村港半日", "清水湾入住"], fallback: "停航跳过乘船。" },
       { dayId: 5, title: "清水湾完整留白", summary: "海景早餐、海岸、泳池和午休，不开长途车。", highlights: ["清水湾海岸", "酒店慢度假"], fallback: "红旗时不下海。" },
-      { dayId: 6, title: "免税与海棠湾", summary: "午后集中逛免税城，再去约 5 km 外的索菲特住一晚。", highlights: ["免税城 4 小时", "最后一次换宿"], fallback: "不购物可直接入住。" },
-      { dayId: 7, title: "从容返程", summary: "早餐、退房、还车、机场提货与登机。", highlights: ["不补景点", "预留还车时间"], fallback: "天气差提前出发。" },
+      { dayId: 6, title: "免税往返不换宿", summary: "从清水湾往返免税城，晚上仍回英迪格住第三晚。", highlights: ["免税城 4 小时", "不搬行李"], fallback: "不购物就留在清水湾。" },
+      { dayId: 7, title: "从容返程", summary: "从清水湾直接去机场，预留跨区、还车、提货与登机时间。", highlights: ["不补景点", "预留还车时间"], fallback: "天气差提前出发。" },
     ],
   },
   {
@@ -1072,6 +1101,7 @@ export const itineraryPlans: ItineraryPlan[] = [
     color: "#277c78",
     schedule: planBSchedule,
     hotels: planBHotels,
+    budget: budgetB,
     routePath: "/routes/hainan-plan-b.geojson",
     days: [
       { dayId: 1, title: "西海岸轻预算海景", summary: "落地后直接住西海岸假日酒店，避开市中心和骑楼折返。", highlights: ["180° 海景房型", "不进市区"], fallback: "持续暴雨直接入住。" },
@@ -1079,11 +1109,40 @@ export const itineraryPlans: ItineraryPlan[] = [
       { dayId: 3, title: "兴隆林野与老味", summary: "不去石梅湾，改走兴隆热带植物园和市场，下午回酒店。", highlights: ["兴隆植物园", "兴隆市场", "不追网红海岸"], fallback: "雷暴全天酒店。" },
       { dayId: 4, title: "直接南下土福湾", summary: "彻底删除新村港，单向去三正月酒店，下午不再增加景点。", highlights: ["无折返", "换住三正月", "早入住"], fallback: "持续暴雨直达酒店。" },
       { dayId: 5, title: "土福湾酒店日", summary: "海景早餐、酒店海岸、空中泳池与午休，不开长途车。", highlights: ["不开车", "海岸与泳池"], fallback: "红旗时不下海。" },
-      { dayId: 6, title: "短距离免税收尾", summary: "从土福湾约 20–30 分钟到免税城，再短接驳入住索菲特。", highlights: ["免税城 4 小时", "全日车程更短"], fallback: "以中免当天营业通知为准。" },
+      { dayId: 6, title: "短距离免税往返", summary: "从土福湾约 20–30 分钟到免税城，结束后回三正月住第三晚。", highlights: ["免税城 4 小时", "不搬行李"], fallback: "以中免当天营业通知为准。" },
       { dayId: 7, title: "保守返程", summary: "比晴天方案更早离店，预留积水、还车和机场提货时间。", highlights: ["不加景点", "航班动态复核"], fallback: "按航司通知调整。" },
     ],
   },
 ];
+
+export function calculatePlanBudget(plan: ItineraryPlan, mode: TravelMode): CalculatedBudget {
+  const travelers = mode === "duo" ? 2 : 1;
+  const items = plan.budget.items.map((item) => {
+    const multiplier = item.sharing === "per-person" ? travelers : 1;
+    return {
+      ...item,
+      calculatedRange: {
+        min: item.range.min * multiplier,
+        max: item.range.max * multiplier,
+      },
+    };
+  });
+  const total = items.reduce<BudgetRange>((sum, item) => ({
+    min: sum.min + item.calculatedRange.min,
+    max: sum.max + item.calculatedRange.max,
+  }), { min: 0, max: 0 });
+
+  return {
+    travelers,
+    total,
+    perPerson: { min: Math.round(total.min / travelers), max: Math.round(total.max / travelers) },
+    overTarget: {
+      min: Math.max(0, total.min - plan.budget.target),
+      max: Math.max(0, total.max - plan.budget.target),
+    },
+    items,
+  };
+}
 
 export function getDayRoute(dayId: number): Place[] {
   return getPlanDayRoute(days, dayId);

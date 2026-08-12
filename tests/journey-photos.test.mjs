@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { buildJourneyPhotoItems } from "../app/journey-photos.ts";
-import { days, places } from "../app/trip-data.ts";
+import { days, itineraryPlans, places } from "../app/trip-data.ts";
 
 test("builds a compact, ordered photo journey from the real itinerary", () => {
   const items = buildJourneyPhotoItems(days, places);
@@ -18,17 +18,25 @@ test("builds a compact, ordered photo journey from the real itinerary", () => {
     assert.match(item.id, /^day-\d+-/);
     assert.match(item.photo.src, /^\/hainan\/.+\.webp$/i);
     assert.match(item.photo.creditUrl, /^https:\/\//);
-    assert.equal(item.place.image?.src, item.photo.src);
+    assert.ok([item.place.image, ...(item.place.gallery ?? [])].some((photo) => photo?.src === item.photo.src));
   }
 });
 
-test("keeps the requested Xiaohongshu hotel photography in the journey rail", () => {
+test("uses high-quality real hotel images and adds secondary views without repeating files", () => {
   const items = buildJourneyPhotoItems(days, places);
   const wanning = items.find((item) => item.place.id === "wanning-hyatt");
-  const sofitel = items.find((item) => item.place.id === "sofitel-sanya");
+  const marriottViews = items.filter((item) => item.place.id === "haikou-marriott");
 
-  assert.equal(wanning?.photo.platform, "小红书");
-  assert.match(wanning?.photo.src ?? "", /grand-hyatt-wanning-xhs\.webp$/);
-  assert.equal(sofitel?.photo.platform, "小红书");
-  assert.match(sofitel?.photo.src ?? "", /sofitel-pool-xhs\.webp$/);
+  assert.equal(wanning?.photo.platform, "官网");
+  assert.match(wanning?.photo.src ?? "", /grand-hyatt-wanning-pool-official\.webp$/);
+  assert.equal(marriottViews.length, 2);
+  assert.ok(items.some((item) => item.photo.platform === "小红书"), "real Xiaohongshu place photography remains in the rail");
+});
+
+test("Plan B also keeps at least ten curated photos including the Wanning pool", () => {
+  const planB = itineraryPlans.find((plan) => plan.id === "B");
+  const items = buildJourneyPhotoItems(planB.schedule, places);
+
+  assert.ok(items.length >= 10);
+  assert.ok(items.some((item) => /wanning-holiday-inn-pool-ctrip\.webp$/.test(item.photo.src)));
 });

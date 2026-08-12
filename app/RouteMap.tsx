@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
-import { getPlanDayRoute, getPlanHotel, places, type Day, type Hotel, type ItineraryPlan, type Place, type TravelLegMode } from "./trip-data";
-import { getDayGuide, hotelBayGuide } from "./trip-details";
+import { getPlanDayRoute, places, type Day, type ItineraryPlan, type Place, type TravelLegMode } from "./trip-data";
+import { getDayGuide } from "./trip-details";
 import { modeLabel } from "./trip-legs";
 import {
   cameraForArrival,
@@ -144,7 +144,7 @@ function JourneyStartGate({ ready, onStart, activePlan }: { ready: boolean; onSt
       <h2 id="journey-start-title">海南七日旅程</h2>
       <div className="journey-start-facts">
         <span><b>7</b>天 6 晚</span>
-        <span><b>4</b>个住宿基地</span>
+        <span><b>3</b>个住宿基地</span>
         <span><b>2</b>晚住万宁</span>
       </div>
       <button type="button" onClick={onStart} disabled={!ready}>
@@ -232,7 +232,6 @@ function PlaceDetailDialog({
   dayId,
   routeContext,
   schedule,
-  hotels,
   arrivalMode,
   onClose,
   onContinue,
@@ -241,15 +240,12 @@ function PlaceDetailDialog({
   dayId: number;
   routeContext: RouteContext;
   schedule: Day[];
-  hotels: Hotel[];
   arrivalMode: boolean;
   onClose: () => void;
   onContinue: () => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const dayGuide = getDayGuide(dayId);
-  const hotel = getPlanHotel(hotels, place.hotelId);
-  const isSanyaBase = hotel?.id === "sofitel-sanya";
   const nextLeg = schedule.find((day) => day.id === dayId)?.legs.find((leg) => leg.fromIndex === routeContext.position - 1);
   const sourceLinks = [
     ...(place.image ? [{ label: `图片来源 · ${place.image.platform} · ${place.image.credit}`, url: place.image.creditUrl }] : []),
@@ -369,22 +365,6 @@ function PlaceDetailDialog({
               {dayGuide.optional && (
                 <div className="optional-stop"><strong>{dayGuide.optional.title}</strong><p>{dayGuide.optional.detail}</p></div>
               )}
-            </section>
-          )}
-
-          {isSanyaBase && (
-            <section className="place-detail-section bay-comparison">
-              <div className="place-detail-heading"><span>04</span><h3>为什么这次住海棠湾</h3></div>
-              <div className="bay-grid">
-                {hotelBayGuide.map((bay) => (
-                  <article key={bay.bay} className={bay.bay === "海棠湾" ? "is-selected" : ""}>
-                    <strong>{bay.bay}{bay.bay === "海棠湾" && <em>本次选择</em>}</strong>
-                    <p>{bay.fit}</p>
-                    <small>{bay.tradeoff}</small>
-                  </article>
-                ))}
-              </div>
-              <p className="hotel-official-note">索菲特官网确认酒店位于海棠湾海滨，设有临海餐饮、泳池与度假设施；连续住两晚，第一天留给酒店，第二天再进城慢逛。</p>
             </section>
           )}
 
@@ -1182,7 +1162,6 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
           dayId={placeDetail.dayId}
           routeContext={detailRouteContext}
           schedule={schedule}
-          hotels={planHotels}
           arrivalMode={placeDetail.arrivalMode && arrivalStageIndex !== null}
           onClose={closePlaceDetail}
           onContinue={() => continueArrivalRef.current()}
@@ -1205,7 +1184,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         <span><i className="dashed" />✈ 航班</span>
         <span><i className="walk" />🚶 步行</span>
         <span><i className="photo" />实景图</span>
-        <span><i className="change" />Day 2 / 4 / 6 换宿</span>
+        <span><i className="change" />Day 2 / 4 换宿</span>
       </div>
 
       {!routeIsReady && status !== "error" && <div className="map-status" role="status">正在连接 Plan {plan.id} 完整路线…</div>}

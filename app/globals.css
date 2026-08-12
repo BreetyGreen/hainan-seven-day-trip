@@ -196,6 +196,22 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .plan-highlights li { background: var(--plan-soft); border: 1px solid color-mix(in srgb,var(--plan-accent) 28%,transparent); border-radius: 999px; color: var(--plan-deep); font-size: 8px; font-weight: 750; padding: 5px 8px; }
 .journey-card h1 { font-size: 30px; letter-spacing: -.035em; line-height: 1.06; margin: 0 0 11px; text-wrap: balance; }
 .journey-lead { color: var(--muted); font-size: 12px; line-height: 1.65; margin: 0; }
+.budget-summary { background: color-mix(in srgb,var(--plan-soft) 72%,white); border-bottom: 1px solid color-mix(in srgb,var(--plan-accent) 28%,transparent); border-top: 1px solid color-mix(in srgb,var(--plan-accent) 28%,transparent); margin-top: 14px; padding: 11px 2px 10px; }
+.budget-summary-head { align-items: end; display: flex; gap: 12px; justify-content: space-between; }
+.budget-summary-head > div { display: grid; gap: 3px; }
+.budget-summary-head span { color: var(--plan-deep); font-size: 8px; font-weight: 850; }
+.budget-summary-head strong { font-size: 17px; letter-spacing: -.025em; line-height: 1.1; }
+.budget-summary-head > p { color: var(--muted); font-size: 8px; margin: 0; text-align: right; }
+.budget-target { color: #74420b; font-size: 8px; line-height: 1.5; margin: 7px 0 0; }
+.budget-summary details { margin-top: 7px; }
+.budget-summary summary { color: var(--plan-deep); cursor: pointer; font-size: 8px; font-weight: 800; }
+.budget-summary dl { border-top: 1px solid var(--line); margin: 8px 0 0; }
+.budget-summary dl > div { align-items: center; border-bottom: 1px solid var(--line); display: grid; gap: 10px; grid-template-columns: 1fr auto; padding: 7px 0; }
+.budget-summary dt b, .budget-summary dt small { display: block; }
+.budget-summary dt b { font-size: 9px; }
+.budget-summary dt small { color: var(--muted); font-size: 7px; line-height: 1.45; margin-top: 2px; }
+.budget-summary dd { font-size: 8px; font-weight: 850; margin: 0; white-space: nowrap; }
+.budget-summary details > p { color: var(--muted); font-size: 7px; line-height: 1.5; margin: 8px 0 0; }
 .base-flow { border-top: 1px solid var(--line); display: grid; gap: 10px; margin-top: 16px; padding-top: 12px; }
 .base-flow-group { display: contents; }
 .hotel-story { background: white; border: 1px solid var(--line); border-radius: 12px; display: grid; grid-template-columns: 112px 1fr; min-height: 142px; overflow: hidden; transition: border-color .2s ease, background .2s ease; }
@@ -522,6 +538,8 @@ canvas.leaflet-zoom-animated { will-change: transform; }
   .hotel-change-bridge { flex: 0 0 132px; grid-template-columns: 1fr; place-content: center; text-align: center; }
   .hotel-change-bridge > span { grid-row: auto; }
   .mode-guidance, .travel-basics, .research-link, .verified-note { display: none; }
+  .budget-summary { margin-top: 10px; padding-block: 9px; }
+  .budget-summary-head strong { font-size: 15px; }
   .click-hint { margin-top: 9px; }
   .day-facts { grid-template-columns: repeat(3,1fr); margin: 10px 0; }
   .day-facts div:last-child { grid-column: auto; }

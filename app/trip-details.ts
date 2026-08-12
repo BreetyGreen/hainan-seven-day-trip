@@ -38,13 +38,6 @@ export type DayGuide = {
   optional?: { title: string; detail: string; sourceUrl: string };
 };
 
-export type HotelBayGuide = {
-  bay: "三亚湾" | "大东海" | "亚龙湾" | "海棠湾";
-  fit: string;
-  tradeoff: string;
-  examples: string[];
-};
-
 const sanyaMemo = "https://xhslink.cn/o/6QybMpO8y3I";
 const sanyaFood = "https://xhslink.cn/o/2HxyZx28FWw";
 const sanyaHotels = "https://xhslink.cn/o/6gqXrkMD9Zk";
@@ -152,24 +145,17 @@ export const dayGuides: DayGuide[] = [
   },
   {
     dayId: 6,
-    headline: "免税采购集中到一段，结束后短接驳入住",
-    rhythm: ["清水湾慢退房", "45–60 分钟到免税城", "14:30–18:30 按清单采购", "10–15 分钟到索菲特"],
-    foodStops: [mapFood("免税城内简餐或索菲特晚饭", "三亚海棠湾", "采购中段或入住后", ["粉面或简餐", "清淡蔬菜", "补水"], "不为了高赞餐厅横穿市区；把体力留给采购、入住和次日返程。", "三亚国际免税城 餐饮", "免税城营业、品牌库存和机场提货时限以出发周中免 App 为准。", "hotel-plan")],
+    headline: "免税采购集中到一段，结束后回同一家陵水酒店",
+    rhythm: ["陵水酒店慢早餐", "20–60 分钟到免税城", "14:30–18:30 按清单采购", "原路返回陵水基地"],
+    foodStops: [mapFood("免税城内简餐或回酒店晚饭", "海棠湾免税城／陵水酒店", "采购中段或返程后", ["粉面或简餐", "清淡蔬菜", "补水"], "不为了高赞餐厅横穿市区，也不再增加一次换宿；采购后直接回熟悉的房间。", "三亚国际免税城 餐饮", "免税城营业、品牌库存和机场提货时限以出发周中免 App 为准。", "hotel-plan")],
   },
   {
     dayId: 7,
     headline: "返程日只做早餐、还车和登机",
     rhythm: ["酒店早餐", "退房装车", "加油还车", "机场托运"],
-    foodStops: [mapFood("酒店早餐与机场简餐", "海棠湾至凤凰机场", "按航班时间", ["酒店早餐", "随身水和小点心"], "返程不为餐厅增加误机风险。", "三亚凤凰机场餐饮", "返程餐只服务于准时到机场，不安排额外高赞店。", "hotel-plan")],
+    foodStops: [mapFood("酒店早餐与机场简餐", "陵水酒店至凤凰机场", "按航班时间", ["酒店早餐", "随身水和小点心"], "返程不为餐厅增加误机风险。", "三亚凤凰机场餐饮", "返程餐只服务于准时到机场，不安排额外高赞店。", "hotel-plan")],
     optional: { title: "顺路才买的饮品与糕点", detail: "用户收藏的五号手作、老盐季和斑斓故事只在导航显示顺路且时间充足时考虑。", sourceUrl: sanyaMemo },
   },
-];
-
-export const hotelBayGuide: HotelBayGuide[] = [
-  { bay: "三亚湾", fit: "机场和城市餐饮便利。", tradeoff: "从陵水南下后还要继续穿城，不符合这版慢节奏。", examples: ["海韵度假", "皇冠假日"] },
-  { bay: "大东海", fit: "靠近小东海、鹿回头和城市生活。", tradeoff: "公共海滩和市区客流更多，纯度假感弱。", examples: ["半山半岛洲际", "山海天JW万豪"] },
-  { bay: "亚龙湾", fit: "成熟海湾和沙滩体验完整。", tradeoff: "与陵水衔接不如海棠湾顺，酒店房价需单独比较。", examples: ["亚龙湾希尔顿", "美高梅"] },
-  { bay: "海棠湾", fit: "从陵水顺路、靠近免税城，适合最后一晚自驾收尾。", tradeoff: "去三亚市区较远，所以这版不再横穿市区追景点。", examples: ["理文索菲特", "开维费尔蒙", "阳光壹"] },
 ];
 
 export function getDayGuide(dayId: number) {

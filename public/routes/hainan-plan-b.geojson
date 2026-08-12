@@ -43,13 +43,18 @@
     },
     {
       "type": "Feature",
-      "properties": { "dayId": 6, "legId": "B-D6-drive", "mode": "drive", "label": "土福湾 → 三亚国际免税城 → 海棠湾索菲特", "distanceKm": 27, "durationHours": 0.7 },
-      "geometry": { "type": "LineString", "coordinates": [[109.8064448,18.4031364],[109.78,18.38],[109.7487,18.3548],[109.73,18.343],[109.7137,18.3329]] }
+      "properties": { "dayId": 6, "legId": "B-D6-drive", "mode": "drive", "label": "土福湾 → 三亚国际免税城", "distanceKm": 22, "durationHours": 0.45 },
+      "geometry": { "type": "LineString", "coordinates": [[109.8064448,18.4031364],[109.78,18.38],[109.7487,18.3548]] }
     },
     {
       "type": "Feature",
-      "properties": { "dayId": 7, "legId": "B-D7-drive", "mode": "drive", "label": "海棠湾索菲特 → 三亚凤凰机场", "distanceKm": 40, "durationHours": 0.9 },
-      "geometry": { "type": "LineString", "coordinates": [[109.7137,18.3329],[109.65,18.319],[109.58,18.32],[109.51,18.297],[109.452,18.302],[109.4125351,18.3051519]] }
+      "properties": { "dayId": 6, "legId": "B-D6-drive-return", "mode": "drive", "label": "三亚国际免税城 → 土福湾", "distanceKm": 22, "durationHours": 0.45 },
+      "geometry": { "type": "LineString", "coordinates": [[109.7487,18.3548],[109.78,18.38],[109.8064448,18.4031364]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 7, "legId": "B-D7-drive", "mode": "drive", "label": "土福湾 → 三亚凤凰机场", "distanceKm": 48, "durationHours": 0.9 },
+      "geometry": { "type": "LineString", "coordinates": [[109.8064448,18.4031364],[109.74,18.37],[109.66,18.33],[109.58,18.32],[109.51,18.297],[109.452,18.302],[109.4125351,18.3051519]] }
     },
     {
       "type": "Feature",

@@ -117,7 +117,7 @@ test("pauses only at meaningful arrivals and the first visit to each hotel base"
   assert.equal(requiresManualArrival(byId("xincun-port"), new Set()), true);
   assert.equal(requiresManualArrival(byId("wanning-hyatt"), new Set()), true);
   assert.equal(requiresManualArrival(byId("wanning-hyatt"), new Set(["wanning-hyatt"])), false);
-  assert.equal(requiresManualArrival(byId("sofitel-sanya"), new Set(["wanning-hyatt"])), true);
+  assert.equal(requiresManualArrival(byId("clearwater-indigo"), new Set(["wanning-hyatt"])), true);
 });
 
 test("builds exact previous-current-next context for a middle arrival", () => {
@@ -128,8 +128,8 @@ test("builds exact previous-current-next context for a middle arrival", () => {
   assert.equal(context.total, 3);
   assert.equal(context.previous.place.id, "clearwater-indigo");
   assert.equal(context.current.place.id, "cdf-sanya");
-  assert.equal(context.next.place.id, "sofitel-sanya");
-  assert.deepEqual(context.remaining.map((stop) => stop.place.id), ["sofitel-sanya"]);
+  assert.equal(context.next.place.id, "clearwater-indigo");
+  assert.deepEqual(context.remaining.map((stop) => stop.place.id), ["clearwater-indigo"]);
   assert.equal(context.nextMode, "drive");
 });
 
