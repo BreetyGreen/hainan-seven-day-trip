@@ -17,17 +17,44 @@ test("curates a city-spanning social video library with official Douyin embeds",
 });
 
 test("only mounts the official player after a deliberate click and keeps Xiaohongshu honest", async () => {
-  const [component, routeMap] = await Promise.all([
+  const [component, viewer, routeMap] = await Promise.all([
     readFile(new URL("../app/SocialVideoGallery.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/SocialVideoViewer.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),
   ]);
 
   assert.match(component, /视频旅程库/);
   assert.match(component, /useState<SocialVideo \| null>\(null\)/);
-  assert.match(component, /activeVideo\?\.embedUrl/);
-  assert.match(component, /loading="lazy"/);
-  assert.match(component, /allowFullScreen/);
-  assert.match(component, /小红书暂不提供稳定的第三方网页播放器/);
-  assert.match(component, /去小红书播放/);
+  assert.match(viewer, /video\.embedUrl/);
+  assert.match(viewer, /loading="lazy"/);
+  assert.match(viewer, /allowFullScreen/);
+  assert.match(viewer, /小红书暂不提供稳定的第三方网页播放器/);
+  assert.match(viewer, /去小红书播放/);
   assert.match(routeMap, /SocialVideoGallery/);
+});
+
+test("opens social videos in an independent accessible viewer", async () => {
+  const [gallery, viewer] = await Promise.all([
+    readFile(new URL("../app/SocialVideoGallery.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/SocialVideoViewer.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(gallery, /SocialVideoViewer/);
+  assert.match(viewer, /createPortal/);
+  assert.match(viewer, /role="dialog"/);
+  assert.match(viewer, /aria-modal="true"/);
+  assert.match(viewer, /document\.body\.style\.overflow\s*=\s*"hidden"/);
+  assert.match(viewer, /event\.key === "Escape"/);
+  assert.match(viewer, /aria-label="上一个视频"/);
+  assert.match(viewer, /aria-label="下一个视频"/);
+});
+
+test("gives the social video viewer a full-screen touch-friendly mobile layout", async () => {
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(styles, /\.social-video-viewer-backdrop\s*\{[^}]*position:\s*fixed[^}]*inset:\s*0/s);
+  assert.match(styles, /@media\s*\(max-width:\s*820px\)[\s\S]*\.social-video-viewer\s*\{[^}]*height:\s*100dvh/s);
+  assert.match(styles, /safe-area-inset-top/);
+  assert.match(styles, /safe-area-inset-bottom/);
+  assert.match(styles, /\.social-video-viewer-actions[^}]*min-height:\s*44px/s);
 });

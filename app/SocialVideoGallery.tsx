@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { SocialVideoViewer } from "./SocialVideoViewer";
 import { socialVideosForCity, type SocialVideo, type SocialVideoPlatform } from "./social-videos";
 import { withBasePath } from "./site-paths";
 
@@ -9,6 +10,7 @@ export function SocialVideoGallery({ city }: { city: string }) {
   const [platform, setPlatform] = useState<"全部" | SocialVideoPlatform>("全部");
   const [activeVideo, setActiveVideo] = useState<SocialVideo | null>(null);
   const visibleVideos = platform === "全部" ? videos : videos.filter((video) => video.platform === platform);
+  const closeViewer = useCallback(() => setActiveVideo(null), []);
 
   if (videos.length === 0) return null;
 
@@ -27,33 +29,7 @@ export function SocialVideoGallery({ city }: { city: string }) {
         ))}
       </nav>
 
-      {activeVideo && (
-        <div className={`social-video-player is-${activeVideo.orientation}`}>
-          <button type="button" className="social-video-close" onClick={() => setActiveVideo(null)} aria-label="关闭视频播放器">×</button>
-          {activeVideo?.embedUrl ? (
-            <iframe
-              key={activeVideo.videoId}
-              src={activeVideo.embedUrl}
-              title={`${activeVideo.platform}视频：${activeVideo.title}`}
-              loading="lazy"
-              referrerPolicy="unsafe-url"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            />
-          ) : (
-            <div className="social-video-xhs-fallback">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={withBasePath(activeVideo.poster)} alt={activeVideo.title} />
-              <div>
-                <strong>{activeVideo.title}</strong>
-                <p>小红书暂不提供稳定的第三方网页播放器，为保证作者来源与播放完整性，请到原笔记观看动态内容。</p>
-                <a href={activeVideo.sourceUrl} target="_blank" rel="noreferrer">去小红书播放 ↗</a>
-              </div>
-            </div>
-          )}
-          <footer><span>{activeVideo.platform} · {activeVideo.creator}</span><a href={activeVideo.sourceUrl} target="_blank" rel="noreferrer">打开原视频 ↗</a></footer>
-        </div>
-      )}
+      {activeVideo && <SocialVideoViewer video={activeVideo} videos={visibleVideos} onClose={closeViewer} onSelect={setActiveVideo} />}
 
       <div className="social-video-grid">
         {visibleVideos.map((video) => (
