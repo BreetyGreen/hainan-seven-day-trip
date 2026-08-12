@@ -379,8 +379,25 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .place-detail-close { align-items: center; background: rgba(7,27,38,.9); border: 1px solid rgba(255,255,255,.22); border-radius: 50%; color: white; cursor: pointer; display: flex; font-size: 22px; height: 36px; justify-content: center; line-height: 1; padding: 0 0 2px; position: absolute; right: 14px; top: 14px; transition: background .18s ease, transform .22s cubic-bezier(.2,.8,.2,1); width: 36px; z-index: 3; }
 .place-detail-close:hover { background: var(--coral); transform: rotate(5deg) scale(1.06); }
 .place-detail-hero { background: var(--navy); height: 220px; overflow: hidden; position: relative; }
+.place-detail-hero.has-gallery { height: 292px; }
 .place-detail-hero::after { background: linear-gradient(180deg,rgba(7,27,38,.03) 30%,rgba(7,27,38,.76)); content: ""; inset: 0; position: absolute; }
+.place-detail-hero.has-gallery::after { bottom: 60px; }
 .place-detail-hero img { height: 100%; object-fit: cover; width: 100%; }
+.place-photo-gallery { height: 100%; outline: none; position: relative; }
+.place-photo-stage { height: 100%; overflow: hidden; position: relative; }
+.place-photo-gallery.is-multiple .place-photo-stage { height: calc(100% - 60px); }
+.place-photo-stage > img { animation: place-photo-enter .34s cubic-bezier(.2,.8,.2,1); display: block; }
+.place-photo-nav { align-items: center; backdrop-filter: blur(10px); background: rgba(7,27,38,.58); border: 1px solid rgba(255,255,255,.42); border-radius: 50%; color: white; cursor: pointer; display: flex; font-size: 15px; height: 34px; justify-content: center; padding: 0; position: absolute; top: 50%; transform: translateY(-50%); transition: background .18s ease, transform .2s ease; width: 34px; z-index: 4; }
+.place-photo-nav:hover { background: var(--coral); transform: translateY(-50%) scale(1.06); }
+.place-photo-nav.is-previous { left: 14px; }
+.place-photo-nav.is-next { right: 14px; }
+.place-photo-count { backdrop-filter: blur(10px); background: rgba(7,27,38,.62); border: 1px solid rgba(255,255,255,.22); border-radius: 999px; color: white; font-size: 8px; font-weight: 850; left: 14px; padding: 5px 9px; position: absolute; top: 14px; z-index: 4; }
+.place-photo-thumbnails { align-items: center; background: #10262f; display: flex; gap: 7px; height: 60px; overflow-x: auto; padding: 7px 14px; scrollbar-width: none; }
+.place-photo-thumbnails::-webkit-scrollbar { display: none; }
+.place-photo-thumbnails button { background: transparent; border: 2px solid transparent; border-radius: 8px; cursor: pointer; flex: 0 0 64px; height: 46px; opacity: .58; overflow: hidden; padding: 0; transition: border-color .18s ease, opacity .18s ease, transform .18s ease; }
+.place-photo-thumbnails button:hover { opacity: .86; transform: translateY(-1px); }
+.place-photo-thumbnails button.is-active { border-color: var(--coral); opacity: 1; }
+.place-photo-thumbnails img { display: block; height: 100%; object-fit: cover; width: 100%; }
 .place-detail-hero.is-illustrated { background: radial-gradient(circle at 72% 18%,rgba(100,208,202,.48),transparent 29%), linear-gradient(135deg,#0c2733,#245b63); }
 .place-detail-illustration { align-items: center; display: flex; inset: 0; justify-content: center; position: absolute; }
 .place-detail-illustration span { align-items: center; background: rgba(255,254,250,.94); border-radius: 50%; color: var(--navy); display: flex; font-family: Georgia,serif; font-size: 36px; height: 88px; justify-content: center; position: relative; width: 88px; z-index: 1; }
@@ -390,7 +407,10 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .place-detail-hero-caption { bottom: 16px; color: white; display: flex; flex-direction: column; gap: 4px; left: 20px; position: absolute; z-index: 2; }
 .place-detail-hero-caption span { font-size: 9px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
 .place-detail-hero-caption small { color: rgba(255,255,255,.75); font-size: 8px; }
+.place-detail-hero-caption a { color: rgba(255,255,255,.78); font-size: 8px; text-decoration: none; }
+.place-detail-hero-caption a:hover { color: white; text-decoration: underline; }
 .place-detail-content { height: calc(100% - 220px); overflow-y: auto; padding: 22px 24px 28px; scrollbar-color: rgba(16,35,43,.24) transparent; scrollbar-width: thin; }
+.place-detail-panel:has(.place-detail-hero.has-gallery) .place-detail-content { height: calc(100% - 292px); }
 .place-detail-route-context { background: linear-gradient(135deg,#edf6f3,#f6f1e8); border: 1px solid rgba(16,35,43,.08); border-radius: 16px; margin: 0 0 20px; padding: 14px; }
 .place-detail-route-heading { align-items: baseline; display: flex; justify-content: space-between; margin-bottom: 12px; }
 .place-detail-route-heading span { color: var(--coral); font-size: 8px; font-weight: 900; letter-spacing: .08em; }
@@ -477,6 +497,7 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 
 @keyframes detail-backdrop-enter { from { background: rgba(7,27,38,0); } }
 @keyframes detail-panel-enter { from { opacity: 0; transform: translateX(32px) scale(.98); } to { opacity: 1; transform: translateX(0) scale(1); } }
+@keyframes place-photo-enter { from { opacity: .45; transform: scale(1.025); } to { opacity: 1; transform: scale(1); } }
 
 @keyframes stop-card-enter { from { opacity: 0; transform: translateY(-10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes travel-flow { from { transform: translateX(0); } to { transform: translateX(-180px); } }
@@ -575,6 +596,12 @@ canvas.leaflet-zoom-animated { will-change: transform; }
   .place-detail-backdrop { padding: 8px; }
   .place-detail-panel { border-radius: 18px; width: 100%; }
   .place-detail-hero { height: 180px; }
+  .place-detail-hero.has-gallery { height: 240px; }
+  .place-photo-gallery.is-multiple .place-photo-stage { height: calc(100% - 52px); }
+  .place-photo-thumbnails { height: 52px; padding: 5px 10px; }
+  .place-photo-thumbnails button { flex-basis: 56px; height: 40px; }
+  .place-detail-hero.has-gallery::after { bottom: 52px; }
+  .place-detail-panel:has(.place-detail-hero.has-gallery) .place-detail-content { height: calc(100% - 240px); }
   .place-detail-content { height: calc(100% - 180px); padding: 18px 18px 24px; }
   .place-detail-continue-wrap { bottom: -24px; margin: 18px -18px -24px; padding: 12px 18px 14px; }
   .place-detail-content > h2 { font-size: 24px; }

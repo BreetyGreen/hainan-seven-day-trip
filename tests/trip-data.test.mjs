@@ -184,10 +184,29 @@ test("ships local verified images with attribution", async () => {
 
   for (const place of imageStops) {
     assert.match(place.image.src, /^\/hainan\/.+\.webp$/i);
-    assert.ok(["小红书", "官网", "携程"].includes(place.image.platform));
+    assert.ok(["小红书", "官网", "携程", "媒体"].includes(place.image.platform));
     assert.match(place.image.creditUrl, /^https:\/\//);
     assert.ok(place.image.credit.length > 0);
     await access(new URL(`../public${place.image.src}`, import.meta.url));
+  }
+});
+
+test("signature places tell a sourced story with at least three distinct photos", async () => {
+  const signaturePlaceIds = ["shimei-bay", "xincun-port", "xinglong-garden"];
+
+  for (const placeId of signaturePlaceIds) {
+    const place = places.find((item) => item.id === placeId);
+    assert.ok(place?.image, `${placeId} needs a primary image`);
+    const photos = [place.image, ...(place.gallery ?? [])];
+    assert.ok(photos.length >= 3, `${placeId} needs at least three photos`);
+    assert.equal(new Set(photos.map((photo) => photo.src)).size, photos.length, `${placeId} photos must be unique`);
+
+    for (const photo of photos) {
+      assert.match(photo.src, /^\/hainan\/.+\.webp$/i);
+      assert.match(photo.creditUrl, /^https:\/\//);
+      assert.ok(photo.noteTitle.length > 0);
+      await access(new URL(`../public${photo.src}`, import.meta.url));
+    }
   }
 });
 
@@ -262,6 +281,24 @@ test("ships separate flight and drive legs so transport can be mapped honestly",
     const previous = routeData.features[index - 1].geometry.coordinates.at(-1);
     const current = routeData.features[index].geometry.coordinates[0];
     assert.deepEqual(current, previous, `Leg ${index} and leg ${index + 1} must connect`);
+  }
+});
+
+test("every self-drive leg follows cached OSRM road geometry", async () => {
+  for (const plan of itineraryPlans) {
+    const raw = await readFile(new URL(`../public${plan.routePath}`, import.meta.url), "utf8");
+    const routeData = JSON.parse(raw);
+    const driveFeatures = routeData.features.filter((feature) => feature.properties.mode === "drive");
+
+    assert.ok(driveFeatures.length > 0, `${plan.id} needs self-drive features`);
+    for (const feature of driveFeatures) {
+      assert.match(feature.properties.source ?? "", /OSRM.*OpenStreetMap/i, `${feature.properties.legId} needs a route source`);
+      assert.ok(feature.geometry.coordinates.length >= 20, `${feature.properties.legId} needs road-level geometry`);
+      assert.ok(feature.properties.distanceKm > 0);
+      assert.ok(feature.properties.durationMinutes > 0);
+      assert.ok(feature.properties.routeLegs.length >= 1);
+      assert.ok(feature.properties.routeLegs.every((leg) => leg.distanceKm > 0 && leg.durationMinutes > 0));
+    }
   }
 });
 

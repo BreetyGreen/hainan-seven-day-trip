@@ -16,6 +16,7 @@ import {
 import { buildJourneyPhotoItems, type JourneyPhotoItem } from "./journey-photos";
 import { sampleRouteAtProgress } from "./trip-motion";
 import { withBasePath } from "./site-paths";
+import { PlacePhotoGallery } from "./PlacePhotoGallery";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -36,7 +37,10 @@ type RouteFeature = {
     mode: PlaybackMode;
     label: string;
     distanceKm: number | null;
+    durationMinutes?: number | null;
     durationHours: number | null;
+    routeLegs?: Array<{ index: number; distanceKm: number; durationMinutes: number }>;
+    source?: string;
   };
   geometry: { type: "LineString"; coordinates: number[][] };
 };
@@ -249,6 +253,7 @@ function PlaceDetailDialog({
   const nextLeg = schedule.find((day) => day.id === dayId)?.legs.find((leg) => leg.fromIndex === routeContext.position - 1);
   const sourceLinks = [
     ...(place.image ? [{ label: `图片来源 · ${place.image.platform} · ${place.image.credit}`, url: place.image.creditUrl }] : []),
+    ...(place.gallery?.map((photo) => ({ label: `图片来源 · ${photo.platform} · ${photo.credit}`, url: photo.creditUrl })) ?? []),
     { label: `${place.activity.source.platform} · ${place.activity.source.title}`, url: place.activity.source.url },
     { label: "地点核验", url: place.sourceUrl },
     ...(dayGuide?.foodStops.map((stop) => ({ label: stop.sourceLabel, url: stop.sourceUrl })) ?? []),
@@ -270,20 +275,22 @@ function PlaceDetailDialog({
     }}>
       <aside className="place-detail-panel" role="dialog" aria-modal="true" aria-labelledby="place-detail-title">
         <button ref={closeButtonRef} className="place-detail-close" type="button" onClick={onClose} aria-label="关闭地点详情">×</button>
-        <div className={`place-detail-hero ${place.image ? "has-image" : "is-illustrated"}`}>
+        <div className={`place-detail-hero ${place.image ? "has-image" : "is-illustrated"} ${(place.gallery?.length ?? 0) > 0 ? "has-gallery" : ""}`}>
           {place.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={withBasePath(place.image.src)} alt={place.image.alt} />
+            <PlacePhotoGallery
+              placeName={place.name}
+              photos={[place.image, ...(place.gallery ?? [])]}
+              dayId={dayId}
+              city={place.city}
+              category={categoryLabel[place.category]}
+            />
           ) : (
             <div className="place-detail-illustration" aria-hidden="true">
               <span>{place.category === "transport" ? "✈" : place.category === "coast" ? "≈" : place.category === "food" ? "♨" : "✦"}</span>
               <i /><i /><i />
             </div>
           )}
-          <div className="place-detail-hero-caption">
-            <span>DAY {dayId} · {place.city} · {categoryLabel[place.category]}</span>
-            {place.image && <small>实景图 · {place.image.platform} · {place.image.credit}</small>}
-          </div>
+          {!place.image && <div className="place-detail-hero-caption"><span>DAY {dayId} · {place.city} · {categoryLabel[place.category]}</span></div>}
         </div>
 
         <div className="place-detail-content">
@@ -566,7 +573,6 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         travelerMarkerRef.current = travelerMarker;
         routeLayerRef.current = L.layerGroup().addTo(map);
         markerLayerRef.current = L.layerGroup().addTo(map);
-        setStatus("loading");
       } catch {
         if (!cancelled) setStatus("error");
       }
@@ -725,13 +731,20 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
     if (selectedDay !== null) {
       const selectedPlaybackDay = playbackPlan.find((day) => day.dayId === selectedDay);
       const dayLegs = schedule.find((day) => day.id === selectedDay)?.legs ?? [];
+      const driveMetrics = routeData.features
+        .filter((feature) => feature.properties.dayId === selectedDay && feature.properties.mode === "drive")
+        .flatMap((feature) => feature.properties.routeLegs ?? []);
+      let driveMetricIndex = 0;
       selectedPlaybackDay?.segments.forEach((segment, index) => {
         const leg = dayLegs[index];
         if (!leg || leg.mode === "optional" || segment.coordinates.length === 0) return;
+        const routeMetric = leg.mode === "drive" ? driveMetrics[driveMetricIndex++] : undefined;
+        const durationLabel = routeMetric ? `导航约 ${routeMetric.durationMinutes} 分钟` : leg.durationLabel;
+        const distanceLabel = routeMetric ? `${routeMetric.distanceKm.toFixed(1)} km` : (leg.distanceLabel ?? "");
         const [lng, lat] = segment.coordinates[Math.floor(segment.coordinates.length / 2)];
         const legIcon = L.divIcon({
           className: "route-leg-duration-wrap",
-          html: `<span class="route-leg-duration-marker"><b>${routeModeGlyph(leg.mode)}</b><span>${escapeHtml(leg.durationLabel)}</span><small>${escapeHtml(leg.distanceLabel ?? "")}</small></span>`,
+          html: `<span class="route-leg-duration-marker"><b>${routeModeGlyph(leg.mode)}</b><span>${escapeHtml(durationLabel)}</span><small>${escapeHtml(distanceLabel)}</small></span>`,
           iconAnchor: [42, 22],
           iconSize: [84, 44],
         });
@@ -1138,7 +1151,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
               : stagePlace.why}</p>
             <div className="playback-stop-facts">
               <span><b>{visibleStage.type === "travel" ? "交通时间" : "建议时间"}</b>{visibleStage.type === "travel" ? visibleLeg?.durationLabel ?? modeLabel(visibleStage.segment.mode) : stagePlace.activity.time}</span>
-              <span><b>{visibleStage.type === "travel" ? "方式 · 距离" : "停留"}</b>{visibleStage.type === "travel" ? `${modeLabel(visibleStage.segment.mode)}${visibleLeg ? ` · ${visibleLeg.distanceLabel}` : ""}` : stagePlace.activity.duration}</span>
+              <span><b>{visibleStage.type === "travel" ? visibleLeg?.distanceLabel ? "方式 · 距离" : "交通方式" : "停留"}</b>{visibleStage.type === "travel" ? `${modeLabel(visibleStage.segment.mode)}${visibleLeg?.distanceLabel ? ` · ${visibleLeg.distanceLabel}` : ""}` : stagePlace.activity.duration}</span>
             </div>
             <button className="playback-detail-button" type="button" onClick={() => {
               const stopIndex = visibleStage.type === "stop" ? visibleStage.stopIndex : visibleStage.segmentIndex + 1;
@@ -1158,6 +1171,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
 
       {placeDetail && detailRouteContext && (
         <PlaceDetailDialog
+          key={`${placeDetail.place.id}-${placeDetail.dayId}-${placeDetail.stopIndex}`}
           place={placeDetail.place}
           dayId={placeDetail.dayId}
           routeContext={detailRouteContext}

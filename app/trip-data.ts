@@ -25,7 +25,7 @@ export type Source = {
 export type PhotoSource = {
   src: string;
   alt: string;
-  platform: "小红书" | "官网" | "携程";
+  platform: "小红书" | "官网" | "携程" | "媒体";
   credit: string;
   creditUrl: string;
   noteTitle: string;
@@ -178,11 +178,19 @@ const ctripPhoto = (src: string, alt: string, credit: string, creditUrl: string,
   noteTitle,
 });
 
+const mediaPhoto = (src: string, alt: string, credit: string, creditUrl: string, noteTitle: string): PhotoSource => ({
+  src: withBasePath(src),
+  alt,
+  platform: "媒体",
+  credit,
+  creditUrl,
+  noteTitle,
+});
+
 const xhsQilou = "https://www.xiaohongshu.com/search_result/6a689911000000000503abca";
 const xhsXincun = "https://www.xiaohongshu.com/search_result/6a71b3a50000000021020fc8";
 const xhsLuhuitou = "https://www.xiaohongshu.com/search_result/690489c200000000030373f2";
 const xhsSangem = "https://www.xiaohongshu.com/search_result/68a893f3000000001c032dad";
-const xhsWanningRoute = "https://www.xiaohongshu.com/search_result/6a2b733d000000000802544e";
 const xhsWanningReality = "https://www.xiaohongshu.com/search_result/69abee14000000000e03ce43";
 const xhsWanningHyatt = "https://www.xiaohongshu.com/search_result/6a33dac0000000002100add2";
 const xhsWanningFood = "https://www.xiaohongshu.com/search_result?keyword=%E4%B8%87%E5%AE%81%E7%BA%AF%E5%9C%9F%E8%91%97%E5%BF%85%E5%90%8318%E5%AE%B6%E8%80%81%E5%BA%97";
@@ -198,6 +206,13 @@ const xhsHaikouWestCoast = "https://www.xiaohongshu.com/search_result?keyword=%E
 const xhsWanningHoliday = "https://www.xiaohongshu.com/search_result?keyword=%E4%B8%87%E5%AE%81%E7%A5%9E%E5%B7%9E%E5%8D%8A%E5%B2%9B%E5%81%87%E6%97%A5%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97";
 const ctripWanningHoliday = "https://hotels.ctrip.com/hotels/132011313.html";
 const xhsXinglongGarden = "https://www.xiaohongshu.com/search_result?keyword=%E5%85%B4%E9%9A%86%E7%83%AD%E5%B8%A6%E6%A4%8D%E7%89%A9%E5%9B%AD";
+const shimeiBayOfficial = "https://www.mee.gov.cn/home/ztbd/2021/mlhwyxalzjhd/algs/hns2/202109/t20210906_900100.shtml";
+const shimeiBayCtrip = "https://jp.trip.com/moments/theme/poi-shimei-bay-75965-itinerary-999195/";
+const xinglongMct = "https://zhuanti.mct.gov.cn/csxz2022/hainan/detail/1528.html";
+const xinglongCtrip = "https://www.trip.com/travel-guide/attraction/wanning/xinglong-tropical-botanical-garden-75967/";
+const xincunThePaper = "https://m.thepaper.cn/newsDetail_forward_21141726?commTag=true";
+const xincunCgtn = "https://arabic.cgtn.com/news/2023-11-20/1726480234795307009/";
+const xincunOfficial = "https://www.hainan.gov.cn/hainan/c100641g/202310/639e14e4e6ef4ae997a117ba042a0d73.shtml?ddtab=true";
 
 export const routeResearchSource = "https://www.visitsanya.com/zh";
 
@@ -394,16 +409,20 @@ export const places: Place[] = [
     city: "万宁",
     category: "coast",
     coordinates: { lat: 18.661922, lng: 110.27209 },
-    why: "比日月湾更适合慢走，把海岸、午后休息和回酒店连成一条短线。",
+    why: "六公里海湾、青皮林与九里文化海湾连在一起，比追逐网红咖啡店更适合安静慢走。",
     activity: {
       time: "09:30–11:30",
       duration: "约 2 小时",
-      steps: ["从公共入口进入海岸", "沿安全水线慢走 30–40 分钟", "高温前离开去兴隆吃午饭"],
-      practical: ["不借私人酒店通道", "红旗或大浪时不下水"],
+      steps: ["09:30 从九里文化海湾公共入口开始", "沿青皮林与海岸步道慢走 40–60 分钟", "在海边书屋停留约 30 分钟", "11:30 前离开去兴隆吃午饭"],
+      practical: ["不借私人酒店通道，也不把车驶入沙滩", "红旗或大浪时只走林荫与书屋，不下水"],
       weather: "雷雨时删除此站，直接执行 Plan B。",
-      source: { platform: "小红书", author: "逍遥", title: "万宁3天2晚旅行攻略｜头一次来这样玩不纠结", url: xhsWanningRoute },
+      source: { platform: "官网", author: "生态环境部", title: "石梅湾生态修复与九里文化海湾", url: shimeiBayOfficial },
     },
-    image: xhsPhoto("/hainan/shimei-bay-xhs.webp", "万宁石梅湾安静海岸与椰林", "逍遥", xhsWanningRoute, "万宁3天2晚旅行攻略｜头一次来这样玩不纠结"),
+    image: officialPhoto("/hainan/shimei-bay-official.webp", "万宁石梅湾日落下的青皮林与海岸草地", "生态环境部", shimeiBayOfficial, "石梅湾生态修复后的海岸景观"),
+    gallery: [
+      officialPhoto("/hainan/shimei-bay-aerial-official.webp", "万宁石梅湾碧蓝海水、沙滩与青皮林航拍", "生态环境部", shimeiBayOfficial, "石梅湾沙滩与青皮林航拍"),
+      ctripPhoto("/hainan/shimei-bay-coast-ctrip.webp", "万宁石梅湾礁石海岸与热带植被全景", "携程旅行公开内容", shimeiBayCtrip, "石梅湾海岸实景"),
+    ],
     sourceUrl: "https://www.openstreetmap.org/way/341370752",
     verifiedAt: "2026-08-11",
   },
@@ -434,16 +453,21 @@ export const places: Place[] = [
     city: "万宁",
     category: "garden",
     coordinates: { lat: 18.7327905, lng: 110.1962942 },
-    why: "Plan B 把海岸打卡换成有遮阴、有讲解的热带植物慢走，再顺路去兴隆市场吃饭。",
+    why: "Plan B 把海岸打卡换成有遮阴、有讲解的热带植物慢走，还能认识咖啡、可可与香草。",
     activity: {
       time: "09:30–11:30",
       duration: "约 2 小时",
-      steps: ["开园后尽早进入避开高温", "只走核心植物与香料区", "中午前离园去兴隆市场"],
-      practical: ["穿防滑鞋并带驱蚊", "是否开放与门票以当天官方公告为准"],
+      steps: ["开园后尽早进入，先走咖啡、可可与香草核心区", "现场问清当天是否有咖啡品鉴或巧克力制作体验", "沿湖畔与椰林步道慢走，不求走完全园", "中午前离园去兴隆市场"],
+      practical: ["穿防滑鞋并带驱蚊", "体验项目与讲解场次以当天园区公告为准"],
       weather: "小阵雨可保留；雷电或暴雨取消户外步道。",
-      source: { platform: "小红书", author: "兴隆植物园游记合集", title: "兴隆热带植物园慢游与避坑", url: xhsXinglongGarden },
+      source: { platform: "官网", author: "文化和旅游部", title: "兴隆咖啡谷与热带植物园体验", url: xinglongMct },
     },
     image: xhsPhoto("/hainan/xinglong-garden-xhs.webp", "万宁兴隆热带植物园林荫与热带植物", "兴隆植物园游记合集", xhsXinglongGarden, "兴隆热带植物园慢游与避坑"),
+    gallery: [
+      officialPhoto("/hainan/xinglong-coffee-valley-official.webp", "万宁兴隆咖啡谷与热带园林全景", "文化和旅游部", xinglongMct, "兴隆咖啡谷全景"),
+      officialPhoto("/hainan/xinglong-garden-lake-official.webp", "兴隆热带植物园湖畔椰林与草地", "文化和旅游部", xinglongMct, "兴隆热带植物园湖畔"),
+      ctripPhoto("/hainan/xinglong-garden-entrance-ctrip.webp", "兴隆热带植物园入口与高大棕榈", "携程旅行公开页", xinglongCtrip, "兴隆热带植物园入口实景"),
+    ],
     sourceUrl: "https://www.amap.com/search?query=%E5%85%B4%E9%9A%86%E7%83%AD%E5%B8%A6%E6%A4%8D%E7%89%A9%E5%9B%AD",
     verifiedAt: "2026-08-11",
   },
@@ -499,7 +523,7 @@ export const places: Place[] = [
     activity: {
       time: "睡醒后自由安排",
       duration: "半日到完整一天",
-      steps: ["早餐后沿酒店公共海岸慢走", "中午回房避晒", "傍晚按救生旗决定是否亲水"],
+      steps: ["08:00 前后沿酒店公共海岸慢走并拍一组晨光照片", "11:30 前回房冲凉、午饭和完整午休", "16:30 后再去泳池或海岸", "日落后回酒店安静吃饭，不加夜间打卡"],
       practical: ["红旗时不下海", "住客通道与公共海岸边界以现场为准"],
       weather: "大浪不下海，改酒店公区、下午茶或泳池。",
       source: { platform: "小红书", author: "清水湾实住笔记合集", title: "清水湾海景酒店与海岸实拍", url: "https://www.xiaohongshu.com/search_result?keyword=%E6%B8%85%E6%B0%B4%E6%B9%BE%E6%B5%B7%E6%99%AF%E9%85%92%E5%BA%97" },
@@ -515,13 +539,13 @@ export const places: Place[] = [
     city: "三亚",
     category: "culture",
     coordinates: { lat: 18.3548, lng: 109.7487 },
-    why: "把采购集中在 Day 6 下午，从陵水基地往返，不换酒店，也不额外占用返程日上午。",
+    why: "这是可选采购窗口，不是旅行高潮；有明确购买清单才去，否则把整天留给陵水海岸。",
     activity: {
       time: "14:30–18:30",
       duration: "约 4 小时",
-      steps: ["出发前在中免 App 核对营业和库存", "证件、离岛航班信息一次带齐", "先完成清单品类再逛非必买区"],
+      steps: ["先决定是否真的需要采购；没有清单就不出发", "出发前在中免 App 核对营业和库存", "证件、离岛航班信息一次带齐", "按清单完成后离开，不把逛店拖成整晚"],
       practical: ["营业时间与提货时限以出发周官方信息为准", "预留机场提货和托运行李时间"],
-      weather: "雨天优先执行，是 Plan B 的主活动。",
+      weather: "雨天可以执行，但仍只是备选采购窗口。",
       source: { platform: "官网", author: "中国旅游集团中免", title: "三亚国际免税城", url: cdfOfficial },
     },
     image: officialPhoto("/hainan/cdf-sanya-official.webp", "三亚国际免税城建筑夜景", "Wikimedia Commons · 钉钉 · CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:%E4%B8%89%E4%BA%9A%E5%9B%BD%E9%99%85%E5%85%8D%E7%A8%8E%E5%9F%8E.jpg", "三亚国际免税城"),
@@ -557,16 +581,20 @@ export const places: Place[] = [
     city: "陵水",
     category: "harbor",
     coordinates: { lat: 18.41519, lng: 109.997 },
-    why: "用一个半日看疍家渔排与真实港口，不再叠加猴岛和另一座海岛。",
+    why: "用一个半日看疍家渔排、港口船流与水上生活，不再叠加猴岛和另一座海岛。",
     activity: {
       time: "09:30–13:30",
       duration: "约 4 小时含午饭",
-      steps: ["先在正规码头确认当天船班", "海况允许才乘客船看渔排", "回到新村镇吃明码标价午饭"],
-      practical: ["不乘无证揽客船", "不对居民近距离拍摄"],
-      weather: "大风、雷雨或停航时取消乘船，直接回酒店。",
-      source: { platform: "小红书", author: "金属滚儿", title: "海陆之间：陵水新村的疍家文明与生命脉动", url: xhsXincun },
+      steps: ["09:30 到正规旅游码头确认当天船班与明码价格", "先在码头观察渔船、渔排和生活物资往来", "海况允许才乘正规客船看疍家渔排", "回到新村镇吃明码标价午饭后继续南下"],
+      practical: ["不乘无证揽客船，也不接受临时加价项目", "不对居民近距离拍摄，拍人前先征得同意"],
+      weather: "大风、雷雨或停航时取消乘船；持续降雨则直接去清水湾办理入住。",
+      source: { platform: "官网", author: "海南省人民政府", title: "新村港疍家渔排与海上社区", url: xincunOfficial },
     },
     image: xhsPhoto("/hainan/xincun-port-xhs.webp", "新村港海面上的疍家渔排、船只与远山", "金属滚儿", xhsXincun, "海陆之间：陵水新村的疍家文明与生命脉动"),
+    gallery: [
+      mediaPhoto("/hainan/xincun-port-thepaper.webp", "陵水新村港成片疍家渔排与往来船只俯拍", "澎湃新闻 · 海南日报客户端", xincunThePaper, "新村港渔排航拍"),
+      mediaPhoto("/hainan/xincun-port-cgtn.webp", "夕阳映照下的新村港疍家渔排与船迹", "CGTN", xincunCgtn, "新村港海上社区夕照"),
+    ],
     sourceUrl: "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%E6%96%B0%E6%9D%91%E6%B8%AF",
     verifiedAt: "2026-08-11",
   },
@@ -820,7 +848,7 @@ const planASchedule: Day[] = [
     title: "万宁慢海岸与兴隆老味",
     dateLabel: "9 月 14 日 · 万宁基地",
     pace: "短线慢游",
-    summary: "石梅湾慢走、兴隆吃午饭，傍晚回神州半岛；不追日月湾网红咖啡店。",
+    summary: "石梅湾青皮林、海边书屋慢走，兴隆吃午饭，傍晚回神州半岛；不追网红咖啡店。",
     placeIds: ["wanning-hyatt", "shimei-bay", "xinglong-market", "wanning-hyatt"],
     legs: [
       leg(0, 1, "drive", "约 20–30 分钟", "雷雨时删除海岸。", "约 18 km"),
@@ -858,7 +886,7 @@ const planASchedule: Day[] = [
     title: "清水湾海景留白日",
     dateLabel: "9 月 16 日 · 陵水基地",
     pace: "完整留白日",
-    summary: "睡醒再决定海岸、泳池或下午茶；这一天不开长途车，也不补任何网红景点。",
+    summary: "晨光海岸、完整午休和傍晚泳池组成一整天；不开长途车，也不补任何网红景点。",
     placeIds: ["clearwater-indigo", "clearwater-coast", "clearwater-indigo"],
     legs: [
       leg(0, 1, "walk", "步行约 5–10 分钟", "雷雨时留在室内。", "酒店海岸段"),
@@ -873,10 +901,10 @@ const planASchedule: Day[] = [
   {
     id: 6,
     city: "陵水",
-    title: "清水湾 ↔ 三亚免税城",
+    title: "清水湾自由日 · 可选免税",
     dateLabel: "9 月 17 日 · 陵水基地",
-    pace: "免税往返日",
-    summary: "不退房、不搬行李；午后从清水湾去免税城，集中采购后回同一家酒店住第三晚。",
+    pace: "可选采购窗口",
+    summary: "有明确清单才午后往返免税城；不购物就完整留在清水湾，无论如何都不换酒店。",
     placeIds: ["clearwater-indigo", "cdf-sanya", "clearwater-indigo"],
     legs: [
       leg(0, 1, "drive", "约 45–60 分钟", "暴雨时推迟退房后出发。", "约 45 km"),
@@ -886,7 +914,7 @@ const planASchedule: Day[] = [
     driveLabel: "单程约 45–60 分钟",
     sleep: "海南清水湾英迪格酒店",
     meals: ["清水湾早餐", "免税城内简餐", "回酒店安静晚饭"],
-    weatherPlan: "雨天免税城优先；营业时间、购买资格与机场提货时限出发周再核对。",
+    weatherPlan: "雨天可选免税城，但仍先看是否有购买清单；营业、资格与提货时限出发周再核对。",
   },
   {
     id: 7,
@@ -955,7 +983,7 @@ const planBSchedule: Day[] = [
     title: "兴隆植物与南洋老味",
     dateLabel: "9 月 14 日 · 万宁基地",
     pace: "林野短线",
-    summary: "不去石梅湾：上午兴隆热带植物园，午饭逛兴隆市场，下午回酒店休息。",
+    summary: "不去石梅湾：上午认识咖啡、可可和香草，按当天场次选品鉴或巧克力体验，午饭逛兴隆市场。",
     placeIds: ["wanning-holiday-inn", "xinglong-garden", "xinglong-market", "wanning-holiday-inn"],
     legs: [
       leg(0, 1, "drive", "约 40–50 分钟", "雷暴时直接取消植物园。", "约 36 km"),
@@ -992,7 +1020,7 @@ const planBSchedule: Day[] = [
     title: "土福湾酒店与海岸日",
     dateLabel: "9 月 16 日 · 陵水基地",
     pace: "完整度假日",
-    summary: "海景早餐、酒店海岸、空中泳池和午休；不开长途车，也不去拥挤海岛。",
+    summary: "晨光海岸、完整午休、傍晚空中泳池和蓝调海景；不开长途车，也不去拥挤海岛。",
     placeIds: ["sangem-moon", "sangem-beach", "sangem-moon"],
     legs: [
       leg(0, 1, "walk", "约 5–10 分钟", "雷雨时留在室内。", "酒店海岸段"),
@@ -1007,10 +1035,10 @@ const planBSchedule: Day[] = [
   {
     id: 6,
     city: "陵水",
-    title: "土福湾 ↔ 三亚免税城",
+    title: "土福湾自由日 · 可选免税",
     dateLabel: "9 月 17 日 · 陵水基地",
-    pace: "免税往返日",
-    summary: "不退房、不搬行李；从三正月短程去免税城，集中采购后回土福湾住第三晚。",
+    pace: "可选采购窗口",
+    summary: "有明确清单才短程去免税城；不购物就把第三天完整留给土福湾，仍住同一家酒店。",
     placeIds: ["sangem-moon", "cdf-sanya", "sangem-moon"],
     legs: [
       leg(0, 1, "drive", "约 20–30 分钟", "暴雨时延迟出发。", "约 22 km"),
@@ -1086,10 +1114,10 @@ export const itineraryPlans: ItineraryPlan[] = [
     days: [
       { dayId: 1, title: "西海岸落地缓冲", summary: "直接住海口西海岸，不进市中心；只在酒店海岸看日落。", highlights: ["西海岸海景房", "不进老城区"], fallback: "航班晚点直接入住。" },
       { dayId: 2, title: "真正住进万宁", summary: "海口南下万宁，午后入住神州半岛，傍晚只走酒店海岸。", highlights: ["跨城约 2.5 小时", "神州半岛日落"], fallback: "雨大就删除海岸。" },
-      { dayId: 3, title: "万宁慢海岸", summary: "石梅湾慢走、兴隆午饭，再回神州半岛；不追网红咖啡店。", highlights: ["石梅湾", "兴隆市场", "万宁连住第 2 晚"], fallback: "海况差切换 Plan B。" },
-      { dayId: 4, title: "顺路进入陵水", summary: "万宁退房后去新村港，结束后一路向南入住清水湾。", highlights: ["不走回头路", "新村港半日", "清水湾入住"], fallback: "停航跳过乘船。" },
-      { dayId: 5, title: "清水湾完整留白", summary: "海景早餐、海岸、泳池和午休，不开长途车。", highlights: ["清水湾海岸", "酒店慢度假"], fallback: "红旗时不下海。" },
-      { dayId: 6, title: "免税往返不换宿", summary: "从清水湾往返免税城，晚上仍回英迪格住第三晚。", highlights: ["免税城 4 小时", "不搬行李"], fallback: "不购物就留在清水湾。" },
+      { dayId: 3, title: "万宁慢海岸", summary: "石梅湾青皮林、海边书屋与兴隆午饭，傍晚回神州半岛。", highlights: ["青皮林海岸", "海边书屋", "万宁连住第 2 晚"], fallback: "海况差切换 Plan B。" },
+      { dayId: 4, title: "顺路进入陵水", summary: "在正规码头看疍家渔排与港口船流，再一路向南入住清水湾。", highlights: ["不走回头路", "疍家渔排", "清水湾入住"], fallback: "停航跳过乘船。" },
+      { dayId: 5, title: "清水湾完整留白", summary: "晨光海岸、完整午休和傍晚泳池，不开长途车。", highlights: ["晨光海岸", "傍晚泳池"], fallback: "红旗时不下海。" },
+      { dayId: 6, title: "自由日 · 可选免税", summary: "有清单才往返免税城；不购物就继续留在清水湾。", highlights: ["采购可跳过", "不搬行李"], fallback: "不购物就留在清水湾。" },
       { dayId: 7, title: "从容返程", summary: "从清水湾直接去机场，预留跨区、还车、提货与登机时间。", highlights: ["不补景点", "预留还车时间"], fallback: "天气差提前出发。" },
     ],
   },
@@ -1106,10 +1134,10 @@ export const itineraryPlans: ItineraryPlan[] = [
     days: [
       { dayId: 1, title: "西海岸轻预算海景", summary: "落地后直接住西海岸假日酒店，避开市中心和骑楼折返。", highlights: ["180° 海景房型", "不进市区"], fallback: "持续暴雨直接入住。" },
       { dayId: 2, title: "换一家万宁基地", summary: "入住万宁神州半岛假日度假酒店，不再与 A 线共用君悦。", highlights: ["万宁连住两晚", "神州半岛短散步"], fallback: "服务区增加休息。" },
-      { dayId: 3, title: "兴隆林野与老味", summary: "不去石梅湾，改走兴隆热带植物园和市场，下午回酒店。", highlights: ["兴隆植物园", "兴隆市场", "不追网红海岸"], fallback: "雷暴全天酒店。" },
+      { dayId: 3, title: "兴隆林野与老味", summary: "认识咖啡、可可和香草，按场次选品鉴或巧克力体验，再去兴隆市场。", highlights: ["咖啡可可植物", "体验项目", "兴隆市场"], fallback: "雷暴全天酒店。" },
       { dayId: 4, title: "直接南下土福湾", summary: "彻底删除新村港，单向去三正月酒店，下午不再增加景点。", highlights: ["无折返", "换住三正月", "早入住"], fallback: "持续暴雨直达酒店。" },
-      { dayId: 5, title: "土福湾酒店日", summary: "海景早餐、酒店海岸、空中泳池与午休，不开长途车。", highlights: ["不开车", "海岸与泳池"], fallback: "红旗时不下海。" },
-      { dayId: 6, title: "短距离免税往返", summary: "从土福湾约 20–30 分钟到免税城，结束后回三正月住第三晚。", highlights: ["免税城 4 小时", "不搬行李"], fallback: "以中免当天营业通知为准。" },
+      { dayId: 5, title: "土福湾酒店日", summary: "晨光海岸、完整午休、傍晚空中泳池与蓝调海景。", highlights: ["不开车", "蓝调泳池"], fallback: "红旗时不下海。" },
+      { dayId: 6, title: "自由日 · 可选免税", summary: "有清单才短程去免税城；否则完整留在土福湾。", highlights: ["采购可跳过", "不搬行李"], fallback: "以中免当天营业通知为准。" },
       { dayId: 7, title: "保守返程", summary: "比晴天方案更早离店，预留积水、还车和机场提货时间。", highlights: ["不加景点", "航班动态复核"], fallback: "按航司通知调整。" },
     ],
   },

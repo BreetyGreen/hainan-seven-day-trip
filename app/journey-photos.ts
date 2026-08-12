@@ -17,7 +17,7 @@ export function buildJourneyPhotoItems(days: Day[], places: Place[]): JourneyPho
     for (const placeId of day.placeIds) {
       const place = placeById.get(placeId);
       if (!place?.image || place.category === "transport") continue;
-      [place.image, ...(place.gallery ?? [])].forEach((photo, photoIndex) => {
+      [place.image, ...(place.gallery ?? [])].slice(0, 2).forEach((photo, photoIndex) => {
         if (usedPhotos.has(photo.src)) return;
         usedPhotos.add(photo.src);
         items.push({

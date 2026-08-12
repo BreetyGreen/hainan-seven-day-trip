@@ -54,9 +54,10 @@ test("server-renders the Hainan map-first trip", async () => {
 });
 
 test("keeps the map controls accessible and removes starter artifacts", async () => {
-  const [page, routeMap, layout, css, packageJson] = await Promise.all([
+  const [page, routeMap, placePhotoGallery, layout, css, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/PlacePhotoGallery.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
@@ -132,6 +133,11 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(routeMap, /className="playback-day-button"/);
   assert.match(routeMap, /onClick=\{\(\) => openDayDetail/);
   assert.match(routeMap, /JourneyPhotoRail/);
+  assert.match(routeMap, /PlacePhotoGallery/);
+  assert.match(placePhotoGallery, /aria-label="上一张地点图片"/);
+  assert.match(placePhotoGallery, /aria-label="下一张地点图片"/);
+  assert.match(placePhotoGallery, /地点图片.*\/.*photos\.length/);
+  assert.match(placePhotoGallery, /查看第.*张地点图片/);
   assert.match(routeMap, /buildJourneyPhotoItems/);
   assert.match(routeMap, /aria-label="旅程图片概览"/);
   assert.match(routeMap, /照片旅程/);
@@ -149,6 +155,7 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(routeMap, /播放|暂停/);
   assert.match(routeMap, /继续/);
   assert.match(routeMap, /重播/);
+  assert.doesNotMatch(routeMap, /visibleLeg \? ` · \$\{visibleLeg\.distanceLabel\}`/);
   assert.match(layout, /lang="zh-CN"/);
   assert.match(layout, /海南东线七日地图/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
@@ -199,6 +206,7 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(css, /@keyframes rest-breathe/);
   assert.match(css, /\.journey-shell:has\(\.place-detail-backdrop\) \.journey-card\s*\{[^}]*opacity:\s*0/s);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
+  assert.equal((routeMap.match(/setStatus\("loading"\)/g) ?? []).length, 0, "Leaflet init must not overwrite a ready route with loading");
   assert.doesNotMatch(page, /_sites-preview|SkeletonPreview|codex-preview/);
 
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
