@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { RouteMap } from "./RouteMap";
 import { days, hotels, type Hotel, type TravelMode } from "./trip-data";
+import { withBasePath } from "./site-paths";
 
 const modeNotes: Record<TravelMode, { label: string; subtitle: string; guidance: string }> = {
   solo: {
@@ -23,7 +24,7 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
       <div className="hotel-photo-wrap">
         {/* Local, source-verified photography is intentionally served from the static itinerary bundle. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={hotel.image.src} alt={hotel.image.alt} loading={base === 1 ? "eager" : "lazy"} />
+        <img src={withBasePath(hotel.image.src)} alt={hotel.image.alt} loading={base === 1 ? "eager" : "lazy"} />
         <span>BASE {base} · {hotel.city}</span>
         <small>图源：{hotel.image.platform} · {hotel.image.credit}</small>
       </div>
@@ -115,10 +116,10 @@ export default function Home() {
                   <strong>DAY {activeDay.id} · 换宿日</strong>
                   <div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <figure><img src={swap.from.image.src} alt={swap.from.image.alt} /><figcaption>{swap.fromLabel}<br /><small>退房</small></figcaption></figure>
+                    <figure><img src={withBasePath(swap.from.image.src)} alt={swap.from.image.alt} /><figcaption>{swap.fromLabel}<br /><small>退房</small></figcaption></figure>
                     <span aria-hidden="true">行李 →</span>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <figure><img src={swap.to.image.src} alt={swap.to.image.alt} /><figcaption>{swap.toLabel}</figcaption></figure>
+                    <figure><img src={withBasePath(swap.to.image.src)} alt={swap.to.image.alt} /><figcaption>{swap.toLabel}</figcaption></figure>
                   </div>
                   <p className="change-badge">退房后直接前往下一家酒店；换宿日不叠加售票景区。</p>
                 </section>

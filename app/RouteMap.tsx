@@ -15,6 +15,7 @@ import {
 } from "./trip-camera";
 import { buildJourneyPhotoItems, type JourneyPhotoItem } from "./journey-photos";
 import { sampleRouteAtProgress } from "./trip-motion";
+import { withBasePath } from "./site-paths";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -215,7 +216,7 @@ function JourneyPhotoRail({
             onClick={() => onOpen(item)}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" />
+            <img src={withBasePath(item.photo.src)} alt={item.photo.alt} loading="lazy" decoding="async" />
             <span className="journey-photo-day">DAY {item.dayId}</span>
             <span className={`journey-photo-source is-${item.photo.platform === "小红书" ? "xhs" : "official"}`}>{item.photo.platform}</span>
             <span className="journey-photo-caption"><b>{item.place.shortName}</b><small>{item.kind === "hotel" ? "住宿基地" : item.place.city}</small></span>
@@ -272,7 +273,7 @@ function PlaceDetailDialog({
         <div className={`place-detail-hero ${place.image ? "has-image" : "is-illustrated"}`}>
           {place.image ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={place.image.src} alt={place.image.alt} />
+            <img src={withBasePath(place.image.src)} alt={place.image.alt} />
           ) : (
             <div className="place-detail-illustration" aria-hidden="true">
               <span>{place.category === "transport" ? "✈" : place.category === "coast" ? "≈" : place.category === "food" ? "♨" : "✦"}</span>
@@ -497,7 +498,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       try {
         const [L, response] = await Promise.all([
           import("leaflet"),
-          fetch("/routes/hainan-east-coast.geojson"),
+          fetch(withBasePath("/routes/hainan-east-coast.geojson")),
         ]);
         if (!response.ok) throw new Error(`Route data ${response.status}`);
         const data = (await response.json()) as RouteCollection;
@@ -631,7 +632,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
           opacity: isOverview ? 0.3 : isActive ? 0.96 : 0.15,
           weight: isActive ? (isOverview ? 3 : 6) : 2,
         },
-      }).addTo(routeGroup);
+      } as L.GeoJSONOptions & { renderer: Canvas }).addTo(routeGroup);
     });
 
     const visiblePlaces = uniquePlaces(selectedDay === null ? places : getDayRoute(selectedDay));
@@ -719,7 +720,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
         const [lng, lat] = segment.coordinates[Math.floor(segment.coordinates.length / 2)];
         const legIcon = L.divIcon({
           className: "route-leg-duration-wrap",
-          html: `<span class="route-leg-duration-marker"><b>${routeModeGlyph(leg.mode)}</b><span>${escapeHtml(leg.durationLabel)}</span><small>${escapeHtml(leg.distanceLabel)}</small></span>`,
+          html: `<span class="route-leg-duration-marker"><b>${routeModeGlyph(leg.mode)}</b><span>${escapeHtml(leg.durationLabel)}</span><small>${escapeHtml(leg.distanceLabel ?? "")}</small></span>`,
           iconAnchor: [42, 22],
           iconSize: [84, 44],
         });
@@ -1107,7 +1108,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
           <div className={`playback-stop-visual ${stagePlace.image ? "has-image" : ""}`}>
             {/* Local, source-matched travel photography keeps its original public path. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {stagePlace.image && <img src={stagePlace.image.src} alt={stagePlace.image.alt} />}
+            {stagePlace.image && <img src={withBasePath(stagePlace.image.src)} alt={stagePlace.image.alt} />}
             <div className={`activity-motion activity-motion-${stageKind}`} aria-hidden="true">
               <span>{visibleStage.type === "travel" ? routeModeGlyph(visibleStage.segment.mode) : stageMeta.glyph}</span>
               <i /><i /><i />

@@ -1,3 +1,5 @@
+import { withBasePath } from "./site-paths.ts";
+
 export type TravelMode = "solo" | "duo";
 
 export type PlaceCategory =
@@ -102,7 +104,7 @@ const mapSource = (title: string, url: string): Source => ({
 });
 
 const officialPhoto = (src: string, alt: string, credit: string, creditUrl: string, noteTitle: string): PhotoSource => ({
-  src,
+  src: withBasePath(src),
   alt,
   platform: "官网",
   credit,
@@ -111,7 +113,7 @@ const officialPhoto = (src: string, alt: string, credit: string, creditUrl: stri
 });
 
 const xhsPhoto = (src: string, alt: string, credit: string, creditUrl: string, noteTitle: string): PhotoSource => ({
-  src,
+  src: withBasePath(src),
   alt,
   platform: "小红书",
   credit,
