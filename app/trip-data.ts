@@ -112,6 +112,9 @@ export type ItineraryPlan = {
   description: string;
   color: string;
   days: PlanDay[];
+  schedule: Day[];
+  hotels: Hotel[];
+  routePath: `/routes/${string}.geojson`;
 };
 
 const mapSource = (title: string, url: string): Source => ({
@@ -154,6 +157,12 @@ const atourCtrip = "https://hotels.ctrip.com/hotels/120750482.html";
 const wanningHyattOfficial = "https://www.hyatt.com/grand-hyatt/zh-CN/shhgh-grand-hyatt-shenzhou-peninsula";
 const indigoOfficial = "https://www.ihg.com.cn/hotelindigo/hotels/cn/zh/lingshui/lqswb/hoteldetail";
 const cdfOfficial = "https://www.ctgdutyfree.com.cn/detail/4340.html";
+const haikouMarriottOfficial = "https://www.marriott.com.cn/hotels/HAKMC-haikou-marriott-hotel/overview/";
+const haikouWestCoastHolidayOfficial = "https://www.ihg.com.cn/holidayinn/hotels/cn/zh/haikou/hakbh/hoteldetail";
+const wanningHolidayOfficial = "https://www.ihg.com.cn/holidayinnresorts/hotels/cn/zh/wanning/wxjsh/hoteldetail";
+const xhsHaikouWestCoast = "https://www.xiaohongshu.com/search_result?keyword=%E6%B5%B7%E5%8F%A3%E8%A5%BF%E6%B5%B7%E5%B2%B8%E6%B5%B7%E6%99%AF%E9%85%92%E5%BA%97";
+const xhsWanningHoliday = "https://www.xiaohongshu.com/search_result?keyword=%E4%B8%87%E5%AE%81%E7%A5%9E%E5%B7%9E%E5%8D%8A%E5%B2%9B%E5%81%87%E6%97%A5%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97";
+const xhsXinglongGarden = "https://www.xiaohongshu.com/search_result?keyword=%E5%85%B4%E9%9A%86%E7%83%AD%E5%B8%A6%E6%A4%8D%E7%89%A9%E5%9B%AD";
 
 export const routeResearchSource = "https://www.visitsanya.com/zh";
 
@@ -194,6 +203,68 @@ export const places: Place[] = [
       source: mapSource("海口美兰国际机场", "https://www.openstreetmap.org/relation/4452375"),
     },
     sourceUrl: "https://www.openstreetmap.org/relation/4452375",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "haikou-marriott",
+    name: "海口万豪酒店",
+    shortName: "海口万豪",
+    city: "海口",
+    category: "stay",
+    coordinates: { lat: 20.0618533, lng: 110.1870672 },
+    why: "把抵达夜从市中心移到西海岸：下楼就是海风，第二天直接沿环岛东线南下。",
+    hotelId: "haikou-marriott",
+    activity: {
+      time: "Day 1",
+      duration: "住 1 晚",
+      steps: ["落地取车后直接去西海岸", "进房核对阳台海景与遮挡", "只在酒店海岸散步，不再折返市区"],
+      practical: ["优先可取消海景大床房", "航班晚点就取消散步"],
+      weather: "暴雨时在酒店完成晚饭和休息，不进市中心。",
+      source: { platform: "官网", author: "Marriott", title: "海口万豪酒店", url: haikouMarriottOfficial },
+    },
+    image: officialPhoto("/hainan/haikou-marriott-official.webp", "海口万豪酒店西海岸建筑与海景", "Marriott 官方", haikouMarriottOfficial, "海口万豪酒店西海岸外观"),
+    sourceUrl: haikouMarriottOfficial,
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "haikou-west-coast-holiday",
+    name: "海口西海岸假日酒店",
+    shortName: "西海岸假日",
+    city: "海口",
+    category: "stay",
+    coordinates: { lat: 20.049293, lng: 110.216681 },
+    why: "Plan B 的海口轻预算海景基地；远离市中心，官方标注 180° 海景客房。",
+    hotelId: "haikou-west-coast-holiday",
+    activity: {
+      time: "Day 1",
+      duration: "住 1 晚",
+      steps: ["从机场直接抵达西海岸", "入住时确认海景朝向", "晚饭与散步都留在酒店周边"],
+      practical: ["比较含早与不含早的可退价", "高楼层仍需确认房型名称"],
+      weather: "持续降雨就使用酒店餐厅与室内设施。",
+      source: { platform: "官网", author: "IHG", title: "海口西海岸假日酒店", url: haikouWestCoastHolidayOfficial },
+    },
+    image: officialPhoto("/hainan/haikou-west-coast-holiday-official.webp", "海口西海岸假日酒店海景建筑与泳池", "IHG 官方", haikouWestCoastHolidayOfficial, "海口西海岸假日酒店"),
+    sourceUrl: haikouWestCoastHolidayOfficial,
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "haikou-west-coast",
+    name: "海口西海岸酒店海岸",
+    shortName: "海口西海岸",
+    city: "海口",
+    category: "coast",
+    coordinates: { lat: 20.0591, lng: 110.1892 },
+    why: "用离房间最近的一段海岸替代进城打卡，让抵达日真正安静下来。",
+    activity: {
+      time: "17:00–18:30",
+      duration: "约 60–90 分钟",
+      steps: ["入住后从酒店确认开放通道", "沿海岸慢走不超过 40 分钟", "天黑前回酒店吃饭"],
+      practical: ["不为日落跨区开车", "看救生旗，不在风浪中下海"],
+      weather: "航班晚点、雷雨或大风时直接删除。",
+      source: { platform: "小红书", author: "海口西海岸实住合集", title: "海口西海岸海景酒店与日落", url: xhsHaikouWestCoast },
+    },
+    image: officialPhoto("/hainan/haikou-marriott-official.webp", "海口西海岸酒店与临海景观", "Marriott 官方", haikouMarriottOfficial, "海口西海岸酒店海景"),
+    sourceUrl: "https://www.openstreetmap.org/search?query=Haikou%20West%20Coast",
     verifiedAt: "2026-08-11",
   },
   {
@@ -259,6 +330,27 @@ export const places: Place[] = [
     verifiedAt: "2026-08-11",
   },
   {
+    id: "wanning-holiday-inn",
+    name: "万宁神州半岛假日度假酒店",
+    shortName: "万宁假日",
+    city: "万宁",
+    category: "stay",
+    coordinates: { lat: 18.680208, lng: 110.361108 },
+    why: "Plan B 仍然住进神州半岛，但把预算和酒店内活动放在前面，避免每天跨湾奔波。",
+    hotelId: "wanning-holiday-inn",
+    activity: {
+      time: "Day 2–3",
+      duration: "连住 2 晚",
+      steps: ["Day 2 一次性入住", "确认房型朝向和早餐", "Day 3 只去兴隆植物园与市场后返回"],
+      practical: ["官方地址为神州半岛凤凰路南侧 666 号", "海景餐厅不等于所有房型均为正海景"],
+      weather: "大雨时留在酒店；短时阵雨后再去兴隆。",
+      source: { platform: "官网", author: "IHG", title: "万宁神州半岛假日度假酒店", url: wanningHolidayOfficial },
+    },
+    image: officialPhoto("/hainan/wanning-holiday-inn-official.webp", "万宁神州半岛假日度假酒店海岸建筑", "IHG 官方", wanningHolidayOfficial, "万宁神州半岛假日度假酒店"),
+    sourceUrl: wanningHolidayOfficial,
+    verifiedAt: "2026-08-11",
+  },
+  {
     id: "shimei-bay",
     name: "万宁石梅湾",
     shortName: "石梅湾",
@@ -296,6 +388,26 @@ export const places: Place[] = [
     },
     image: xhsPhoto("/hainan/xinglong-market-xhs.webp", "万宁兴隆华侨农贸市场水果与南洋小吃", "小红书万宁本地食客合集", xhsWanningFood, "万宁本地老店与兴隆市场合集"),
     sourceUrl: "https://www.amap.com/search?query=%E5%85%B4%E9%9A%86%E5%8D%8E%E4%BE%A8%E5%86%9C%E8%B4%B8%E5%B8%82%E5%9C%BA",
+    verifiedAt: "2026-08-11",
+  },
+  {
+    id: "xinglong-garden",
+    name: "兴隆热带植物园",
+    shortName: "兴隆植物园",
+    city: "万宁",
+    category: "garden",
+    coordinates: { lat: 18.7327905, lng: 110.1962942 },
+    why: "Plan B 把海岸打卡换成有遮阴、有讲解的热带植物慢走，再顺路去兴隆市场吃饭。",
+    activity: {
+      time: "09:30–11:30",
+      duration: "约 2 小时",
+      steps: ["开园后尽早进入避开高温", "只走核心植物与香料区", "中午前离园去兴隆市场"],
+      practical: ["穿防滑鞋并带驱蚊", "是否开放与门票以当天官方公告为准"],
+      weather: "小阵雨可保留；雷电或暴雨取消户外步道。",
+      source: { platform: "小红书", author: "兴隆植物园游记合集", title: "兴隆热带植物园慢游与避坑", url: xhsXinglongGarden },
+    },
+    image: xhsPhoto("/hainan/xinglong-garden-xhs.webp", "万宁兴隆热带植物园林荫与热带植物", "兴隆植物园游记合集", xhsXinglongGarden, "兴隆热带植物园慢游与避坑"),
+    sourceUrl: "https://www.amap.com/search?query=%E5%85%B4%E9%9A%86%E7%83%AD%E5%B8%A6%E6%A4%8D%E7%89%A9%E5%9B%AD",
     verifiedAt: "2026-08-11",
   },
   {
@@ -542,20 +654,20 @@ export const places: Place[] = [
   },
 ];
 
-export const hotels: Hotel[] = [
+const planAHotels: Hotel[] = [
   {
-    id: "haikou-qilou-atour",
-    name: "海口万国大都会骑楼亚朵酒店",
-    shortName: "海口抵达缓冲",
+    id: "haikou-marriott",
+    name: "海口万豪酒店",
+    shortName: "海口西海岸海景基地",
     city: "海口",
     checkInDay: 1,
     nights: "Day 1 · 住 1 晚",
-    fit: "位置和隔音优先，不为只睡一晚购买海景。",
-    reasons: ["靠近骑楼老街", "第二天南下路线清楚"],
-    cautions: ["不是度假酒店", "房间优先避开电梯与临街低楼层"],
-    image: officialPhoto("/hainan/haikou-qilou-atour-official.webp", "海口骑楼亚朵酒店客房与公共区域", "携程酒店公开页", atourCtrip, "海口万国大都会骑楼亚朵酒店"),
-    officialUrl: atourCtrip,
-    xhsSource: { author: "携程公开页", title: "酒店图片与近期住客内容", url: atourCtrip },
+    fit: "西海岸、海景阳台、远离市中心；抵达后不再进城折腾。",
+    reasons: ["官方明确位于西海岸并提供 180° 海景阳台房", "次日直接南下万宁，不用穿过老城区"],
+    cautions: ["只住一晚，先比较基础海景房而不是套房", "机场到西海岸约 50–70 分钟，晚航班需直接入住"],
+    image: officialPhoto("/hainan/haikou-marriott-official.webp", "海口万豪酒店西海岸建筑与海景", "Marriott 官方", haikouMarriottOfficial, "海口万豪酒店"),
+    officialUrl: haikouMarriottOfficial,
+    xhsSource: { author: "海口西海岸实住合集", title: "海口西海岸海景酒店实住与房型", url: xhsHaikouWestCoast },
   },
   {
     id: "grand-hyatt-wanning",
@@ -601,6 +713,54 @@ export const hotels: Hotel[] = [
   },
 ];
 
+const planBHotels: Hotel[] = [
+  {
+    id: "haikou-west-coast-holiday",
+    name: "海口西海岸假日酒店",
+    shortName: "西海岸轻预算海景基地",
+    city: "海口",
+    checkInDay: 1,
+    nights: "Day 1 · 住 1 晚",
+    fit: "同样避开市中心，以官方 180° 海景客房换取更可控的首晚预算。",
+    reasons: ["位于滨海西路，靠近假日海滩", "餐厅、泳池和健身房都能在酒店内完成"],
+    cautions: ["预订时确认房型确为海景而非城市景", "从美兰机场约 42 km，晚航班不要再加景点"],
+    image: officialPhoto("/hainan/haikou-west-coast-holiday-official.webp", "海口西海岸假日酒店海景建筑与泳池", "IHG 官方", haikouWestCoastHolidayOfficial, "海口西海岸假日酒店"),
+    officialUrl: haikouWestCoastHolidayOfficial,
+    xhsSource: { author: "海口西海岸实住合集", title: "海口西海岸海景酒店实住与房型", url: xhsHaikouWestCoast },
+  },
+  {
+    id: "wanning-holiday-inn",
+    name: "万宁神州半岛假日度假酒店",
+    shortName: "万宁神州半岛轻松基地",
+    city: "万宁",
+    checkInDay: 2,
+    nights: "Day 2–3 · 连住 2 晚",
+    fit: "保留神州半岛海岸位置，以更轻预算的假日度假品牌替代君悦。",
+    reasons: ["官方地址在神州半岛凤凰路南侧", "去兴隆植物园与市场可以连成一条短线"],
+    cautions: ["新开业阶段优先看近期服务评价", "海景餐厅不代表基础房全部正海景"],
+    image: officialPhoto("/hainan/wanning-holiday-inn-official.webp", "万宁神州半岛假日度假酒店海岸建筑", "IHG 官方", wanningHolidayOfficial, "万宁神州半岛假日度假酒店"),
+    officialUrl: wanningHolidayOfficial,
+    xhsSource: { author: "神州半岛实住合集", title: "万宁神州半岛假日度假酒店房型与公区", url: xhsWanningHoliday },
+  },
+  {
+    id: "sangem-moon",
+    name: "海南三正月酒店",
+    shortName: "陵水土福湾安静基地",
+    city: "陵水",
+    checkInDay: 4,
+    nights: "Day 4–5 · 连住 2 晚",
+    fit: "Plan B 不去新村港，直接住土福湾两晚，用海景房、海岸与泳池替代奔波。",
+    reasons: ["官方定位为土福湾热带海岸秘境", "现有小红书实住图能核对公区与海景"],
+    cautions: ["不适合再折返新村港，Plan B 已彻底删除该点", "真海景仍要确认楼层、朝向与遮挡"],
+    image: xhsPhoto("/hainan/sangem-moon-xhs.webp", "海南三正月酒店蓝调时刻建筑外景", "肥欧OOOOOO", xhsSangem, "海南酒店攻略——陵水三正月，值得二刷"),
+    officialUrl: sangemOfficial,
+    xhsSource: { author: "肥欧OOOOOO", title: "海南酒店攻略——陵水三正月，值得二刷", url: xhsSangem },
+  },
+  planAHotels[3],
+];
+
+export const hotels: Hotel[] = planAHotels;
+
 const leg = (fromIndex: number, toIndex: number, mode: TravelLegMode, durationLabel: string, fallback: string, distanceLabel?: string, timingNote?: string): RouteLeg => ({
   fromIndex,
   toIndex,
@@ -611,26 +771,26 @@ const leg = (fromIndex: number, toIndex: number, mode: TravelLegMode, durationLa
   fallback,
 });
 
-export const days: Day[] = [
+const planASchedule: Day[] = [
   {
     id: 1,
     city: "海口",
     title: "武汉 → 海口",
     dateLabel: "9 月 12 日 · 抵达日",
     pace: "落地缓冲",
-    summary: "抵达后先入住；时间和天气允许才去骑楼慢走、吃一顿海南落地餐。",
-    placeIds: ["wuhan-airport", "haikou-airport", "haikou-qilou-atour", "qilou", "haikou-qilou-atour"],
+    summary: "抵达后直接去西海岸入住；时间和天气允许，只在酒店海岸看日落，不进市中心。",
+    placeIds: ["wuhan-airport", "haikou-airport", "haikou-marriott", "haikou-west-coast", "haikou-marriott"],
     legs: [
       leg(0, 1, "flight", "约 2 小时 30 分", "航班晚点时删除骑楼。", undefined, "以最终航班为准"),
-      leg(1, 2, "drive", "约 30–45 分钟", "暴雨时先在机场等待。", "约 23 km"),
-      leg(2, 3, "drive", "约 10–15 分钟", "晚点时留在酒店附近吃饭。", "约 4 km"),
-      leg(3, 4, "drive", "约 10–15 分钟", "雨大时提前返回酒店。", "约 4 km"),
+      leg(1, 2, "drive", "约 50–70 分钟", "暴雨时先在机场等待。", "约 45 km"),
+      leg(2, 3, "walk", "约 5–10 分钟", "晚点时留在酒店吃饭。", "酒店海岸段"),
+      leg(3, 4, "walk", "约 5–10 分钟", "雷雨时直接返回。", "酒店海岸段"),
     ],
-    distanceLabel: "岛内约 27 km",
-    driveLabel: "岛内约 50–75 分钟",
-    sleep: "海口万国大都会骑楼亚朵酒店",
-    meals: ["骑楼粉面", "老爸茶或清补凉"],
-    weatherPlan: "晚点或暴雨直接入住，不补赶骑楼。",
+    distanceLabel: "岛内约 45 km",
+    driveLabel: "约 50–70 分钟＋海岸步行",
+    sleep: "海口万豪酒店",
+    meals: ["机场轻食", "酒店海南菜或客房简餐"],
+    weatherPlan: "晚点或暴雨直接入住，不再进市中心。",
   },
   {
     id: 2,
@@ -639,7 +799,7 @@ export const days: Day[] = [
     dateLabel: "9 月 13 日 · 换宿日",
     pace: "第一次换宿",
     summary: "慢早餐后约 2.5 小时南下，真正住进万宁两晚；下午只留酒店海岸和日落。",
-    placeIds: ["haikou-qilou-atour", "wanning-hyatt", "shenzhou-peninsula", "wanning-hyatt"],
+    placeIds: ["haikou-marriott", "wanning-hyatt", "shenzhou-peninsula", "wanning-hyatt"],
     legs: [
       leg(0, 1, "drive", "约 2 小时 20 分–2 小时 40 分", "暴雨时增加服务区休息，抵达后直接入住。", "约 170 km", "含海口出城；服务区休息另计"),
       leg(1, 2, "walk", "约 10–20 分钟", "雷雨时留在酒店。", "酒店海岸段"),
@@ -747,6 +907,143 @@ export const days: Day[] = [
   },
 ];
 
+const planBSchedule: Day[] = [
+  {
+    id: 1,
+    city: "海口",
+    title: "武汉 → 海口西海岸",
+    dateLabel: "9 月 12 日 · 抵达日",
+    pace: "海景缓冲",
+    summary: "落地后直接住西海岸假日酒店，避开市中心；只在雨停后走一小段海岸。",
+    placeIds: ["wuhan-airport", "haikou-airport", "haikou-west-coast-holiday", "haikou-west-coast", "haikou-west-coast-holiday"],
+    legs: [
+      leg(0, 1, "flight", "约 2 小时 30 分", "航班晚点时删除海岸。", undefined, "以最终航班为准"),
+      leg(1, 2, "drive", "约 50–70 分钟", "暴雨时先在机场等待。", "约 42 km"),
+      leg(2, 3, "walk", "约 10–15 分钟", "雨大时留在酒店。", "酒店周边"),
+      leg(3, 4, "walk", "约 10–15 分钟", "天黑前返回。", "酒店周边"),
+    ],
+    distanceLabel: "岛内约 42 km",
+    driveLabel: "约 50–70 分钟＋短步行",
+    sleep: "海口西海岸假日酒店",
+    meals: ["机场轻食", "酒店餐厅或滨海简餐"],
+    weatherPlan: "持续降雨就全天留在酒店，不进市区补点。",
+  },
+  {
+    id: 2,
+    city: "万宁",
+    title: "海口西海岸 → 万宁神州半岛",
+    dateLabel: "9 月 13 日 · 换宿日",
+    pace: "第一次换宿",
+    summary: "从西海岸直接南下，入住万宁神州半岛假日度假酒店；下午只熟悉酒店和海岸。",
+    placeIds: ["haikou-west-coast-holiday", "wanning-holiday-inn", "shenzhou-peninsula", "wanning-holiday-inn"],
+    legs: [
+      leg(0, 1, "drive", "约 2 小时 30 分–2 小时 50 分", "暴雨时增加服务区休息。", "约 185 km", "西海岸出发，服务区休息另计"),
+      leg(1, 2, "walk", "约 10–20 分钟", "雷雨时留在酒店。", "半岛海岸段"),
+      leg(2, 3, "walk", "约 10–20 分钟", "天黑前返回。", "半岛海岸段"),
+    ],
+    distanceLabel: "跨城约 185 km",
+    driveLabel: "约 2.5–2.8 h",
+    sleep: "万宁神州半岛假日度假酒店",
+    meals: ["西海岸早餐", "服务区轻食", "酒店海景餐厅"],
+    weatherPlan: "天气差直接入住，不追日落。",
+    isHotelChange: true,
+  },
+  {
+    id: 3,
+    city: "万宁",
+    title: "兴隆植物与南洋老味",
+    dateLabel: "9 月 14 日 · 万宁基地",
+    pace: "林野短线",
+    summary: "不去石梅湾：上午兴隆热带植物园，午饭逛兴隆市场，下午回酒店休息。",
+    placeIds: ["wanning-holiday-inn", "xinglong-garden", "xinglong-market", "wanning-holiday-inn"],
+    legs: [
+      leg(0, 1, "drive", "约 40–50 分钟", "雷暴时直接取消植物园。", "约 36 km"),
+      leg(1, 2, "drive", "约 5–10 分钟", "雨大时直接找室内午饭。", "约 3 km"),
+      leg(2, 3, "drive", "约 40–50 分钟", "积水时提早回酒店。", "约 38 km"),
+    ],
+    distanceLabel: "约 77 km 小环线",
+    driveLabel: "约 1.5 h，分三段",
+    sleep: "万宁神州半岛假日度假酒店",
+    meals: ["酒店早餐", "兴隆后安粉与南洋糕点", "酒店晚饭"],
+    weatherPlan: "小阵雨保留市场；雷暴则全天酒店。",
+  },
+  {
+    id: 4,
+    city: "陵水",
+    title: "万宁 → 陵水土福湾",
+    dateLabel: "9 月 15 日 · 换宿日",
+    pace: "第二次换宿",
+    summary: "彻底删除新村港和折返，退房后单向南下三正月酒店；下午只看房间海景与酒店公区。",
+    placeIds: ["wanning-holiday-inn", "sangem-moon"],
+    legs: [
+      leg(0, 1, "drive", "约 1 小时 20 分–1 小时 40 分", "暴雨时服务区休息后再走。", "约 96 km"),
+    ],
+    distanceLabel: "约 96 km 单向南下",
+    driveLabel: "约 1.3–1.7 h",
+    sleep: "海南三正月酒店",
+    meals: ["万宁酒店早餐", "高速服务区轻食", "土福湾酒店晚饭"],
+    weatherPlan: "无论天气都不折返新村港，抵达后直接休息。",
+    isHotelChange: true,
+  },
+  {
+    id: 5,
+    city: "陵水",
+    title: "土福湾酒店与海岸日",
+    dateLabel: "9 月 16 日 · 陵水基地",
+    pace: "完整度假日",
+    summary: "海景早餐、酒店海岸、空中泳池和午休；不开长途车，也不去拥挤海岛。",
+    placeIds: ["sangem-moon", "sangem-beach", "sangem-moon"],
+    legs: [
+      leg(0, 1, "walk", "约 5–10 分钟", "雷雨时留在室内。", "酒店海岸段"),
+      leg(1, 2, "walk", "约 5–10 分钟", "红旗时不下海。", "酒店海岸段"),
+    ],
+    distanceLabel: "酒店与土福湾海岸",
+    driveLabel: "不开长途车",
+    sleep: "海南三正月酒店",
+    meals: ["海景早餐", "酒店简餐", "土福湾安静晚饭"],
+    weatherPlan: "风浪或雷电时使用室内设施，海岸只看不下水。",
+  },
+  {
+    id: 6,
+    city: "三亚",
+    title: "土福湾 → 三亚免税城 → 海棠湾",
+    dateLabel: "9 月 17 日 · 换宿日",
+    pace: "第三次换宿",
+    summary: "三正月退房后 20–30 分钟到免税城，集中采购，再去索菲特完成最后一晚。",
+    placeIds: ["sangem-moon", "cdf-sanya", "sofitel-sanya"],
+    legs: [
+      leg(0, 1, "drive", "约 20–30 分钟", "暴雨时延迟退房后出发。", "约 22 km"),
+      leg(1, 2, "drive", "约 10–15 分钟", "不购物可直接入住。", "约 5 km"),
+    ],
+    distanceLabel: "约 27 km",
+    driveLabel: "约 30–45 分钟，分两段",
+    sleep: "三亚理文索菲特酒店",
+    meals: ["三正月早餐", "免税城内简餐", "索菲特晚饭"],
+    weatherPlan: "雨天优先免税城，营业与提货时限出发周复核。",
+    isHotelChange: true,
+  },
+  {
+    id: 7,
+    city: "三亚",
+    title: "三亚 → 武汉",
+    dateLabel: "9 月 18 日 · 返程日",
+    pace: "还车离岛",
+    summary: "早餐、退房、还车与登机；Plan B 同样不在返程日补景点。",
+    placeIds: ["sofitel-sanya", "sanya-airport", "wuhan-airport"],
+    legs: [
+      leg(0, 1, "drive", "约 45–60 分钟", "积水时再提前出发。", "约 40 km", "还车时间另计"),
+      leg(1, 2, "flight", "约 2 小时 30 分", "航班调整时同步联系航司与租车公司。", undefined, "以最终航班为准"),
+    ],
+    distanceLabel: "岛内约 40 km",
+    driveLabel: "约 45–60 分钟＋航班",
+    sleep: "回家",
+    meals: ["酒店早餐", "机场简餐"],
+    weatherPlan: "提前 72 小时和 24 小时复核航班与还车安排。",
+  },
+];
+
+export const days: Day[] = planASchedule;
+
 export const itineraryPlans: ItineraryPlan[] = [
   {
     id: "A",
@@ -754,8 +1051,11 @@ export const itineraryPlans: ItineraryPlan[] = [
     tagline: "珊瑚日落线",
     description: "天气稳定时执行：万宁住两晚，以短距离海岸、兴隆老味和清水湾留白为主。",
     color: "#e86f5c",
+    schedule: planASchedule,
+    hotels: planAHotels,
+    routePath: "/routes/hainan-plan-a.geojson",
     days: [
-      { dayId: 1, title: "海口落地缓冲", summary: "入住后只走骑楼一段街区。", highlights: ["骑楼慢走", "老爸茶或海南粉"], fallback: "航班晚点直接入住。" },
+      { dayId: 1, title: "西海岸落地缓冲", summary: "直接住海口西海岸，不进市中心；只在酒店海岸看日落。", highlights: ["西海岸海景房", "不进老城区"], fallback: "航班晚点直接入住。" },
       { dayId: 2, title: "真正住进万宁", summary: "海口南下万宁，午后入住神州半岛，傍晚只走酒店海岸。", highlights: ["跨城约 2.5 小时", "神州半岛日落"], fallback: "雨大就删除海岸。" },
       { dayId: 3, title: "万宁慢海岸", summary: "石梅湾慢走、兴隆午饭，再回神州半岛；不追网红咖啡店。", highlights: ["石梅湾", "兴隆市场", "万宁连住第 2 晚"], fallback: "海况差切换 Plan B。" },
       { dayId: 4, title: "顺路进入陵水", summary: "万宁退房后去新村港，结束后一路向南入住清水湾。", highlights: ["不走回头路", "新村港半日", "清水湾入住"], fallback: "停航跳过乘船。" },
@@ -766,28 +1066,39 @@ export const itineraryPlans: ItineraryPlan[] = [
   },
   {
     id: "B",
-    name: "Plan B · 雨天酒店与免税",
-    tagline: "青绿避雨线",
-    description: "阵雨、海况差或只想更安静时执行：酒店内容优先，减少海岸停留，把室内采购集中安排。",
+    name: "Plan B · 林野与酒店慢住",
+    tagline: "青绿慢住线",
+    description: "这不是 A 线的雨天文案，而是另一套住宿与节点：西海岸假日、万宁假日、兴隆植物园、土福湾三正月。",
     color: "#277c78",
+    schedule: planBSchedule,
+    hotels: planBHotels,
+    routePath: "/routes/hainan-plan-b.geojson",
     days: [
-      { dayId: 1, title: "海口轻量落地", summary: "骑楼只在雨停后短走，晚点就留在酒店附近吃。", highlights: ["不补赶", "室内老爸茶"], fallback: "持续暴雨直接入住。" },
-      { dayId: 2, title: "万宁酒店先行", summary: "海口南下万宁，入住后体验酒店公区和房间海景。", highlights: ["万宁住两晚", "不追日落"], fallback: "服务区增加休息。" },
-      { dayId: 3, title: "雨天万宁", summary: "上午留在酒店；雨势减弱再去兴隆市场吃午饭，不跑石梅湾。", highlights: ["酒店慢度假", "兴隆老味", "雨天短距离"], fallback: "大雨全天酒店。" },
-      { dayId: 4, title: "直接南下清水湾", summary: "风浪大就跳过新村港乘船，只吃一顿午饭后入住清水湾。", highlights: ["不坐无证船", "早入住"], fallback: "持续暴雨直达酒店。" },
-      { dayId: 5, title: "清水湾酒店日", summary: "酒店早餐、室内公区、午休与晚饭，海岸只在安全时短走。", highlights: ["不开车", "室内设施"], fallback: "不下海。" },
-      { dayId: 6, title: "雨天免税主场", summary: "清水湾退房后直接去三亚免税城，集中完成清单，再入住索菲特。", highlights: ["免税室内 4–5 小时", "海棠湾短接驳"], fallback: "以中免当天营业通知为准。" },
+      { dayId: 1, title: "西海岸轻预算海景", summary: "落地后直接住西海岸假日酒店，避开市中心和骑楼折返。", highlights: ["180° 海景房型", "不进市区"], fallback: "持续暴雨直接入住。" },
+      { dayId: 2, title: "换一家万宁基地", summary: "入住万宁神州半岛假日度假酒店，不再与 A 线共用君悦。", highlights: ["万宁连住两晚", "神州半岛短散步"], fallback: "服务区增加休息。" },
+      { dayId: 3, title: "兴隆林野与老味", summary: "不去石梅湾，改走兴隆热带植物园和市场，下午回酒店。", highlights: ["兴隆植物园", "兴隆市场", "不追网红海岸"], fallback: "雷暴全天酒店。" },
+      { dayId: 4, title: "直接南下土福湾", summary: "彻底删除新村港，单向去三正月酒店，下午不再增加景点。", highlights: ["无折返", "换住三正月", "早入住"], fallback: "持续暴雨直达酒店。" },
+      { dayId: 5, title: "土福湾酒店日", summary: "海景早餐、酒店海岸、空中泳池与午休，不开长途车。", highlights: ["不开车", "海岸与泳池"], fallback: "红旗时不下海。" },
+      { dayId: 6, title: "短距离免税收尾", summary: "从土福湾约 20–30 分钟到免税城，再短接驳入住索菲特。", highlights: ["免税城 4 小时", "全日车程更短"], fallback: "以中免当天营业通知为准。" },
       { dayId: 7, title: "保守返程", summary: "比晴天方案更早离店，预留积水、还车和机场提货时间。", highlights: ["不加景点", "航班动态复核"], fallback: "按航司通知调整。" },
     ],
   },
 ];
 
 export function getDayRoute(dayId: number): Place[] {
-  const day = days.find((item) => item.id === dayId);
+  return getPlanDayRoute(days, dayId);
+}
+
+export function getPlanDayRoute(schedule: Day[], dayId: number): Place[] {
+  const day = schedule.find((item) => item.id === dayId);
   if (!day) return [];
   return day.placeIds.map((placeId) => places.find((place) => place.id === placeId)).filter((place): place is Place => Boolean(place));
 }
 
 export function getHotel(hotelId?: string): Hotel | undefined {
-  return hotels.find((hotel) => hotel.id === hotelId);
+  return getPlanHotel(hotels, hotelId);
+}
+
+export function getPlanHotel(planHotels: Hotel[], hotelId?: string): Hotel | undefined {
+  return planHotels.find((hotel) => hotel.id === hotelId);
 }

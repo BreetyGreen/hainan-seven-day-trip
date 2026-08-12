@@ -12,7 +12,7 @@ import {
 } from "../app/trip-playback.ts";
 
 const routeData = JSON.parse(await readFile(
-  new URL("../public/routes/hainan-east-coast.geojson", import.meta.url),
+  new URL("../public/routes/hainan-plan-a.geojson", import.meta.url),
   "utf8",
 ));
 
@@ -65,15 +65,15 @@ test("gives visible movement enough time to read as travel rather than a jump", 
   assert.ok(wanningLocalDrive.durationMs >= 2400);
 });
 
-test("keeps the Haikou hotel visit, Qilou stop, and hotel return on distinct route positions", () => {
+test("keeps the Haikou west-coast hotel, coast stop, and hotel return on distinct route positions", () => {
   const dayOne = createPlaybackPlan(days, places, routeData.features).find((day) => day.dayId === 1);
   const localStops = dayOne.stops.slice(2);
   const localSegments = dayOne.segments.slice(2);
 
   assert.deepEqual(localStops.map((stop) => stop.place.id), [
-    "haikou-qilou-atour",
-    "qilou",
-    "haikou-qilou-atour",
+    "haikou-marriott",
+    "haikou-west-coast",
+    "haikou-marriott",
   ]);
   assert.ok(localStops[0].routeIndex < localStops[1].routeIndex);
   assert.ok(localStops[1].routeIndex < localStops[2].routeIndex);

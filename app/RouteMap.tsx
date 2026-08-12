@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
-import { days, getDayRoute, getHotel, places, type Place, type TravelLegMode } from "./trip-data";
+import { getPlanDayRoute, getPlanHotel, places, type Day, type Hotel, type ItineraryPlan, type Place, type TravelLegMode } from "./trip-data";
 import { getDayGuide, hotelBayGuide } from "./trip-details";
-import { getDayLegs, getLegAfter, modeLabel } from "./trip-legs";
+import { modeLabel } from "./trip-legs";
 import {
   cameraForArrival,
   cameraForTravel,
@@ -43,7 +43,7 @@ type RouteFeature = {
 
 type RouteCollection = { type: "FeatureCollection"; features: RouteFeature[] };
 
-type RouteMapProps = { selectedDay: number | null; activePlan: "A" | "B" };
+type RouteMapProps = { selectedDay: number | null; plan: ItineraryPlan };
 
 type PlaybackStatus = "idle" | "playing" | "paused" | "complete";
 
@@ -75,8 +75,8 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#039;");
 }
 
-function firstDayForPlace(placeId: string) {
-  return days.find((day) => day.placeIds.includes(placeId))?.id ?? 1;
+function firstDayForPlace(schedule: Day[], placeId: string) {
+  return schedule.find((day) => day.placeIds.includes(placeId))?.id ?? 1;
 }
 
 function animateRoute(map: LeafletMap) {
@@ -231,6 +231,8 @@ function PlaceDetailDialog({
   place,
   dayId,
   routeContext,
+  schedule,
+  hotels,
   arrivalMode,
   onClose,
   onContinue,
@@ -238,15 +240,17 @@ function PlaceDetailDialog({
   place: Place;
   dayId: number;
   routeContext: RouteContext;
+  schedule: Day[];
+  hotels: Hotel[];
   arrivalMode: boolean;
   onClose: () => void;
   onContinue: () => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const dayGuide = getDayGuide(dayId);
-  const hotel = getHotel(place.hotelId);
+  const hotel = getPlanHotel(hotels, place.hotelId);
   const isSanyaBase = hotel?.id === "sofitel-sanya";
-  const nextLeg = getLegAfter(dayId, routeContext.position - 1);
+  const nextLeg = schedule.find((day) => day.id === dayId)?.legs.find((leg) => leg.fromIndex === routeContext.position - 1);
   const sourceLinks = [
     ...(place.image ? [{ label: `图片来源 · ${place.image.platform} · ${place.image.credit}`, url: place.image.creditUrl }] : []),
     { label: `${place.activity.source.platform} · ${place.activity.source.title}`, url: place.activity.source.url },
@@ -403,7 +407,9 @@ function PlaceDetailDialog({
   );
 }
 
-export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
+export function RouteMap({ selectedDay, plan }: RouteMapProps) {
+  const schedule = plan.schedule;
+  const planHotels = plan.hotels;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const routeLayerRef = useRef<LayerGroup | null>(null);
@@ -424,6 +430,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
   const resumePlaybackRef = useRef<() => void>(() => undefined);
   const continueArrivalRef = useRef<() => void>(() => undefined);
   const [routeData, setRouteData] = useState<RouteCollection | null>(null);
+  const [loadedRoutePath, setLoadedRoutePath] = useState<string | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [tilesFailed, setTilesFailed] = useState(false);
   const [playbackStatus, setPlaybackStatus] = useState<PlaybackStatus>("idle");
@@ -434,8 +441,9 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
   const [arrivalStageIndex, setArrivalStageIndex] = useState<number | null>(null);
   const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number; arrivalMode: boolean; stopIndex?: number } | null>(null);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
+  const routeIsReady = status === "ready" && loadedRoutePath === plan.routePath;
 
-  const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(place.id)) => {
+  const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(schedule, place.id)) => {
     pausePlaybackRef.current();
     travelerMarkerRef.current?.setOpacity(0);
     setPlaceDetail({ place, dayId, arrivalMode: false });
@@ -447,7 +455,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
       duration: camera.duration,
       easeLinearity: 0.28,
     });
-  }, []);
+  }, [schedule]);
 
   const closePlaceDetail = useCallback(() => {
     setPlaceDetail(null);
@@ -461,19 +469,19 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
   }, [visibleStage]);
 
   const openDayDetail = useCallback((dayId: number) => {
-    const route = getDayRoute(dayId);
+    const route = getPlanDayRoute(schedule, dayId);
     const preview = route.find((place) => !["transport", "stay"].includes(place.category)) ?? route[0];
     if (preview) openPlaceDetail(preview, dayId);
-  }, [openPlaceDetail]);
+  }, [openPlaceDetail, schedule]);
 
   const activeFeatures = useMemo(
-    () => selectedDay === null ? [] : routeData?.features.filter((feature) => feature.properties.dayId === selectedDay) ?? [],
-    [routeData, selectedDay],
+    () => selectedDay === null || loadedRoutePath !== plan.routePath ? [] : routeData?.features.filter((feature) => feature.properties.dayId === selectedDay) ?? [],
+    [loadedRoutePath, plan.routePath, routeData, selectedDay],
   );
 
   const playbackPlan = useMemo(
-    () => routeData ? createPlaybackPlan(days, places, routeData.features) : [],
-    [routeData],
+    () => routeData && loadedRoutePath === plan.routePath ? createPlaybackPlan(schedule, places, routeData.features) : [],
+    [loadedRoutePath, plan.routePath, routeData, schedule],
   );
   const playbackStages = useMemo(() => createPlaybackStages(playbackPlan), [playbackPlan]);
   const detailRouteContext = useMemo(() => {
@@ -488,7 +496,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
     () => playbackPlan.reduce((total, day) => total + day.stops.length, 0),
     [playbackPlan],
   );
-  const journeyPhotoItems = useMemo(() => buildJourneyPhotoItems(days, places), []);
+  const journeyPhotoItems = useMemo(() => buildJourneyPhotoItems(schedule, places), [schedule]);
 
   useEffect(() => {
     let cancelled = false;
@@ -496,12 +504,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
     async function initialize() {
       if (!containerRef.current || mapRef.current) return;
       try {
-        const [L, response] = await Promise.all([
-          import("leaflet"),
-          fetch(withBasePath("/routes/hainan-east-coast.geojson")),
-        ]);
-        if (!response.ok) throw new Error(`Route data ${response.status}`);
-        const data = (await response.json()) as RouteCollection;
+        const L = await import("leaflet");
         if (cancelled || !containerRef.current) return;
 
         leafletRef.current = L;
@@ -583,8 +586,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
         travelerMarkerRef.current = travelerMarker;
         routeLayerRef.current = L.layerGroup().addTo(map);
         markerLayerRef.current = L.layerGroup().addTo(map);
-        setRouteData(data);
-        setStatus("ready");
+        setStatus("loading");
       } catch {
         if (!cancelled) setStatus("error");
       }
@@ -607,16 +609,37 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    fetch(withBasePath(plan.routePath))
+      .then((response) => {
+        if (!response.ok) throw new Error(`Route data ${response.status}`);
+        return response.json() as Promise<RouteCollection>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setRouteData(data);
+        setLoadedRoutePath(plan.routePath);
+        setStatus("ready");
+      })
+      .catch(() => {
+        if (!cancelled) setStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [plan.routePath]);
+
+  useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
     const routeGroup = routeLayerRef.current;
     const routeRenderer = routeRendererRef.current;
     const markerGroup = markerLayerRef.current;
-    if (!L || !map || !routeGroup || !routeRenderer || !markerGroup || !routeData) return;
+    if (!L || !map || !routeGroup || !routeRenderer || !markerGroup || !routeData || !routeIsReady) return;
 
     routeGroup.clearLayers();
     markerGroup.clearLayers();
-    const planColor = activePlan === "A" ? "#e86f5c" : "#277c78";
+    const planColor = plan.color;
     playbackDriveRef.current?.setStyle({ color: planColor });
 
     routeData.features.forEach((feature) => {
@@ -637,10 +660,10 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
       } as L.GeoJSONOptions & { renderer: Canvas }).addTo(routeGroup);
     });
 
-    const itineraryPlaces = uniquePlaces(days.flatMap((day) => getDayRoute(day.id)));
-    const visiblePlaces = uniquePlaces(selectedDay === null ? itineraryPlaces : getDayRoute(selectedDay));
+    const itineraryPlaces = uniquePlaces(schedule.flatMap((day) => getPlanDayRoute(schedule, day.id)));
+    const visiblePlaces = uniquePlaces(selectedDay === null ? itineraryPlaces : getPlanDayRoute(schedule, selectedDay));
     visiblePlaces.forEach((place, index) => {
-      const placeDay = selectedDay ?? firstDayForPlace(place.id);
+      const placeDay = selectedDay ?? firstDayForPlace(schedule, place.id);
       const markerSymbol = placeSymbol(place, index);
       const photoFlag = place.image ? '<em class="photo-flag">实景</em>' : "";
       const icon = L.divIcon({
@@ -691,11 +714,15 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
       }).addTo(markerGroup);
     });
 
-    const hotelChanges = [
-      { dayId: 2, placeId: "wanning-hyatt", title: "从海口骑楼亚朵换到万宁神州半岛君悦", label: "第一次换宿" },
-      { dayId: 4, placeId: "clearwater-indigo", title: "从万宁君悦换到陵水清水湾英迪格", label: "第二次换宿" },
-      { dayId: 6, placeId: "sofitel-sanya", title: "从清水湾英迪格换到海棠湾索菲特", label: "第三次换宿" },
-    ];
+    const hotelChanges = planHotels.slice(1).map((hotel, index) => {
+      const hotelPlace = places.find((place) => place.hotelId === hotel.id);
+      return {
+        dayId: hotel.checkInDay,
+        placeId: hotelPlace?.id ?? hotel.id,
+        title: `从${planHotels[index].name}换到${hotel.name}`,
+        label: `第${index + 1}次换宿`,
+      };
+    });
     hotelChanges.forEach((change) => {
       if (selectedDay === null || selectedDay === change.dayId) {
         const hotelPlace = places.find((place) => place.id === change.placeId);
@@ -717,7 +744,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
 
     if (selectedDay !== null) {
       const selectedPlaybackDay = playbackPlan.find((day) => day.dayId === selectedDay);
-      const dayLegs = getDayLegs(selectedDay);
+      const dayLegs = schedule.find((day) => day.id === selectedDay)?.legs ?? [];
       selectedPlaybackDay?.segments.forEach((segment, index) => {
         const leg = dayLegs[index];
         if (!leg || leg.mode === "optional" || segment.coordinates.length === 0) return;
@@ -740,7 +767,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
     const features = selectedDay === null ? routeData.features : activeFeatures;
     const bounds = selectedDay === null || selectedDay === 1 || selectedDay === 7
       ? L.latLngBounds(
-          (selectedDay === null ? itineraryPlaces : getDayRoute(selectedDay))
+          (selectedDay === null ? itineraryPlaces : getPlanDayRoute(schedule, selectedDay))
             .filter((place) => place.id !== "wuhan-airport")
             .map((place) => [place.coordinates.lat, place.coordinates.lng] as [number, number]),
         )
@@ -758,7 +785,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
 
     if (selectedDay !== null) animateRoute(map);
     window.setTimeout(() => map.invalidateSize(), 50);
-  }, [activeFeatures, activePlan, openPlaceDetail, playbackPlan, routeData, selectedDay]);
+  }, [activeFeatures, openPlaceDetail, plan.color, planHotels, playbackPlan, routeData, routeIsReady, schedule, selectedDay]);
 
   useEffect(() => {
     const L = leafletRef.current;
@@ -767,7 +794,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
     const flightLine = playbackFlightRef.current;
     const walkLine = playbackWalkRef.current;
     const traveler = travelerMarkerRef.current;
-    if (!L || !map || !driveLine || !flightLine || !walkLine || !traveler || status !== "ready" || playbackStages.length === 0) return;
+    if (!L || !map || !driveLine || !flightLine || !walkLine || !traveler || !routeIsReady || playbackStages.length === 0) return;
 
     let cancelled = false;
     let stageIndex = 0;
@@ -1023,7 +1050,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
       if (animationFrameRef.current !== null) window.cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
     };
-  }, [playbackPlan, playbackStages, selectedDay, status]);
+  }, [playbackPlan, playbackStages, routeIsReady, selectedDay]);
 
   const togglePlayback = () => {
     if (playbackStatusRef.current === "playing") pausePlaybackRef.current();
@@ -1037,7 +1064,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
         : "播放";
   const activeStageDay = visibleStage ? playbackPlan[visibleStage.dayIndex] : null;
   const visibleLeg = visibleStage?.type === "travel" && activeStageDay
-    ? getDayLegs(activeStageDay.dayId)[visibleStage.segmentIndex]
+    ? schedule.find((day) => day.id === activeStageDay.dayId)?.legs[visibleStage.segmentIndex]
     : undefined;
   const stageKind: PlaybackKind = visibleStage?.type === "stop" ? visibleStage.stop.kind : "transport";
   const stageMeta = playbackMeta[stageKind];
@@ -1056,7 +1083,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
       : `${stageMeta.glyph} ${stageMeta.verb} · ${visibleStage.stop.place.shortName}`
     : selectedDay === null
       ? "✈ 武汉 → 海口 · 🚙 海南东线 · ✈ 三亚 → 武汉"
-      : getDayLegs(selectedDay).map((leg) => `${routeModeGlyph(leg.mode)} ${leg.durationLabel}`).join(" · ") || `Day ${selectedDay}`;
+      : schedule.find((day) => day.id === selectedDay)?.legs.map((leg) => `${routeModeGlyph(leg.mode)} ${leg.durationLabel}`).join(" · ") || `Day ${selectedDay}`;
 
   return (
     <div className="map-layer" data-playback-status={playbackStatus}>
@@ -1068,7 +1095,7 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
       />
 
       {selectedDay === null && playbackStatus === "idle" && !placeDetail && (
-        <JourneyStartGate ready={status === "ready"} onStart={() => startPlaybackRef.current(true)} activePlan={activePlan} />
+        <JourneyStartGate ready={routeIsReady} onStart={() => startPlaybackRef.current(true)} activePlan={plan.id} />
       )}
 
       <JourneyPhotoRail
@@ -1154,6 +1181,8 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
           place={placeDetail.place}
           dayId={placeDetail.dayId}
           routeContext={detailRouteContext}
+          schedule={schedule}
+          hotels={planHotels}
           arrivalMode={placeDetail.arrivalMode && arrivalStageIndex !== null}
           onClose={closePlaceDetail}
           onContinue={() => continueArrivalRef.current()}
@@ -1164,10 +1193,10 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
         <span>{activePlaybackDay && selectedDay === null ? `DAY ${activePlaybackDay}` : selectedDay === null ? "DAY 1—7" : `DAY ${selectedDay}`}</span>
         <strong>{routeLabel}</strong>
         <div className="playback-controls" role="group" aria-label="旅程播放控制">
-          <button type="button" onClick={togglePlayback} disabled={status !== "ready" || selectedDay !== null} aria-label={`${primaryPlaybackLabel}七日旅程动画`}>
+          <button type="button" onClick={togglePlayback} disabled={!routeIsReady || selectedDay !== null} aria-label={`${primaryPlaybackLabel}七日旅程动画`}>
             {playbackStatus === "playing" ? "Ⅱ" : "▶"} {primaryPlaybackLabel}
           </button>
-          <button type="button" onClick={() => startPlaybackRef.current(true)} disabled={status !== "ready" || selectedDay !== null}>↺ 重播</button>
+          <button type="button" onClick={() => startPlaybackRef.current(true)} disabled={!routeIsReady || selectedDay !== null}>↺ 重播</button>
         </div>
       </div>
 
@@ -1179,14 +1208,14 @@ export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
         <span><i className="change" />Day 2 / 4 / 6 换宿</span>
       </div>
 
-      {status === "loading" && <div className="map-status" role="status">正在连接 Day 1–7 完整路线…</div>}
+      {!routeIsReady && status !== "error" && <div className="map-status" role="status">正在连接 Plan {plan.id} 完整路线…</div>}
       {status === "error" && (
         <div className="map-status map-error" role="alert">
           <strong>地图底图暂未加载</strong>
           <span>本地路线与三基地文字计划仍可浏览。</span>
         </div>
       )}
-      {tilesFailed && status === "ready" && <div className="tile-note">底图网络较慢，本地路线与节点仍可点击。</div>}
+      {tilesFailed && routeIsReady && <div className="tile-note">底图网络较慢，本地路线与节点仍可点击。</div>}
     </div>
   );
 }

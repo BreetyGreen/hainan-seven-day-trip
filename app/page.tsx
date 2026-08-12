@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { RouteMap } from "./RouteMap";
-import { days, hotels, itineraryPlans, type Hotel, type TravelMode } from "./trip-data";
+import { itineraryPlans, type Hotel, type TravelMode } from "./trip-data";
 import { researchSummary } from "./trip-details";
 import { withBasePath } from "./site-paths";
 
@@ -51,7 +51,7 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
 
 function PlanSwitch({ activePlanId, onChange }: { activePlanId: "A" | "B"; onChange: (plan: "A" | "B") => void }) {
   return (
-    <div className="plan-switch" role="group" aria-label="切换晴天或雨天旅行方案">
+    <div className="plan-switch" role="group" aria-label="切换 Plan A 或 Plan B 旅行方案">
       {itineraryPlans.map((plan) => (
         <button
           key={plan.id}
@@ -73,8 +73,9 @@ export default function Home() {
   const [mode, setMode] = useState<TravelMode>("solo");
   const [activePlanId, setActivePlanId] = useState<"A" | "B">("A");
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const activeDay = selectedDay === null ? null : days.find((day) => day.id === selectedDay) ?? null;
   const activePlan = itineraryPlans.find((plan) => plan.id === activePlanId) ?? itineraryPlans[0];
+  const activeDay = selectedDay === null ? null : activePlan.schedule.find((day) => day.id === selectedDay) ?? null;
+  const activeHotels = activePlan.hotels;
   const activePlanDay = selectedDay === null ? null : activePlan.days.find((day) => day.dayId === selectedDay) ?? null;
 
   return (
@@ -92,7 +93,7 @@ export default function Home() {
           <button type="button" className={selectedDay === null ? "active" : ""} aria-pressed={selectedDay === null} onClick={() => setSelectedDay(null)}>
             全程
           </button>
-          {days.map((day) => (
+          {activePlan.schedule.map((day) => (
             <button
               key={day.id}
               type="button"
@@ -118,7 +119,7 @@ export default function Home() {
       </header>
 
       <section className="journey-shell" id="journey" aria-label="旅程地图">
-        <RouteMap selectedDay={selectedDay} activePlan={activePlanId} />
+        <RouteMap selectedDay={selectedDay} plan={activePlan} />
 
         <aside className="journey-card" aria-live="polite">
           <PlanSwitch activePlanId={activePlanId} onChange={setActivePlanId} />
@@ -139,9 +140,9 @@ export default function Home() {
                 <div><dt>今晚</dt><dd>{activeDay.sleep}</dd></div>
               </dl>
               {activeDay.isHotelChange && (() => {
-                const toIndex = hotels.findIndex((hotel) => hotel.checkInDay === activeDay.id);
-                const from = hotels[Math.max(0, toIndex - 1)];
-                const to = hotels[toIndex];
+                const toIndex = activeHotels.findIndex((hotel) => hotel.checkInDay === activeDay.id);
+                const from = activeHotels[Math.max(0, toIndex - 1)];
+                const to = activeHotels[toIndex];
                 const swap = { from, to, fromLabel: from.shortName, toLabel: `${to.shortName} · ${to.nights.replace(/^Day \d+(?:–\d+)? · /, "")}` };
                 return (
                 <section className="day-hotel-swap" aria-label={`Day ${activeDay.id} 酒店更换`}>
@@ -156,7 +157,7 @@ export default function Home() {
                   <p className="change-badge">退房后直接前往下一家酒店；换宿日不叠加售票景区。</p>
                 </section>
               ); })()}
-              <p className="weather-line"><b>{activePlanId === "B" ? "雨天执行" : "天气退路"}</b>{activePlanDay?.fallback ?? activeDay.weatherPlan}</p>
+              <p className="weather-line"><b>{activePlanId === "B" ? "B 线退路" : "天气退路"}</b>{activePlanDay?.fallback ?? activeDay.weatherPlan}</p>
             </>
           ) : (
             <>
@@ -165,13 +166,13 @@ export default function Home() {
               <p className="plan-day-kicker">{activePlan.name}</p>
               <p className="journey-lead">{activePlan.description}</p>
               <div className="base-flow" aria-label="四个住宿基地">
-                {hotels.map((hotel, index) => (
+                {activeHotels.map((hotel, index) => (
                   <div key={hotel.id} className="base-flow-group">
                     {index > 0 && (
                       <div className="hotel-change-bridge" role="note">
                         <span aria-hidden="true">⇄</span>
                         <strong>DAY {hotel.checkInDay} · 第 {index} 次换宿</strong>
-                        <small>{hotels[index - 1].city} → {hotel.city}</small>
+                        <small>{activeHotels[index - 1].city} → {hotel.city}</small>
                       </div>
                     )}
                     <HotelStory hotel={hotel} base={index + 1} />

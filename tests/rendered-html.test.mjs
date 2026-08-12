@@ -35,7 +35,7 @@ test("server-renders the Hainan map-first trip", async () => {
   assert.match(html, /全程路线/);
   assert.match(html, /万宁住两晚/);
   assert.match(html, /晴天海岸慢游/);
-  assert.match(html, /雨天酒店与免税/);
+  assert.match(html, /林野与酒店慢住/);
   assert.match(html, /点击地图节点/);
   assert.match(html, /九月怎么穿/);
   assert.match(html, /小红书原笔记/);
@@ -61,6 +61,9 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(page, /aria-live/);
   assert.match(page, /aria-pressed/);
   assert.match(page, /<RouteMap/);
+  assert.match(page, /activePlan\.schedule/);
+  assert.match(page, /activePlan\.hotels/);
+  assert.match(page, /plan=\{activePlan\}/);
   assert.match(routeMap, /小红书高互动/);
   assert.match(routeMap, /避雷\/核验/);
   assert.match(routeMap, /地图导航/);
@@ -71,8 +74,8 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.doesNotMatch(routeMap, /bindPopup/);
   assert.match(routeMap, /transport-icon/);
   assert.match(routeMap, /route-leg-duration-marker/);
-  assert.match(routeMap, /getDayLegs/);
-  assert.match(routeMap, /getLegAfter/);
+  assert.match(routeMap, /schedule\.find/);
+  assert.match(routeMap, /getPlanDayRoute/);
   assert.match(routeMap, /durationLabel/);
   assert.match(routeMap, /hotel-change-marker/);
   assert.match(routeMap, /mode === "flight"/);

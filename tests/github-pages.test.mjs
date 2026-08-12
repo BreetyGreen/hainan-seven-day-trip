@@ -29,7 +29,7 @@ test("routes runtime assets through the Pages base path", async () => {
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(routeMap, /withBasePath\("\/routes\/hainan-east-coast\.geojson"\)/);
+  assert.match(routeMap, /withBasePath\(plan\.routePath\)/);
   assert.match(routeMap, /withBasePath\(.*image\.src/);
   assert.match(tripData, /withBasePath/);
   assert.match(layout, /withBasePath\("\/favicon\.svg"\)/);

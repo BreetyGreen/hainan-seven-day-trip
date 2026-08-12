@@ -1,0 +1,60 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "dayId": 1, "legId": "A-D1-flight", "mode": "flight", "label": "武汉天河 → 海口美兰", "distanceKm": null, "durationHours": null },
+      "geometry": { "type": "LineString", "coordinates": [[114.2171149,30.7756632],[110.4592869,19.9442567]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 1, "legId": "A-D1-drive", "mode": "drive", "label": "海口美兰 → 海口万豪", "distanceKm": 45, "durationHours": 1 },
+      "geometry": { "type": "LineString", "coordinates": [[110.4592869,19.9442567],[110.41,19.98],[110.34,20.02],[110.27,20.045],[110.1870672,20.0618533]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 1, "legId": "A-D1-walk", "mode": "walk", "label": "海口万豪 → 西海岸 → 海口万豪", "distanceKm": 1.2, "durationHours": 0.3 },
+      "geometry": { "type": "LineString", "coordinates": [[110.1870672,20.0618533],[110.1892,20.0591],[110.1870672,20.0618533]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 2, "legId": "A-D2-drive", "mode": "drive", "label": "海口西海岸 → 万宁神州半岛君悦", "distanceKm": 185, "durationHours": 2.7 },
+      "geometry": { "type": "LineString", "coordinates": [[110.1870672,20.0618533],[110.35,20.01],[110.458,19.71],[110.424,19.43],[110.365,19.16],[110.361,18.91],[110.340735,18.673544]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 2, "legId": "A-D2-walk", "mode": "walk", "label": "君悦 → 神州半岛海岸 → 君悦", "distanceKm": 1.5, "durationHours": 0.4 },
+      "geometry": { "type": "LineString", "coordinates": [[110.340735,18.673544],[110.3479262,18.6779739],[110.340735,18.673544]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 3, "legId": "A-D3-drive", "mode": "drive", "label": "君悦 → 石梅湾 → 兴隆市场 → 君悦", "distanceKm": 78, "durationHours": 1.75 },
+      "geometry": { "type": "LineString", "coordinates": [[110.340735,18.673544],[110.31,18.666],[110.27209,18.661922],[110.238,18.692],[110.19691,18.73747],[110.246,18.724],[110.299,18.69],[110.340735,18.673544]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 4, "legId": "A-D4-drive", "mode": "drive", "label": "万宁 → 新村港 → 清水湾", "distanceKm": 98, "durationHours": 1.8 },
+      "geometry": { "type": "LineString", "coordinates": [[110.340735,18.673544],[110.286,18.62],[110.217,18.56],[110.109,18.49],[109.997,18.41519],[109.944,18.4],[109.9,18.395],[109.8628,18.4038]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 5, "legId": "A-D5-walk", "mode": "walk", "label": "清水湾英迪格 → 酒店海岸 → 英迪格", "distanceKm": 1.5, "durationHours": 0.3 },
+      "geometry": { "type": "LineString", "coordinates": [[109.8628,18.4038],[109.8686,18.3978],[109.8628,18.4038]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 6, "legId": "A-D6-drive", "mode": "drive", "label": "清水湾 → 三亚国际免税城 → 海棠湾索菲特", "distanceKm": 50, "durationHours": 1.1 },
+      "geometry": { "type": "LineString", "coordinates": [[109.8628,18.4038],[109.827,18.39],[109.787,18.374],[109.7487,18.3548],[109.73,18.343],[109.7137,18.3329]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 7, "legId": "A-D7-drive", "mode": "drive", "label": "海棠湾索菲特 → 三亚凤凰机场", "distanceKm": 40, "durationHours": 0.9 },
+      "geometry": { "type": "LineString", "coordinates": [[109.7137,18.3329],[109.65,18.319],[109.58,18.32],[109.51,18.297],[109.452,18.302],[109.4125351,18.3051519]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "dayId": 7, "legId": "A-D7-flight", "mode": "flight", "label": "三亚凤凰 → 武汉天河", "distanceKm": null, "durationHours": null },
+      "geometry": { "type": "LineString", "coordinates": [[109.4125351,18.3051519],[114.2171149,30.7756632]] }
+    }
+  ]
+}

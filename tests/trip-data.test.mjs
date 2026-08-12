@@ -74,7 +74,7 @@ test("uses one Haikou night, two Wanning nights, two Lingshui nights, and one Sa
   const overnightBases = new Set(days.slice(0, 6).map((day) => day.sleep));
   assert.equal(overnightBases.size, 4);
   assert.deepEqual([...overnightBases], [
-    "海口万国大都会骑楼亚朵酒店",
+    "海口万豪酒店",
     "万宁神州半岛君悦酒店",
     "海南清水湾英迪格酒店",
     "三亚理文索菲特酒店",
@@ -85,6 +85,7 @@ test("uses one Haikou night, two Wanning nights, two Lingshui nights, and one Sa
   assert.equal(hotels.some((hotel) => hotel.city === "万宁"), true);
   assert.deepEqual(days.slice(0, 6).map((day) => day.city), ["海口", "万宁", "万宁", "陵水", "陵水", "三亚"]);
   assert.match(hotels.find((hotel) => hotel.id === "grand-hyatt-wanning")?.fit ?? "", /海景|安静/);
+  assert.match(hotels[0].fit, /西海岸|海景|安静/);
 });
 
 test("offers complete and visually distinct Plan A and Plan B itineraries", () => {
@@ -95,6 +96,9 @@ test("offers complete and visually distinct Plan A and Plan B itineraries", () =
     assert.equal(plan.days.length, 7);
     assert.deepEqual(plan.days.map((day) => day.dayId), [1, 2, 3, 4, 5, 6, 7]);
     assert.match(plan.days.map((day) => `${day.title}${day.summary}${day.highlights.join("")}`).join(""), /万宁/);
+    assert.equal(plan.schedule.length, 7, `${plan.id} needs its own seven-day schedule`);
+    assert.equal(plan.hotels.length, 4, `${plan.id} needs its own four hotel bases`);
+    assert.match(plan.routePath, /^\/routes\/hainan-plan-[ab]\.geojson$/);
   }
 
   const planA = itineraryPlans.find((plan) => plan.id === "A");
@@ -104,6 +108,36 @@ test("offers complete and visually distinct Plan A and Plan B itineraries", () =
   assert.match(`${planB?.name}${planB?.description}`, /雨天|酒店|免税/);
   assert.match(planB?.days.find((day) => day.dayId === 3)?.summary ?? "", /酒店|兴隆|雨/);
   assert.match(planB?.days.find((day) => day.dayId === 6)?.summary ?? "", /免税/);
+
+  assert.notDeepEqual(
+    planA?.hotels.map((hotel) => hotel.id),
+    planB?.hotels.map((hotel) => hotel.id),
+    "Plan A and Plan B must not render the same hotel list",
+  );
+  assert.notDeepEqual(
+    planA?.schedule.flatMap((day) => day.placeIds),
+    planB?.schedule.flatMap((day) => day.placeIds),
+    "Plan A and Plan B must not render the same map nodes",
+  );
+  assert.equal(planA?.hotels[0].city, "海口");
+  assert.match(planA?.hotels[0].fit ?? "", /西海岸|海景|安静/);
+  assert.equal(planB?.hotels[0].city, "海口");
+  assert.match(planB?.hotels[0].fit ?? "", /西海岸|海景|安静/);
+  assert.notEqual(planA?.routePath, planB?.routePath);
+  assert.equal(planA?.schedule[2].placeIds.includes("shimei-bay"), true);
+  assert.equal(planB?.schedule[2].placeIds.includes("xinglong-garden"), true);
+  assert.equal(planB?.schedule[3].placeIds.includes("sangem-moon"), true);
+  assert.equal(planB?.schedule[3].placeIds.includes("xincun-port"), false);
+});
+
+test("both plan route files exist and contain different geometry", async () => {
+  const routeTexts = await Promise.all(itineraryPlans.map(async (plan) => {
+    const routeUrl = new URL(`../public${plan.routePath}`, import.meta.url);
+    await access(routeUrl);
+    return readFile(routeUrl, "utf8");
+  }));
+
+  assert.notEqual(routeTexts[0], routeTexts[1]);
 });
 
 test("every activity point contains specific playable instructions", () => {
@@ -169,21 +203,21 @@ test("locality photos stay attached to the matching real place", () => {
 
 test("ships separate flight and drive legs so transport can be mapped honestly", async () => {
   const raw = await readFile(
-    new URL("../public/routes/hainan-east-coast.geojson", import.meta.url),
+    new URL("../public/routes/hainan-plan-a.geojson", import.meta.url),
     "utf8",
   );
   const routeData = JSON.parse(raw);
 
   assert.equal(routeData.type, "FeatureCollection");
-  assert.equal(routeData.features.length, 9);
+  assert.equal(routeData.features.length, 11);
   assert.deepEqual(
     routeData.features.map((feature) => feature.properties.dayId),
-    [1, 1, 2, 3, 4, 5, 6, 7, 7],
+    [1, 1, 1, 2, 2, 3, 4, 5, 6, 7, 7],
   );
 
   assert.deepEqual(
     routeData.features.filter((feature) => feature.properties.dayId === 1).map((feature) => feature.properties.mode),
-    ["flight", "drive"],
+    ["flight", "drive", "walk"],
   );
   assert.deepEqual(
     routeData.features.filter((feature) => feature.properties.dayId === 7).map((feature) => feature.properties.mode),
@@ -191,13 +225,13 @@ test("ships separate flight and drive legs so transport can be mapped honestly",
   );
   assert.equal(routeData.features.filter((feature) => feature.properties.mode === "flight").length, 2);
   assert.equal(routeData.features.filter((feature) => feature.properties.mode === "drive").length, 6);
-  assert.equal(routeData.features.filter((feature) => feature.properties.mode === "walk").length, 1);
+  assert.equal(routeData.features.filter((feature) => feature.properties.mode === "walk").length, 3);
 
   for (const feature of routeData.features) {
     assert.equal(feature.geometry.type, "LineString");
     assert.ok(feature.geometry.coordinates.length >= 2);
     assert.ok(["flight", "drive", "walk"].includes(feature.properties.mode));
-    assert.match(feature.properties.legId, /^D[1-7]-(flight|drive|walk)$/);
+    assert.match(feature.properties.legId, /^[AB]-D[1-7]-(flight|drive|walk)$/);
   }
 
   for (let index = 1; index < routeData.features.length; index += 1) {
