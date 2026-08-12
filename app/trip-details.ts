@@ -6,6 +6,13 @@ export type ResearchSource = {
   note: string;
 };
 
+export type ResearchSummary = {
+  scannedCards: number;
+  deepReads: number;
+  queryGroups: string[];
+  conclusion: string;
+};
+
 export type FoodStop = {
   name: string;
   area: string;
@@ -45,6 +52,14 @@ const xincunResearch = "https://www.xiaohongshu.com/search_result/6a71b3a5000000
 const sangemOfficial = "https://www.sangemmoon.com/";
 const haikouHighEngagement = "https://www.xiaohongshu.com/explore/69f27160000000003803675c";
 const lingshuiHighEngagement = "https://www.xiaohongshu.com/explore/6969f4c9000000002102b785";
+const wanningHighEngagement = "https://www.xiaohongshu.com/search_result?keyword=%E4%B8%87%E5%AE%81%E7%BA%AF%E5%9C%9F%E8%91%97%E5%BF%85%E5%90%8318%E5%AE%B6%E8%80%81%E5%BA%97";
+
+export const researchSummary: ResearchSummary = {
+  scannedCards: 150,
+  deepReads: 21,
+  queryGroups: ["海南东线 7 天慢游", "海口／陵水／三亚吃住", "万宁安静海景酒店", "万宁小众玩法", "万宁本地老店", "万宁—陵水少折返"],
+  conclusion: "万宁值得住两晚；用神州半岛做基地、石梅湾与兴隆组成短线，比把日月湾网红店逐个打卡更符合安静慢游。",
+};
 
 export const userResearchSources: ResearchSource[] = [
   { id: "sanya-memo", title: "下周出发去三亚！！！", scope: "三亚备忘", url: sanyaMemo, note: "只把顺路饮品与糕点作为候选。" },
@@ -88,12 +103,12 @@ export const dayGuides: DayGuide[] = [
   },
   {
     dayId: 2,
-    headline: "跨城日只做南下和入住",
-    rhythm: ["海口慢早餐", "服务区休息一次", "下午核对陵水海景房"],
+    headline: "跨城日只做南下，并真正住进万宁",
+    rhythm: ["海口慢早餐", "G98 服务区休息一次", "下午核对万宁海景房", "神州半岛短日落"],
     foodStops: [researchedFood({
       name: "姚记辣汤饭", area: "海口水巷口", when: "08:00 左右，吃完直接取车南下",
       order: ["辣汤饭小份", "腊肠或煎蛋二选一"],
-      reason: "同一篇骑楼高互动攻略的起点店，早餐后上高速，不把午饭变成打卡任务。",
+      reason: "同一篇骑楼高互动攻略的起点店，早餐后上高速去万宁，不把午饭变成打卡任务。",
       caution: "胡椒味重；怕辣或航班晚到时，改酒店早餐，不硬赶。",
       sourceUrl: haikouHighEngagement, sourceLabel: "小红书高互动扫街攻略 · 约 1394 互动",
       evidence: { kind: "high-engagement", label: "小红书高互动笔记 · 约 1394 互动", engagement: 1394 },
@@ -102,47 +117,44 @@ export const dayGuides: DayGuide[] = [
   },
   {
     dayId: 3,
-    headline: "新村港一个半日，下午回海景房",
-    rhythm: ["正规码头问船班", "看疍家渔排", "新村镇午饭后返酒店"],
+    headline: "万宁只走一条短线：石梅湾＋兴隆",
+    rhythm: ["石梅湾慢走", "兴隆市场与老味午饭", "午后回君悦休息", "神州半岛傍晚"],
+    foodStops: [researchedFood({
+      name: "兴隆南洋风味／吴记后安粉汤", area: "万宁兴隆", when: "石梅湾后 12:00–13:30",
+      order: ["后安粉汤", "菠萝包或咖啡糕", "当季水果小份"],
+      reason: "2673 互动的万宁本地老店合集与 697 互动的真实榜单都把兴隆、后安粉和南洋点心列为主线，比跨湾排网红咖啡更顺路。",
+      caution: "兴隆南洋风味热门时可能排队；排队过长就进市场选明码标价摊位，不为一家店耗掉下午。",
+      sourceUrl: wanningHighEngagement, sourceLabel: "小红书万宁本地老店合集 · 约 2673 互动",
+      evidence: { kind: "high-engagement", label: "小红书高互动笔记 · 约 2673 互动", engagement: 2673 },
+      mapQuery: "万宁 兴隆华侨农贸市场 后安粉",
+    })],
+  },
+  {
+    dayId: 4,
+    headline: "万宁退房后顺路看新村港，再住清水湾",
+    rhythm: ["万宁退房", "新村港正规码头", "新村镇午饭", "单向南下入住清水湾"],
     foodStops: [researchedFood({
       name: "英姐酸粉热粉", area: "陵水新村镇", when: "乘船前后按班次调整",
       order: ["陵水酸粉", "热粉或汤粉二选一", "清补凉"],
-      reason: "803 互动的陵水合集明确列名，落在新村镇活动片区，吃完即可回酒店。",
+      reason: "803 互动的陵水合集明确列名，正好落在新村港活动片区，吃完继续向南去清水湾。",
       caution: "评论反馈酸粉已涨价；按现场菜单点小份。合集中的 87 号渔船和徐福记出现预制、溢价反馈，本计划剔除。",
       sourceUrl: lingshuiHighEngagement, sourceLabel: "小红书高互动陵水合集 · 约 803 互动",
       evidence: { kind: "high-engagement", label: "小红书高互动笔记 · 约 803 互动", engagement: 803 },
       mapQuery: "陵水 新村 英姐酸粉热粉",
     })],
-  },
-  {
-    dayId: 4,
-    headline: "酒店日不靠景点数量证明来过",
-    rhythm: ["海景早餐", "海岸与泳池", "中午回房避晒", "傍晚再看海"],
-    foodStops: [mapFood("酒店或土福湾附近简餐", "陵水土福湾", "午间避晒时", ["汤粉或炒饭", "椰子水", "清淡蔬菜"], "不为一顿饭离开度假节奏。", "陵水土福湾餐厅", "这是刻意留白的住宿日，不把高赞餐厅当任务；先看酒店当日菜单。", "hotel-plan")],
-    optional: { title: "分界洲岛可选分支", detail: "仅当天海况良好且两人都想上岛时启用；默认路线不播放。", sourceUrl: "https://www.hnlingshui.gov.cn/" },
+    optional: { title: "停航就删乘船", detail: "大风或雷雨时只保留新村镇午饭，持续降雨则从万宁直接去清水湾。", sourceUrl: "https://www.hnlingshui.gov.cn/" },
   },
   {
     dayId: 5,
-    headline: "第二次换宿后只使用酒店",
-    rhythm: ["睡到自然醒", "午饭后短途南下", "索菲特园林和海边"],
-    foodStops: [mapFood("海棠湾顺路海南菜", "三亚海棠湾", "入住前或晚饭", ["文昌鸡小份", "四角豆", "椰子饭"], "换宿日优先距离索菲特近、可停车的店；当天不跨湾追热店。", "三亚海棠湾海南菜", "目前只有位置核验，不冒充小红书高赞店；若入住后不想再开车，直接在酒店吃。")],
+    headline: "清水湾留白日不靠景点数量证明来过",
+    rhythm: ["海景早餐", "海岸或泳池", "中午回房避晒", "傍晚再决定是否出门"],
+    foodStops: [mapFood("酒店或清水湾附近简餐", "陵水清水湾", "午间避晒时", ["汤粉或炒饭", "椰子水", "清淡蔬菜"], "不为一顿饭离开度假节奏。", "陵水清水湾餐厅", "这是刻意留白的住宿日，不把高赞餐厅当任务；先看酒店当日菜单。", "hotel-plan")],
   },
   {
     dayId: 6,
-    headline: "三亚只走一条安静海岸线",
-    rhythm: ["小东海慢走", "帆船港午饭与降温", "鹿回头日落", "回海棠湾"],
-    foodStops: [{
-      name: "正合中西茶店",
-      area: "三亚市区",
-      when: "小东海结束后、是否顺路再决定",
-      order: ["腌面", "炸鸡翅", "冰豆花"],
-      reason: "用作城市日中段休息，不为了餐厅横穿三亚。",
-      sourceUrl: sanyaFood,
-      sourceLabel: "用户提供笔记 · 三亚已吃版",
-      mapUrl: `https://www.amap.com/search?query=${encodeURIComponent("三亚 正合中西茶店")}`,
-      caution: "用户笔记当前能核验标题与作者，但正文互动数据未完整加载，因此标为‘用户收藏’，不标高赞。",
-      evidence: { kind: "user-note", label: "你提供的小红书已吃笔记" },
-    }],
+    headline: "免税采购集中到一段，结束后短接驳入住",
+    rhythm: ["清水湾慢退房", "45–60 分钟到免税城", "14:30–18:30 按清单采购", "10–15 分钟到索菲特"],
+    foodStops: [mapFood("免税城内简餐或索菲特晚饭", "三亚海棠湾", "采购中段或入住后", ["粉面或简餐", "清淡蔬菜", "补水"], "不为了高赞餐厅横穿市区；把体力留给采购、入住和次日返程。", "三亚国际免税城 餐饮", "免税城营业、品牌库存和机场提货时限以出发周中免 App 为准。", "hotel-plan")],
   },
   {
     dayId: 7,
@@ -157,7 +169,7 @@ export const hotelBayGuide: HotelBayGuide[] = [
   { bay: "三亚湾", fit: "机场和城市餐饮便利。", tradeoff: "从陵水南下后还要继续穿城，不符合这版慢节奏。", examples: ["海韵度假", "皇冠假日"] },
   { bay: "大东海", fit: "靠近小东海、鹿回头和城市生活。", tradeoff: "公共海滩和市区客流更多，纯度假感弱。", examples: ["半山半岛洲际", "山海天JW万豪"] },
   { bay: "亚龙湾", fit: "成熟海湾和沙滩体验完整。", tradeoff: "与陵水衔接不如海棠湾顺，酒店房价需单独比较。", examples: ["亚龙湾希尔顿", "美高梅"] },
-  { bay: "海棠湾", fit: "从陵水顺路入住，适合连住两晚并留出酒店时间。", tradeoff: "去小东海和鹿回头约一小时，所以只安排一个城市日。", examples: ["理文索菲特", "开维费尔蒙", "阳光壹"] },
+  { bay: "海棠湾", fit: "从陵水顺路、靠近免税城，适合最后一晚自驾收尾。", tradeoff: "去三亚市区较远，所以这版不再横穿市区追景点。", examples: ["理文索菲特", "开维费尔蒙", "阳光壹"] },
 ];
 
 export function getDayGuide(dayId: number) {

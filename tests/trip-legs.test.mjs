@@ -5,9 +5,9 @@ import { getDayLegs, getLegAfter, modeLabel } from "../app/trip-legs.ts";
 
 test("resolves repeated hotel stops by route index", () => {
   const legs = getDayLegs(3);
-  assert.equal(legs.length, 2);
+  assert.equal(legs.length, 3);
   assert.equal(legs[0].fromIndex, 0);
-  assert.equal(legs.at(-1).toIndex, 2);
+  assert.equal(legs.at(-1).toIndex, 3);
   assert.equal(getLegAfter(3, 1), legs[1]);
 });
 

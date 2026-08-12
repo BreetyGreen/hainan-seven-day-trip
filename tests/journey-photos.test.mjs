@@ -7,7 +7,7 @@ import { days, places } from "../app/trip-data.ts";
 test("builds a compact, ordered photo journey from the real itinerary", () => {
   const items = buildJourneyPhotoItems(days, places);
 
-  assert.ok(items.length >= 8 && items.length <= 10, `expected 8–10 journey photos, got ${items.length}`);
+  assert.ok(items.length >= 10 && items.length <= 14, `expected 10–14 journey photos, got ${items.length}`);
   assert.deepEqual(items.map((item) => item.dayId), [...items.map((item) => item.dayId)].sort((a, b) => a - b));
   assert.equal(new Set(items.map((item) => item.photo.src)).size, items.length, "the rail should not repeat the same photo");
   assert.equal(items.some((item) => item.place.category === "transport"), false);
@@ -24,11 +24,11 @@ test("builds a compact, ordered photo journey from the real itinerary", () => {
 
 test("keeps the requested Xiaohongshu hotel photography in the journey rail", () => {
   const items = buildJourneyPhotoItems(days, places);
-  const sangem = items.find((item) => item.place.id === "sangem-moon");
+  const wanning = items.find((item) => item.place.id === "wanning-hyatt");
   const sofitel = items.find((item) => item.place.id === "sofitel-sanya");
 
-  assert.equal(sangem?.photo.platform, "小红书");
-  assert.match(sangem?.photo.src ?? "", /sangem-moon-xhs\.webp$/);
+  assert.equal(wanning?.photo.platform, "小红书");
+  assert.match(wanning?.photo.src ?? "", /grand-hyatt-wanning-xhs\.webp$/);
   assert.equal(sofitel?.photo.platform, "小红书");
   assert.match(sofitel?.photo.src ?? "", /sofitel-pool-xhs\.webp$/);
 });

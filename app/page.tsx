@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { RouteMap } from "./RouteMap";
-import { days, hotels, type Hotel, type TravelMode } from "./trip-data";
+import { days, hotels, itineraryPlans, type Hotel, type TravelMode } from "./trip-data";
+import { researchSummary } from "./trip-details";
 import { withBasePath } from "./site-paths";
 
 const modeNotes: Record<TravelMode, { label: string; subtitle: string; guidance: string }> = {
@@ -48,18 +49,41 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
   );
 }
 
+function PlanSwitch({ activePlanId, onChange }: { activePlanId: "A" | "B"; onChange: (plan: "A" | "B") => void }) {
+  return (
+    <div className="plan-switch" role="group" aria-label="切换晴天或雨天旅行方案">
+      {itineraryPlans.map((plan) => (
+        <button
+          key={plan.id}
+          type="button"
+          className={`plan-${plan.id.toLowerCase()}`}
+          aria-pressed={activePlanId === plan.id}
+          onClick={() => onChange(plan.id)}
+        >
+          <span>{plan.id}</span>
+          <strong>{plan.name.replace(/^Plan [AB] · /, "")}</strong>
+          <small>{plan.tagline}</small>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function Home() {
   const [mode, setMode] = useState<TravelMode>("solo");
+  const [activePlanId, setActivePlanId] = useState<"A" | "B">("A");
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const activeDay = selectedDay === null ? null : days.find((day) => day.id === selectedDay) ?? null;
+  const activePlan = itineraryPlans.find((plan) => plan.id === activePlanId) ?? itineraryPlans[0];
+  const activePlanDay = selectedDay === null ? null : activePlan.days.find((day) => day.dayId === selectedDay) ?? null;
 
   return (
-    <main className="trip-app">
+    <main className="trip-app" data-plan={activePlanId.toLowerCase()}>
       <header className="map-topbar">
         <button className="map-wordmark" type="button" onClick={() => setSelectedDay(null)} aria-label="查看 Day 1 到 Day 7 完整路线">
           <span className="wordmark-mark" aria-hidden="true">HN</span>
           <span>
-            <strong>武汉 → 海南 · 一条线走完</strong>
+            <strong>武汉 → 海口 → 万宁 → 陵水 → 三亚</strong>
             <small>武汉出发 · 2026.09 · 7 天 6 晚</small>
           </span>
         </button>
@@ -94,23 +118,31 @@ export default function Home() {
       </header>
 
       <section className="journey-shell" id="journey" aria-label="旅程地图">
-        <RouteMap selectedDay={selectedDay} />
+        <RouteMap selectedDay={selectedDay} activePlan={activePlanId} />
 
         <aside className="journey-card" aria-live="polite">
+          <PlanSwitch activePlanId={activePlanId} onChange={setActivePlanId} />
           {activeDay ? (
             <>
               <p className="eyebrow">DAY {activeDay.id} · {activeDay.dateLabel}</p>
               <h1>{activeDay.title}</h1>
-              <p className="journey-lead">{activeDay.summary}</p>
+              <p className="plan-day-kicker">{activePlan.name}</p>
+              <p className="journey-lead">{activePlanDay?.summary ?? activeDay.summary}</p>
+              {activePlanDay && (
+                <ul className="plan-highlights">
+                  {activePlanDay.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                </ul>
+              )}
               <dl className="day-facts">
                 <div><dt>路线</dt><dd>{activeDay.distanceLabel}</dd></div>
                 <div><dt>驾驶</dt><dd>{activeDay.driveLabel}</dd></div>
                 <div><dt>今晚</dt><dd>{activeDay.sleep}</dd></div>
               </dl>
               {activeDay.isHotelChange && (() => {
-                const swap = activeDay.id === 2
-                  ? { from: hotels[0], to: hotels[1], fromLabel: "海口亚朵", toLabel: "三正月 · 入住 3 晚" }
-                  : { from: hotels[1], to: hotels[2], fromLabel: "三正月", toLabel: "索菲特 · 入住 2 晚" };
+                const toIndex = hotels.findIndex((hotel) => hotel.checkInDay === activeDay.id);
+                const from = hotels[Math.max(0, toIndex - 1)];
+                const to = hotels[toIndex];
+                const swap = { from, to, fromLabel: from.shortName, toLabel: `${to.shortName} · ${to.nights.replace(/^Day \d+(?:–\d+)? · /, "")}` };
                 return (
                 <section className="day-hotel-swap" aria-label={`Day ${activeDay.id} 酒店更换`}>
                   <strong>DAY {activeDay.id} · 换宿日</strong>
@@ -124,27 +156,27 @@ export default function Home() {
                   <p className="change-badge">退房后直接前往下一家酒店；换宿日不叠加售票景区。</p>
                 </section>
               ); })()}
-              <p className="weather-line"><b>天气退路</b>{activeDay.weatherPlan}</p>
+              <p className="weather-line"><b>{activePlanId === "B" ? "雨天执行" : "天气退路"}</b>{activePlanDay?.fallback ?? activeDay.weatherPlan}</p>
             </>
           ) : (
             <>
               <p className="eyebrow">全程路线 · DAY 1—7</p>
-              <h1>一条线，<br />只换两次酒店</h1>
-              <p className="journey-lead">海口缓冲 1 晚、陵水海景连住 3 晚、三亚收尾 2 晚；每天只留一条主要活动线。</p>
-              <div className="base-flow" aria-label="三个住宿基地">
-                <HotelStory hotel={hotels[0]} base={1} />
-                <div className="hotel-change-bridge" role="note">
-                  <span aria-hidden="true">⇄</span>
-                  <strong>DAY 2 · 第一次换宿</strong>
-                  <small>海口 → 陵水海景基地</small>
-                </div>
-                <HotelStory hotel={hotels[1]} base={2} />
-                <div className="hotel-change-bridge" role="note">
-                  <span aria-hidden="true">⇄</span>
-                  <strong>DAY 5 · 第二次换宿</strong>
-                  <small>陵水 → 三亚海棠湾</small>
-                </div>
-                <HotelStory hotel={hotels[2]} base={3} />
+              <h1>万宁住两晚，<br />整条东线慢下来</h1>
+              <p className="plan-day-kicker">{activePlan.name}</p>
+              <p className="journey-lead">{activePlan.description}</p>
+              <div className="base-flow" aria-label="四个住宿基地">
+                {hotels.map((hotel, index) => (
+                  <div key={hotel.id} className="base-flow-group">
+                    {index > 0 && (
+                      <div className="hotel-change-bridge" role="note">
+                        <span aria-hidden="true">⇄</span>
+                        <strong>DAY {hotel.checkInDay} · 第 {index} 次换宿</strong>
+                        <small>{hotels[index - 1].city} → {hotel.city}</small>
+                      </div>
+                    )}
+                    <HotelStory hotel={hotel} base={index + 1} />
+                  </div>
+                ))}
               </div>
             </>
           )}
@@ -164,7 +196,16 @@ export default function Home() {
             <span><b>穿</b>九月怎么穿：速干短袖＋薄防晒衣＋可收纳雨壳</span>
           </div>
 
-          <p className="research-link">小红书原笔记已整理进地点详情 · 无需跳转也能看完</p>
+          {selectedDay === null && (
+            <details className="research-summary">
+              <summary>100+ 篇小红书调研怎么改变了路线</summary>
+              <p>已登记 {researchSummary.scannedCards} 条攻略卡片，深读 {researchSummary.deepReads} 篇代表笔记。</p>
+              <p>{researchSummary.conclusion}</p>
+              <div>{researchSummary.queryGroups.map((group) => <span key={group}>{group}</span>)}</div>
+            </details>
+          )}
+
+          <p className="research-link">小红书原笔记已整理进地点详情 · 站内先看结论，需要时再打开原文</p>
           <p className="verified-note"><span>●</span> 活动、地图与酒店 · 2026-08-11 核验</p>
         </aside>
       </section>

@@ -43,7 +43,7 @@ type RouteFeature = {
 
 type RouteCollection = { type: "FeatureCollection"; features: RouteFeature[] };
 
-type RouteMapProps = { selectedDay: number | null };
+type RouteMapProps = { selectedDay: number | null; activePlan: "A" | "B" };
 
 type PlaybackStatus = "idle" | "playing" | "paused" | "complete";
 
@@ -134,7 +134,7 @@ function toLeafletLines(lines: RouteCoordinate[][]) {
   return lines.map((line) => line.map(([lng, lat]) => [lat, lng] as [number, number]));
 }
 
-function JourneyStartGate({ ready, onStart }: { ready: boolean; onStart: () => void }) {
+function JourneyStartGate({ ready, onStart, activePlan }: { ready: boolean; onStart: () => void; activePlan: "A" | "B" }) {
   return (
     <section className="journey-start-gate" aria-labelledby="journey-start-title">
       <div className="journey-start-route" aria-hidden="true">
@@ -144,11 +144,11 @@ function JourneyStartGate({ ready, onStart }: { ready: boolean; onStart: () => v
       <h2 id="journey-start-title">海南七日旅程</h2>
       <div className="journey-start-facts">
         <span><b>7</b>天 6 晚</span>
-        <span><b>3</b>个住宿基地</span>
-        <span><b>2</b>次换酒店</span>
+        <span><b>4</b>个住宿基地</span>
+        <span><b>2</b>晚住万宁</span>
       </div>
       <button type="button" onClick={onStart} disabled={!ready}>
-        <span>{ready ? "开始七日旅程" : "正在准备路线"}</span>
+        <span>{ready ? `开始七日旅程 · Plan ${activePlan}` : "正在准备路线"}</span>
         <i aria-hidden="true">→</i>
       </button>
       <small>到达关键地点会自动停下，等你看完再继续</small>
@@ -403,7 +403,7 @@ function PlaceDetailDialog({
   );
 }
 
-export function RouteMap({ selectedDay }: RouteMapProps) {
+export function RouteMap({ selectedDay, activePlan }: RouteMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const routeLayerRef = useRef<LayerGroup | null>(null);
@@ -616,6 +616,8 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
     routeGroup.clearLayers();
     markerGroup.clearLayers();
+    const planColor = activePlan === "A" ? "#e86f5c" : "#277c78";
+    playbackDriveRef.current?.setStyle({ color: planColor });
 
     routeData.features.forEach((feature) => {
       const isActive = selectedDay === null || feature.properties.dayId === selectedDay;
@@ -625,7 +627,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       L.geoJSON(feature as GeoJsonObject, {
         renderer: routeRenderer,
         style: {
-          color: isOverview ? "#4e9896" : isActive ? (isFlight ? "#143747" : isWalk ? "#2e7773" : "#ff6557") : "#7ebcb8",
+          color: isOverview ? planColor : isActive ? (isFlight ? "#143747" : isWalk ? "#2e7773" : planColor) : "#7ebcb8",
           dashArray: isFlight ? "6 10" : isWalk ? "3 8" : undefined,
           lineCap: "round",
           lineJoin: "round",
@@ -635,7 +637,8 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       } as L.GeoJSONOptions & { renderer: Canvas }).addTo(routeGroup);
     });
 
-    const visiblePlaces = uniquePlaces(selectedDay === null ? places : getDayRoute(selectedDay));
+    const itineraryPlaces = uniquePlaces(days.flatMap((day) => getDayRoute(day.id)));
+    const visiblePlaces = uniquePlaces(selectedDay === null ? itineraryPlaces : getDayRoute(selectedDay));
     visiblePlaces.forEach((place, index) => {
       const placeDay = selectedDay ?? firstDayForPlace(place.id);
       const markerSymbol = placeSymbol(place, index);
@@ -665,7 +668,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
     const transportFeatures = routeData.features.filter((feature) => {
       if (selectedDay !== null) return false;
-      return feature.properties.mode === "flight" || [1, 2, 5, 7].includes(feature.properties.dayId);
+      return feature.properties.mode === "flight" || [1, 2, 4, 6, 7].includes(feature.properties.dayId);
     });
     transportFeatures.forEach((feature) => {
       const [lng, lat] = featureMarkerCoordinate(feature);
@@ -689,8 +692,9 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     });
 
     const hotelChanges = [
-      { dayId: 2, placeId: "sangem-moon", title: "从海口骑楼亚朵换到陵水三正月酒店", label: "第一次换宿" },
-      { dayId: 5, placeId: "sofitel-sanya", title: "从陵水三正月换到海棠湾索菲特", label: "第二次换宿" },
+      { dayId: 2, placeId: "wanning-hyatt", title: "从海口骑楼亚朵换到万宁神州半岛君悦", label: "第一次换宿" },
+      { dayId: 4, placeId: "clearwater-indigo", title: "从万宁君悦换到陵水清水湾英迪格", label: "第二次换宿" },
+      { dayId: 6, placeId: "sofitel-sanya", title: "从清水湾英迪格换到海棠湾索菲特", label: "第三次换宿" },
     ];
     hotelChanges.forEach((change) => {
       if (selectedDay === null || selectedDay === change.dayId) {
@@ -736,7 +740,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
     const features = selectedDay === null ? routeData.features : activeFeatures;
     const bounds = selectedDay === null || selectedDay === 1 || selectedDay === 7
       ? L.latLngBounds(
-          (selectedDay === null ? places : getDayRoute(selectedDay))
+          (selectedDay === null ? itineraryPlaces : getDayRoute(selectedDay))
             .filter((place) => place.id !== "wuhan-airport")
             .map((place) => [place.coordinates.lat, place.coordinates.lng] as [number, number]),
         )
@@ -754,7 +758,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
 
     if (selectedDay !== null) animateRoute(map);
     window.setTimeout(() => map.invalidateSize(), 50);
-  }, [activeFeatures, openPlaceDetail, playbackPlan, routeData, selectedDay]);
+  }, [activeFeatures, activePlan, openPlaceDetail, playbackPlan, routeData, selectedDay]);
 
   useEffect(() => {
     const L = leafletRef.current;
@@ -1064,7 +1068,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
       />
 
       {selectedDay === null && playbackStatus === "idle" && !placeDetail && (
-        <JourneyStartGate ready={status === "ready"} onStart={() => startPlaybackRef.current(true)} />
+        <JourneyStartGate ready={status === "ready"} onStart={() => startPlaybackRef.current(true)} activePlan={activePlan} />
       )}
 
       <JourneyPhotoRail
@@ -1172,7 +1176,7 @@ export function RouteMap({ selectedDay }: RouteMapProps) {
         <span><i className="dashed" />✈ 航班</span>
         <span><i className="walk" />🚶 步行</span>
         <span><i className="photo" />实景图</span>
-        <span><i className="change" />Day 2 / 5 换宿</span>
+        <span><i className="change" />Day 2 / 4 / 6 换宿</span>
       </div>
 
       {status === "loading" && <div className="map-status" role="status">正在连接 Day 1–7 完整路线…</div>}

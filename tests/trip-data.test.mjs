@@ -6,11 +6,13 @@ import {
   days,
   getDayRoute,
   hotels,
+  itineraryPlans,
   places,
 } from "../app/trip-data.ts";
 import {
   dayGuides,
   hotelBayGuide,
+  researchSummary,
   userResearchSources,
 } from "../app/trip-details.ts";
 
@@ -52,8 +54,8 @@ test("every mapped point is a sourced real Hainan or Wuhan place", () => {
 });
 
 test("hotel recommendations keep official and visual evidence", async () => {
-  assert.equal(hotels.length, 3, "the trip must use exactly three hotels");
-  assert.deepEqual(hotels.map((hotel) => hotel.checkInDay), [1, 2, 5]);
+  assert.equal(hotels.length, 4, "the trip must use four overnight bases including Wanning");
+  assert.deepEqual(hotels.map((hotel) => hotel.checkInDay), [1, 2, 4, 6]);
 
   for (const hotel of hotels) {
     assert.ok(hotel.reasons.length >= 2);
@@ -68,19 +70,40 @@ test("hotel recommendations keep official and visual evidence", async () => {
   }
 });
 
-test("uses one Haikou night, three Lingshui nights, and two Sanya nights", () => {
+test("uses one Haikou night, two Wanning nights, two Lingshui nights, and one Sanya night", () => {
   const overnightBases = new Set(days.slice(0, 6).map((day) => day.sleep));
-  assert.equal(overnightBases.size, 3);
+  assert.equal(overnightBases.size, 4);
   assert.deepEqual([...overnightBases], [
     "海口万国大都会骑楼亚朵酒店",
-    "海南三正月酒店",
+    "万宁神州半岛君悦酒店",
+    "海南清水湾英迪格酒店",
     "三亚理文索菲特酒店",
   ]);
-  assert.deepEqual(days.filter((day) => day.isHotelChange).map((day) => day.id), [2, 5]);
-  assert.equal(days.filter((day) => /换宿/.test(day.pace)).length, 2);
-  assert.equal(places.some((place) => place.city === "万宁"), false);
-  assert.equal(hotels.some((hotel) => hotel.city === "万宁"), false);
-  assert.match(hotels.find((hotel) => hotel.id === "sangem-moon")?.fit ?? "", /海景/);
+  assert.deepEqual(days.filter((day) => day.isHotelChange).map((day) => day.id), [2, 4, 6]);
+  assert.equal(days.filter((day) => /换宿/.test(day.pace)).length, 3);
+  assert.equal(places.some((place) => place.city === "万宁"), true);
+  assert.equal(hotels.some((hotel) => hotel.city === "万宁"), true);
+  assert.deepEqual(days.slice(0, 6).map((day) => day.city), ["海口", "万宁", "万宁", "陵水", "陵水", "三亚"]);
+  assert.match(hotels.find((hotel) => hotel.id === "grand-hyatt-wanning")?.fit ?? "", /海景|安静/);
+});
+
+test("offers complete and visually distinct Plan A and Plan B itineraries", () => {
+  assert.deepEqual(itineraryPlans.map((plan) => plan.id), ["A", "B"]);
+  assert.equal(new Set(itineraryPlans.map((plan) => plan.color)).size, 2);
+
+  for (const plan of itineraryPlans) {
+    assert.equal(plan.days.length, 7);
+    assert.deepEqual(plan.days.map((day) => day.dayId), [1, 2, 3, 4, 5, 6, 7]);
+    assert.match(plan.days.map((day) => `${day.title}${day.summary}${day.highlights.join("")}`).join(""), /万宁/);
+  }
+
+  const planA = itineraryPlans.find((plan) => plan.id === "A");
+  const planB = itineraryPlans.find((plan) => plan.id === "B");
+  assert.match(`${planA?.name}${planA?.description}`, /晴天|海岸/);
+  assert.match(planA?.days.find((day) => day.dayId === 3)?.summary ?? "", /海岸|石梅湾|神州半岛/);
+  assert.match(`${planB?.name}${planB?.description}`, /雨天|酒店|免税/);
+  assert.match(planB?.days.find((day) => day.dayId === 3)?.summary ?? "", /酒店|兴隆|雨/);
+  assert.match(planB?.days.find((day) => day.dayId === 6)?.summary ?? "", /免税/);
 });
 
 test("every activity point contains specific playable instructions", () => {
@@ -215,17 +238,29 @@ test("turns the four user-supplied Xiaohongshu notes into structured in-page gui
   assert.ok(xhsStops.every((stop) => /小红书/.test(stop.evidence.label)));
   assert.ok(xhsStops.every((stop) => Number.isInteger(stop.evidence.engagement) && stop.evidence.engagement > 0));
 
+  const wanningNames = dayGuides
+    .filter((guide) => [2, 3].includes(guide.dayId))
+    .flatMap((guide) => guide.foodStops.map((stop) => stop.name));
+  assert.ok(wanningNames.includes("兴隆南洋风味／吴记后安粉汤"));
+
   const lingshuiNames = dayGuides
-    .filter((guide) => [3, 4].includes(guide.dayId))
+    .filter((guide) => [4, 5].includes(guide.dayId))
     .flatMap((guide) => guide.foodStops.map((stop) => stop.name));
   assert.ok(lingshuiNames.includes("英姐酸粉热粉"));
-  assert.ok(lingshuiNames.includes("酒店或土福湾附近简餐"));
+  assert.ok(lingshuiNames.includes("酒店或清水湾附近简餐"));
 
   const sanyaNames = dayGuides
-    .filter((guide) => [5, 6, 7].includes(guide.dayId))
+    .filter((guide) => [6, 7].includes(guide.dayId))
     .flatMap((guide) => guide.foodStops.map((stop) => stop.name));
-  assert.ok(sanyaNames.includes("正合中西茶店"));
+  assert.ok(sanyaNames.includes("免税城内简餐或索菲特晚饭"));
   assert.ok(sanyaNames.includes("酒店早餐与机场简餐"));
+});
+
+test("records the breadth and conclusions of the Xiaohongshu research pass", () => {
+  assert.ok(researchSummary.scannedCards >= 100);
+  assert.ok(researchSummary.deepReads >= 20);
+  assert.ok(researchSummary.queryGroups.some((group) => /万宁/.test(group)));
+  assert.match(researchSummary.conclusion, /万宁.*两晚|两晚.*万宁/);
 });
 
 test("explains the four Sanya bay choices without making price the main story", () => {
