@@ -17,6 +17,7 @@ import { buildJourneyPhotoItems, type JourneyPhotoItem } from "./journey-photos"
 import { sampleRouteAtProgress } from "./trip-motion";
 import { withBasePath } from "./site-paths";
 import { PlacePhotoGallery } from "./PlacePhotoGallery";
+import { SocialInspirationGallery } from "./SocialInspirationGallery";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -336,6 +337,8 @@ function PlaceDetailDialog({
             <span><b>建议时间</b>{place.activity.time}</span>
             <span><b>停留</b>{place.activity.duration}</span>
           </div>
+
+          <SocialInspirationGallery city={place.city} />
 
           <section className="place-detail-section">
             <div className="place-detail-heading"><span>01</span><h3>到这里怎么玩</h3></div>
