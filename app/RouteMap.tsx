@@ -19,6 +19,7 @@ import { withBasePath } from "./site-paths";
 import { PlacePhotoGallery } from "./PlacePhotoGallery";
 import { SocialInspirationGallery } from "./SocialInspirationGallery";
 import { SocialVideoGallery } from "./SocialVideoGallery";
+import { PrivateSocialGallery } from "./PrivateSocialGallery";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -340,7 +341,9 @@ function PlaceDetailDialog({
           </div>
 
           <SocialVideoGallery city={place.city} />
-          <SocialInspirationGallery city={place.city} />
+          {process.env.NEXT_PUBLIC_PRIVATE_MEDIA === "1"
+            ? <PrivateSocialGallery key={place.city} city={place.city} />
+            : <SocialInspirationGallery city={place.city} />}
 
           <section className="place-detail-section">
             <div className="place-detail-heading"><span>01</span><h3>到这里怎么玩</h3></div>
