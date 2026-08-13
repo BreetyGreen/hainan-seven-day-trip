@@ -56,7 +56,7 @@ export function PrivateSocialGallery({ placeId, placeName, city }: { placeId: st
   return (
     <section className={`private-social-gallery is-${scope}`} aria-label={scope === "place" ? `${placeName}私人图片` : `${activeCity}私人图片总库`}>
       <header>
-        <div><span>LOCAL PRIVATE · {scope === "place" ? "PLACE ONLY" : "CITY LIBRARY"}</span><h3>{scope === "place" ? `${placeName} · 私人实景` : `${activeCity} · 城市总图库`}</h3></div>
+        <div><span>XHS PLACE GALLERY · {scope === "place" ? "PLACE ONLY" : "CITY LIBRARY"}</span><h3>{scope === "place" ? `${placeName} · 地点实景` : `${activeCity} · 城市总图库`}</h3></div>
         <b>{scope === "place" ? placeImages.length : cityImages.length} 张</b>
       </header>
       <p>{scope === "place" ? "这里只放与当前地点明确对应的图片，不混入整座城市的攻略图。" : "你已主动进入城市总图库；以下素材不一定属于刚才的具体地点。"}</p>

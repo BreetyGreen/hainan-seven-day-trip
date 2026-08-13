@@ -9,14 +9,17 @@ async function readPrivateLibrary() {
   return { source, images: JSON.parse(match[1]) };
 }
 
-test("keeps the private media mode local and outside public deployment", async () => {
-  const [ignore, env] = await Promise.all([
+test("publishes the place-bound gallery and its image assets through GitHub Pages", async () => {
+  const [ignore, workflow, gallery] = await Promise.all([
     readFile(new URL("../.gitignore", import.meta.url), "utf8"),
-    readFile(new URL("../.env.local", import.meta.url), "utf8"),
+    readFile(new URL("../.github/workflows/pages.yml", import.meta.url), "utf8"),
+    readFile(new URL("../app/PrivateSocialGallery.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(ignore, /^\/public\/private-hainan\/$/m);
-  assert.match(env, /^NEXT_PUBLIC_PRIVATE_MEDIA=1$/m);
+  assert.doesNotMatch(ignore, /^\/public\/private-hainan\/$/m);
+  assert.match(workflow, /^\s+NEXT_PUBLIC_PRIVATE_MEDIA:\s*["']?1["']?$/m);
+  assert.match(gallery, /XHS PLACE GALLERY/);
+  assert.doesNotMatch(gallery, /仅保存在这台电脑|不会随公网网站发布|LOCAL PRIVATE/);
 });
 
 test("ships a large private Xiaohongshu library across every city and theme", async () => {
@@ -80,7 +83,7 @@ test("mounts a place-first private gallery and gates the city-wide library", asy
   assert.match(gallery, /privateSocialImagesForPlace\(placeId\)/);
   assert.match(gallery, /type GalleryScope = "place" \| "city"/);
   assert.match(gallery, /scope === "place" \? placeImages\.length : cityImages\.length/);
-  assert.match(gallery, /LOCAL PRIVATE/);
+  assert.match(gallery, /XHS PLACE GALLERY/);
   assert.match(gallery, /aria-label="私人图片主题筛选"/);
   assert.match(gallery, /slice\(0,\s*scope === "place" \? 8 : 12\)/);
   assert.match(gallery, /loading="lazy"/);

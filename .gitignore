@@ -40,6 +40,3 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
-
-# Local-only private travel media. Never publish this directory.
-/public/private-hainan/

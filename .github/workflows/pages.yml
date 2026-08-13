@@ -31,6 +31,7 @@ jobs:
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          NEXT_PUBLIC_PRIVATE_MEDIA: "1"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
