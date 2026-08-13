@@ -2,6 +2,13 @@ import assert from "node:assert/strict";
 import { access, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
+async function readPrivateLibrary() {
+  const source = await readFile(new URL("../app/private-social-gallery.ts", import.meta.url), "utf8");
+  const match = source.match(/export const privateSocialImages: PrivateSocialImage\[\] = (\[[\s\S]*?\]);\s*\n\s*export function/);
+  assert.ok(match, "private gallery data must remain a JSON-compatible generated array");
+  return { source, images: JSON.parse(match[1]) };
+}
+
 test("keeps the private media mode local and outside public deployment", async () => {
   const [ignore, env] = await Promise.all([
     readFile(new URL("../.gitignore", import.meta.url), "utf8"),
@@ -30,6 +37,34 @@ test("ships a large private Xiaohongshu library across every city and theme", as
     const info = await stat(asset);
     assert.ok(info.size < 400_000, `${assetPath} must stay below 400 KB`);
   }
+});
+
+test("binds only verified private images to exact itinerary places", async () => {
+  const { source, images } = await readPrivateLibrary();
+  assert.ok(images.every((image) => Array.isArray(image.placeIds)), "every image must declare placeIds");
+  assert.match(source, /export function privateSocialImagesForPlace\(placeId: string\)/);
+
+  const expectedBindings = {
+    qilou: "local-qilou-night-xhs",
+    "wanning-hyatt": "local-grand-hyatt-wanning-xhs",
+    "shenzhou-peninsula": "local-shenzhou-peninsula-xhs",
+    "shimei-bay": "local-shimei-bay-xhs",
+    "xinglong-market": "local-xinglong-market-xhs",
+    "xinglong-garden": "local-xinglong-garden-xhs",
+    "xincun-port": "local-xincun-port-xhs",
+    "sangem-moon": "local-sangem-moon-xhs",
+    luhuitou: "local-luhuitou-xhs",
+  };
+
+  for (const [placeId, imageId] of Object.entries(expectedBindings)) {
+    const image = images.find((candidate) => candidate.id === imageId);
+    assert.ok(image, `missing verified image ${imageId}`);
+    assert.ok(image.placeIds.includes(placeId), `${imageId} must bind to ${placeId}`);
+  }
+
+  const broadRouteImages = images.filter((image) => image.id.startsWith("eastline-seven-days-"));
+  assert.ok(broadRouteImages.length > 0);
+  assert.ok(broadRouteImages.every((image) => image.placeIds.length === 0), "city-wide route cards must not pretend to be Qilou photos");
 });
 
 test("mounts a lazy local-only gallery with filters and progressive disclosure", async () => {
