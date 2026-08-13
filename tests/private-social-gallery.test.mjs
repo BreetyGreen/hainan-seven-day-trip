@@ -68,9 +68,10 @@ test("binds only verified private images to exact itinerary places", async () =>
 });
 
 test("mounts a place-first private gallery and gates the city-wide library", async () => {
-  const [gallery, routeMap] = await Promise.all([
+  const [gallery, routeMap, css] = await Promise.all([
     readFile(new URL("../app/PrivateSocialGallery.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
   assert.match(routeMap, /process\.env\.NEXT_PUBLIC_PRIVATE_MEDIA === "1"/);
@@ -78,6 +79,7 @@ test("mounts a place-first private gallery and gates the city-wide library", asy
   assert.match(gallery, /placeId, placeName, city/);
   assert.match(gallery, /privateSocialImagesForPlace\(placeId\)/);
   assert.match(gallery, /type GalleryScope = "place" \| "city"/);
+  assert.match(gallery, /scope === "place" \? placeImages\.length : cityImages\.length/);
   assert.match(gallery, /LOCAL PRIVATE/);
   assert.match(gallery, /aria-label="私人图片主题筛选"/);
   assert.match(gallery, /slice\(0,\s*scope === "place" \? 8 : 12\)/);
@@ -87,4 +89,7 @@ test("mounts a place-first private gallery and gates the city-wide library", asy
   assert.match(gallery, /返回.*专属图片/);
   assert.match(gallery, /上一张私人图片/);
   assert.match(gallery, /下一张私人图片/);
+  assert.match(css, /\.private-gallery-scope-toggle/);
+  assert.match(css, /\.private-gallery-return/);
+  assert.match(css, /\.private-social-gallery\.is-city/);
 });
