@@ -67,19 +67,24 @@ test("binds only verified private images to exact itinerary places", async () =>
   assert.ok(broadRouteImages.every((image) => image.placeIds.length === 0), "city-wide route cards must not pretend to be Qilou photos");
 });
 
-test("mounts a lazy local-only gallery with filters and progressive disclosure", async () => {
+test("mounts a place-first private gallery and gates the city-wide library", async () => {
   const [gallery, routeMap] = await Promise.all([
     readFile(new URL("../app/PrivateSocialGallery.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),
   ]);
 
   assert.match(routeMap, /process\.env\.NEXT_PUBLIC_PRIVATE_MEDIA === "1"/);
-  assert.match(routeMap, /PrivateSocialGallery/);
+  assert.match(routeMap, /<PrivateSocialGallery[\s\S]*placeId=\{place\.id\}[\s\S]*placeName=\{place\.name\}[\s\S]*city=\{place\.city\}/);
+  assert.match(gallery, /placeId, placeName, city/);
+  assert.match(gallery, /privateSocialImagesForPlace\(placeId\)/);
+  assert.match(gallery, /type GalleryScope = "place" \| "city"/);
   assert.match(gallery, /LOCAL PRIVATE/);
   assert.match(gallery, /aria-label="私人图片主题筛选"/);
-  assert.match(gallery, /slice\(0,\s*12\)/);
+  assert.match(gallery, /slice\(0,\s*scope === "place" \? 8 : 12\)/);
   assert.match(gallery, /loading="lazy"/);
   assert.match(gallery, /展开更多/);
+  assert.match(gallery, /查看.*全部素材/);
+  assert.match(gallery, /返回.*专属图片/);
   assert.match(gallery, /上一张私人图片/);
   assert.match(gallery, /下一张私人图片/);
 });

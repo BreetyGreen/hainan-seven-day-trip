@@ -342,7 +342,7 @@ function PlaceDetailDialog({
 
           <SocialVideoGallery city={place.city} />
           {process.env.NEXT_PUBLIC_PRIVATE_MEDIA === "1"
-            ? <PrivateSocialGallery key={place.city} city={place.city} />
+            ? <PrivateSocialGallery key={place.id} placeId={place.id} placeName={place.name} city={place.city} />
             : <SocialInspirationGallery city={place.city} />}
 
           <section className="place-detail-section">

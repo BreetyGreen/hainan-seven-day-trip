@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   privateSocialImages,
+  privateSocialImagesForPlace,
   type PrivateSocialCity,
   type PrivateSocialImage,
   type PrivateSocialTheme,
@@ -12,17 +13,21 @@ import { withBasePath } from "./site-paths";
 
 const cities: PrivateSocialCity[] = ["海口", "万宁", "陵水", "三亚"];
 const themes: ("全部" | PrivateSocialTheme)[] = ["全部", "海景酒店", "安静海岸", "城市漫游", "吃喝"];
+type GalleryScope = "place" | "city";
 
-export function PrivateSocialGallery({ city }: { city: string }) {
+export function PrivateSocialGallery({ placeId, placeName, city }: { placeId: string; placeName: string; city: string }) {
   const initialCity = cities.includes(city as PrivateSocialCity) ? city as PrivateSocialCity : "海口";
+  const [scope, setScope] = useState<GalleryScope>("place");
   const [activeCity, setActiveCity] = useState<PrivateSocialCity>(initialCity);
   const [theme, setTheme] = useState<"全部" | PrivateSocialTheme>("全部");
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<PrivateSocialImage | null>(null);
 
+  const placeImages = useMemo(() => privateSocialImagesForPlace(placeId), [placeId]);
   const cityImages = useMemo(() => privateSocialImages.filter((image) => image.city === activeCity), [activeCity]);
-  const filteredImages = useMemo(() => theme === "全部" ? cityImages : cityImages.filter((image) => image.theme === theme), [cityImages, theme]);
-  const visibleImages = expanded ? filteredImages : filteredImages.slice(0, 12);
+  const sourceImages = scope === "place" ? placeImages : cityImages;
+  const filteredImages = useMemo(() => theme === "全部" || scope === "place" ? sourceImages : sourceImages.filter((image) => image.theme === theme), [scope, sourceImages, theme]);
+  const visibleImages = expanded ? filteredImages : filteredImages.slice(0, scope === "place" ? 8 : 12);
 
   useEffect(() => {
     if (!selected) return;
@@ -33,33 +38,45 @@ export function PrivateSocialGallery({ city }: { city: string }) {
     return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", onKeyDown); };
   }, [selected]);
 
+  const switchScope = (nextScope: GalleryScope) => {
+    setScope(nextScope);
+    setTheme("全部");
+    setExpanded(false);
+    setSelected(null);
+  };
+
   const stepSelection = (direction: -1 | 1) => {
     if (!selected) return;
     const index = filteredImages.findIndex((image) => image.id === selected.id);
     setSelected(filteredImages[(index + direction + filteredImages.length) % filteredImages.length]);
   };
 
-  return (
-    <section className="private-social-gallery" aria-label="本地私人小红书素材库">
-      <header>
-        <div><span>LOCAL PRIVATE</span><h3>我的海南灵感照片墙</h3></div>
-        <b>{privateSocialImages.length} 张</b>
-      </header>
-      <p>仅保存在这台电脑 · 原图已下载到本地，不会随公网网站发布</p>
+  if (placeImages.length === 0) return null;
 
-      <nav className="private-city-filter" aria-label="私人图片城市筛选">
-        {cities.map((item) => {
-          const count = privateSocialImages.filter((image) => image.city === item).length;
-          return <button type="button" key={item} className={activeCity === item ? "is-active" : ""} onClick={() => { setActiveCity(item); setTheme("全部"); setExpanded(false); setSelected(null); }}>{item}<span>{count}</span></button>;
-        })}
-      </nav>
-      <nav className="private-theme-filter" aria-label="私人图片主题筛选">
-        {themes.map((item) => {
-          const count = item === "全部" ? cityImages.length : cityImages.filter((image) => image.theme === item).length;
-          if (count === 0) return null;
-          return <button type="button" key={item} className={theme === item ? "is-active" : ""} onClick={() => { setTheme(item); setExpanded(false); setSelected(null); }}>{item}<span>{count}</span></button>;
-        })}
-      </nav>
+  return (
+    <section className={`private-social-gallery is-${scope}`} aria-label={scope === "place" ? `${placeName}私人图片` : `${activeCity}私人图片总库`}>
+      <header>
+        <div><span>LOCAL PRIVATE · {scope === "place" ? "PLACE ONLY" : "CITY LIBRARY"}</span><h3>{scope === "place" ? `${placeName} · 私人实景` : `${activeCity} · 城市总图库`}</h3></div>
+        <b>{scope === "place" ? placeImages.length : privateSocialImages.length} 张</b>
+      </header>
+      <p>{scope === "place" ? "这里只放与当前地点明确对应的图片，不混入整座城市的攻略图。" : "你已主动进入城市总图库；以下素材不一定属于刚才的具体地点。"}</p>
+
+      {scope === "city" && <>
+        <button className="private-gallery-return" type="button" onClick={() => switchScope("place")}>← 返回 {placeName} 专属图片</button>
+        <nav className="private-city-filter" aria-label="私人图片城市筛选">
+          {cities.map((item) => {
+            const count = privateSocialImages.filter((image) => image.city === item).length;
+            return <button type="button" key={item} className={activeCity === item ? "is-active" : ""} onClick={() => { setActiveCity(item); setTheme("全部"); setExpanded(false); setSelected(null); }}>{item}<span>{count}</span></button>;
+          })}
+        </nav>
+        <nav className="private-theme-filter" aria-label="私人图片主题筛选">
+          {themes.map((item) => {
+            const count = item === "全部" ? cityImages.length : cityImages.filter((image) => image.theme === item).length;
+            if (count === 0) return null;
+            return <button type="button" key={item} className={theme === item ? "is-active" : ""} onClick={() => { setTheme(item); setExpanded(false); setSelected(null); }}>{item}<span>{count}</span></button>;
+          })}
+        </nav>
+      </>}
 
       <div className="private-photo-grid">
         {visibleImages.map((image, index) => (
@@ -70,7 +87,8 @@ export function PrivateSocialGallery({ city }: { city: string }) {
           </button>
         ))}
       </div>
-      {filteredImages.length > 12 && <button className="private-gallery-expand" type="button" onClick={() => setExpanded((value) => !value)}>{expanded ? "收起照片" : `展开更多 · 共 ${filteredImages.length} 张`}</button>}
+      {filteredImages.length > (scope === "place" ? 8 : 12) && <button className="private-gallery-expand" type="button" onClick={() => setExpanded((value) => !value)}>{expanded ? "收起照片" : `展开更多 · 共 ${filteredImages.length} 张`}</button>}
+      {scope === "place" && <button className="private-gallery-scope-toggle" type="button" onClick={() => switchScope("city")}>查看 {city} 全部素材 · {cityImages.length} 张 →</button>}
 
       {selected && createPortal(
         <div className="private-photo-viewer-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelected(null); }}>
