@@ -51,16 +51,16 @@ test("uses a low-request tile grid on ultra-wide screens", async () => {
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(routeMap, /https:\/\/tile\.openstreetmap\.de\/\{z\}\/\{x\}\/\{y\}\.png/);
+  assert.match(routeMap, /https:\/\/tile\.openstreetmap\.de\/\$\{urlCoords\.z\}\/\$\{urlCoords\.x\}\/\$\{urlCoords\.y\}\.png/);
   assert.match(routeMap, /const initialTileRanges = \[/);
-  assert.match(routeMap, /tiles\.getTileUrl = \(coords\) =>/);
-  assert.match(routeMap, /const cachedCoords = \{ \.\.\.coords, z: coords\.z \+ \(useWideTileGrid \? -1 : 0\) \}/);
-  assert.match(routeMap, /withBasePath\(`\/map-tiles\/osm\/\$\{cachedCoords\.z\}\/\$\{cachedCoords\.x\}\/\$\{cachedCoords\.y\}\.png`\)/);
+  assert.match(routeMap, /class AtlasTileLayer extends L\.GridLayer/);
+  assert.match(routeMap, /\/map-atlas\/osm\/\$\{atlasRange\.z\}\.webp/);
+  assert.match(routeMap, /tile\.style\.backgroundPosition/);
   assert.match(routeMap, /const useWideTileGrid = window\.innerWidth >= 2200/);
-  assert.match(routeMap, /tileSize: useWideTileGrid \? 512 : 256/);
-  assert.match(routeMap, /zoomOffset: useWideTileGrid \? -1 : 0/);
+  assert.match(routeMap, /const tileSize = useWideTileGrid \? 512 : 256/);
+  assert.match(routeMap, /const tileZoomOffset = useWideTileGrid \? -1 : 0/);
   assert.match(routeMap, /keepBuffer: 0/);
-  assert.match(routeMap, /const tilesRef = useRef<TileLayer \| null>\(null\)/);
+  assert.match(routeMap, /const tilesRef = useRef<GridLayer \| null>\(null\)/);
   assert.match(routeMap, /tilesRef\.current = tiles/);
   assert.match(routeMap, /if \(tilesRef\.current && !map\.hasLayer\(tilesRef\.current\)\)/);
   assert.doesNotMatch(routeMap, /tiles\.addTo\(map\)/);

@@ -142,7 +142,7 @@ async function pageState() {
         const rect = tile.getBoundingClientRect();
         return rect.right > 0 && rect.bottom > 0 && rect.left < innerWidth && rect.top < innerHeight;
       });
-      const loaded = (items) => items.filter((tile) => tile.complete && tile.naturalWidth > 0).length;
+      const loaded = (items) => items.filter((tile) => tile.dataset.mapTileReady === "1" || (tile.complete && tile.naturalWidth > 0)).length;
       const button = document.querySelector('.journey-start-gate button');
       return {
         title: document.title,
@@ -158,7 +158,7 @@ async function pageState() {
         loadedTiles: loaded(tiles),
         visibleTiles: visible.length,
         loadedVisibleTiles: loaded(visible),
-        tileUrls: tiles.map((tile) => tile.currentSrc || tile.src),
+        tileUrls: tiles.map((tile) => tile.dataset.tileUrl || tile.currentSrc || tile.src),
         startLabel: button?.textContent.trim() ?? null,
         startEnabled: button ? !button.disabled : false,
       };

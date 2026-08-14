@@ -1,8 +1,10 @@
 import { mkdir, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const root = fileURLToPath(new URL("../public/map-tiles/osm/", import.meta.url));
+const atlasRoot = fileURLToPath(new URL("../public/map-atlas/osm/", import.meta.url));
 const ranges = [
   { z: 5, minX: 24, maxX: 27, minY: 13, maxY: 15 },
   { z: 6, minX: 49, maxX: 54, minY: 26, maxY: 30 },
@@ -51,4 +53,31 @@ await Promise.all(Array.from({ length: concurrency }, async () => {
   }
 }));
 
-process.stdout.write(`Cached ${tiles.length} initial overview tiles.\n`);
+await mkdir(atlasRoot, { recursive: true });
+for (const range of ranges) {
+  const widthInTiles = range.maxX - range.minX + 1;
+  const heightInTiles = range.maxY - range.minY + 1;
+  const composite = [];
+  for (let x = range.minX; x <= range.maxX; x += 1) {
+    for (let y = range.minY; y <= range.maxY; y += 1) {
+      composite.push({
+        input: join(root, String(range.z), String(x), `${y}.png`),
+        left: (x - range.minX) * 256,
+        top: (y - range.minY) * 256,
+      });
+    }
+  }
+  await sharp({
+    create: {
+      width: widthInTiles * 256,
+      height: heightInTiles * 256,
+      channels: 3,
+      background: "#aad3df",
+    },
+  })
+    .composite(composite)
+    .webp({ quality: 92, smartSubsample: true })
+    .toFile(join(atlasRoot, `${range.z}.webp`));
+}
+
+process.stdout.write(`Cached ${tiles.length} initial overview tiles and ${ranges.length} atlases.\n`);

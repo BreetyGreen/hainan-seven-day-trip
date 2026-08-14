@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { GeoJsonObject } from "geojson";
-import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline, TileLayer } from "leaflet";
+import type { Canvas, Coords, DoneCallback, GridLayer, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
 import { getPlanDayRoute, places, type Day, type ItineraryPlan, type Place, type TravelLegMode } from "./trip-data";
 import { modeLabel } from "./trip-legs";
 import {
@@ -42,8 +42,8 @@ const initialTileRanges = [
   { z: 8, minX: 204, maxX: 209, minY: 111, maxY: 116 },
 ];
 
-function hasCachedInitialTile(coords: { z: number; x: number; y: number }) {
-  return initialTileRanges.some((range) => (
+function cachedInitialTileRange(coords: { z: number; x: number; y: number }) {
+  return initialTileRanges.find((range) => (
     coords.z === range.z
     && coords.x >= range.minX
     && coords.x <= range.maxX
@@ -400,7 +400,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
   const planHotels = plan.hotels;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
-  const tilesRef = useRef<TileLayer | null>(null);
+  const tilesRef = useRef<GridLayer | null>(null);
   const routeLayerRef = useRef<LayerGroup | null>(null);
   const routeRendererRef = useRef<Canvas | null>(null);
   const markerLayerRef = useRef<LayerGroup | null>(null);
@@ -561,23 +561,61 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         map.on("zoomend", markZoomEnd);
 
         const useWideTileGrid = window.innerWidth >= 2200;
-        const tiles = L.tileLayer("https://tile.openstreetmap.de/{z}/{x}/{y}.png", {
+        const tileSize = useWideTileGrid ? 512 : 256;
+        const tileZoomOffset = useWideTileGrid ? -1 : 0;
+        const atlasLoads = new Map<number, Promise<void>>();
+        class AtlasTileLayer extends L.GridLayer {
+          createTile(coords: Coords, done: DoneCallback) {
+            const urlCoords = { ...coords, z: coords.z + tileZoomOffset };
+            const atlasRange = cachedInitialTileRange(urlCoords);
+            if (!atlasRange) {
+              const remoteTile = document.createElement("img");
+              remoteTile.alt = "";
+              remoteTile.decoding = "async";
+              remoteTile.src = `https://tile.openstreetmap.de/${urlCoords.z}/${urlCoords.x}/${urlCoords.y}.png`;
+              remoteTile.addEventListener("load", () => done(undefined, remoteTile), { once: true });
+              remoteTile.addEventListener("error", () => done(new Error(`Map tile ${urlCoords.z}/${urlCoords.x}/${urlCoords.y} failed`), remoteTile), { once: true });
+              return remoteTile;
+            }
+
+            const tile = document.createElement("div");
+            const atlasUrl = withBasePath(`/map-atlas/osm/${atlasRange.z}.webp`);
+            const atlasWidth = (atlasRange.maxX - atlasRange.minX + 1) * tileSize;
+            const atlasHeight = (atlasRange.maxY - atlasRange.minY + 1) * tileSize;
+            tile.style.backgroundColor = "#aad3df";
+            tile.dataset.tileUrl = atlasUrl;
+            tile.style.backgroundImage = `url("${atlasUrl}")`;
+            tile.style.backgroundRepeat = "no-repeat";
+            tile.style.backgroundSize = `${atlasWidth}px ${atlasHeight}px`;
+            tile.style.backgroundPosition = `${-(urlCoords.x - atlasRange.minX) * tileSize}px ${-(urlCoords.y - atlasRange.minY) * tileSize}px`;
+
+            let atlasLoad = atlasLoads.get(atlasRange.z);
+            if (!atlasLoad) {
+              atlasLoad = new Promise((resolveAtlas, rejectAtlas) => {
+                const atlas = new Image();
+                atlas.decoding = "async";
+                atlas.addEventListener("load", () => resolveAtlas(), { once: true });
+                atlas.addEventListener("error", () => rejectAtlas(new Error(`Map atlas ${atlasRange.z} failed`)), { once: true });
+                atlas.src = atlasUrl;
+              });
+              atlasLoads.set(atlasRange.z, atlasLoad);
+            }
+            atlasLoad.then(() => {
+              tile.dataset.mapTileReady = "1";
+              done(undefined, tile);
+            }).catch((error: Error) => done(error, tile));
+            return tile;
+          }
+        }
+        const tiles = new AtlasTileLayer({
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
           maxZoom: 18,
-          tileSize: useWideTileGrid ? 512 : 256,
-          zoomOffset: useWideTileGrid ? -1 : 0,
+          tileSize,
           updateWhenZooming: false,
           updateWhenIdle: true,
           updateInterval: 160,
           keepBuffer: 0,
-        });
-        const remoteTileUrl = tiles.getTileUrl.bind(tiles);
-        tiles.getTileUrl = (coords) => {
-          const cachedCoords = { ...coords, z: coords.z + (useWideTileGrid ? -1 : 0) };
-          return hasCachedInitialTile(cachedCoords)
-            ? withBasePath(`/map-tiles/osm/${cachedCoords.z}/${cachedCoords.x}/${cachedCoords.y}.png`)
-            : remoteTileUrl(coords);
-        };
+        }) as GridLayer;
         const markTilesReady = () => {
           if (!cancelled) {
             document.documentElement.dataset.tripMapReady = "1";
