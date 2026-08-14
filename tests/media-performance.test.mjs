@@ -40,16 +40,28 @@ test("does not let below-the-fold photography compete with hydration", async () 
   assert.match(deferredImage, /deferred-image-placeholder/);
 });
 
-test("uses the responsive Esri tile source and avoids off-screen tile overfetch", async () => {
+test("uses a low-request tile grid on ultra-wide screens", async () => {
   const [routeMap, layout] = await Promise.all([
     readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(routeMap, /https:\/\/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Street_Map\/MapServer\/tile\/\{z\}\/\{y\}\/\{x\}/);
+  assert.match(routeMap, /https:\/\/tile\.openstreetmap\.de\/\{z\}\/\{x\}\/\{y\}\.png/);
+  assert.match(routeMap, /const useWideTileGrid = window\.innerWidth >= 2200/);
+  assert.match(routeMap, /tileSize: useWideTileGrid \? 512 : 256/);
+  assert.match(routeMap, /zoomOffset: useWideTileGrid \? -1 : 0/);
   assert.match(routeMap, /keepBuffer: 0/);
-  assert.doesNotMatch(routeMap, /tile\.openstreetmap\.org/);
-  assert.match(layout, /rel="preconnect" href="https:\/\/server\.arcgisonline\.com"/);
-  assert.match(layout, /rel="dns-prefetch" href="\/\/server\.arcgisonline\.com"/);
+  assert.match(routeMap, /const tilesRef = useRef<TileLayer \| null>\(null\)/);
+  assert.match(routeMap, /tilesRef\.current = tiles/);
+  assert.match(routeMap, /if \(tilesRef\.current && !map\.hasLayer\(tilesRef\.current\)\)/);
+  assert.doesNotMatch(routeMap, /tiles\.addTo\(map\)/);
+  assert.ok(routeMap.indexOf('map.once("moveend", addTilesAtFinalView)') < routeMap.indexOf("map.fitBounds(bounds"));
+  assert.match(routeMap, /window\.setTimeout\(addTilesAtFinalView, 800\)/);
+  assert.match(routeMap, /const routeDataReady = mapReady && status === "ready"/);
+  assert.match(routeMap, /const routeIsReady = routeDataReady && tilesReady/);
+  assert.match(routeMap, /!routeData \|\| !routeDataReady/);
+  assert.doesNotMatch(routeMap, /server\.arcgisonline\.com/);
+  assert.match(layout, /rel="preconnect" href="https:\/\/tile\.openstreetmap\.de"/);
+  assert.match(layout, /rel="dns-prefetch" href="\/\/tile\.openstreetmap\.de"/);
   assert.match(layout, /rel="preload"[^>]+hainan-plan-a\.geojson[^>]+as="fetch"/);
 });

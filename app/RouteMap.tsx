@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { GeoJsonObject } from "geojson";
-import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
+import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline, TileLayer } from "leaflet";
 import { getPlanDayRoute, places, type Day, type ItineraryPlan, type Place, type TravelLegMode } from "./trip-data";
 import { modeLabel } from "./trip-legs";
 import {
@@ -383,6 +383,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
   const planHotels = plan.hotels;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const tilesRef = useRef<TileLayer | null>(null);
   const routeLayerRef = useRef<LayerGroup | null>(null);
   const routeRendererRef = useRef<Canvas | null>(null);
   const markerLayerRef = useRef<LayerGroup | null>(null);
@@ -414,7 +415,8 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
   const [arrivalStageIndex, setArrivalStageIndex] = useState<number | null>(null);
   const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number; arrivalMode: boolean; stopIndex?: number } | null>(null);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
-  const routeIsReady = mapReady && tilesReady && status === "ready" && loadedRoutePath === plan.routePath;
+  const routeDataReady = mapReady && status === "ready" && loadedRoutePath === plan.routePath;
+  const routeIsReady = routeDataReady && tilesReady;
 
   const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(schedule, place.id)) => {
     pausePlaybackRef.current();
@@ -541,9 +543,12 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         map.on("zoomstart", markZoomStart);
         map.on("zoomend", markZoomEnd);
 
-        const tiles = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
-          attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> and data partners, including OpenStreetMap contributors',
+        const useWideTileGrid = window.innerWidth >= 2200;
+        const tiles = L.tileLayer("https://tile.openstreetmap.de/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
           maxZoom: 18,
+          tileSize: useWideTileGrid ? 512 : 256,
+          zoomOffset: useWideTileGrid ? -1 : 0,
           updateWhenZooming: false,
           updateWhenIdle: true,
           updateInterval: 160,
@@ -554,9 +559,9 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         };
         tiles.on("load", markTilesReady);
         tiles.on("tileerror", () => setTilesFailed(true));
-        tiles.addTo(map);
 
         mapRef.current = map;
+        tilesRef.current = tiles;
         routeRendererRef.current = routeRenderer;
         playbackRendererRef.current = playbackRenderer;
         playbackDriveRef.current = playbackDrive;
@@ -576,6 +581,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
       mapRef.current?.remove();
       mapContainer?.classList.remove("is-map-zooming");
       mapRef.current = null;
+      tilesRef.current = null;
       routeRendererRef.current = null;
       playbackRendererRef.current = null;
       playbackDriveRef.current = null;
@@ -614,7 +620,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
     const routeGroup = routeLayerRef.current;
     const routeRenderer = routeRendererRef.current;
     const markerGroup = markerLayerRef.current;
-    if (!L || !map || !routeGroup || !routeRenderer || !markerGroup || !routeData || !routeIsReady) return;
+    if (!L || !map || !routeGroup || !routeRenderer || !markerGroup || !routeData || !routeDataReady) return;
 
     routeGroup.clearLayers();
     markerGroup.clearLayers();
@@ -760,18 +766,29 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
       : L.geoJSON({ type: "FeatureCollection", features } as GeoJsonObject).getBounds();
     if (bounds.isValid()) {
       const mobile = window.innerWidth <= 820;
+      const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const addTilesAtFinalView = () => {
+        if (tilesRef.current && !map.hasLayer(tilesRef.current)) tilesRef.current.addTo(map);
+      };
+      if (tilesRef.current && !map.hasLayer(tilesRef.current)) {
+        if (animate) map.once("moveend", addTilesAtFinalView);
+      }
       map.fitBounds(bounds, {
-        animate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+        animate,
         duration: 0.65,
         maxZoom: selectedDay === null ? 8 : selectedDay === 1 || selectedDay === 7 ? 9 : 10,
         paddingTopLeft: mobile ? [24, 100] : [390, 95],
         paddingBottomRight: mobile ? [24, 120] : [80, 80],
       });
+      if (tilesRef.current && !map.hasLayer(tilesRef.current)) {
+        if (animate) window.setTimeout(addTilesAtFinalView, 800);
+        else addTilesAtFinalView();
+      }
     }
 
     if (selectedDay !== null) animateRoute(map);
     window.setTimeout(() => map.invalidateSize(), 50);
-  }, [activeFeatures, openPlaceDetail, plan.color, planHotels, playbackPlan, routeData, routeIsReady, schedule, selectedDay]);
+  }, [activeFeatures, openPlaceDetail, plan.color, planHotels, playbackPlan, routeData, routeDataReady, schedule, selectedDay]);
 
   useEffect(() => {
     const L = leafletRef.current;

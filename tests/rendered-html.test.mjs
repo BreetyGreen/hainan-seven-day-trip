@@ -109,7 +109,8 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(routeMap, /playbackStatus === "idle" && !placeDetail/);
   assert.match(routeMap, /const \[mapReady, setMapReady\] = useState\(false\)/);
   assert.match(routeMap, /const \[tilesReady, setTilesReady\] = useState\(false\)/);
-  assert.match(routeMap, /const routeIsReady = mapReady && tilesReady && status === "ready"/);
+  assert.match(routeMap, /const routeDataReady = mapReady && status === "ready"/);
+  assert.match(routeMap, /const routeIsReady = routeDataReady && tilesReady/);
   assert.match(routeMap, /tiles\.on\("load", markTilesReady\)/);
   assert.match(routeMap, /mapRef\.current = map;[\s\S]*setMapReady\(true\)/);
   assert.match(routeMap, /setMapReady\(false\)/);

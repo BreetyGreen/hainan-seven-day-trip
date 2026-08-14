@@ -15,6 +15,7 @@ test("configures a repository-scoped static GitHub Pages build", async () => {
   assert.match(nextConfig, /basePath/);
   assert.match(nextConfig, /assetPrefix/);
   assert.match(packageJson, /"build:pages"/);
+  assert.match(packageJson, /inline-pages-bootstrap\.mjs/);
   assert.match(workflow, /actions\/deploy-pages@v4/);
   assert.match(workflow, /npm run build:pages/);
   assert.match(workflow, /path:\s*\.\/out/);

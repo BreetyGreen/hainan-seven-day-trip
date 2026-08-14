@@ -143,9 +143,16 @@ async function pageState() {
         return rect.right > 0 && rect.bottom > 0 && rect.left < innerWidth && rect.top < innerHeight;
       });
       const loaded = (items) => items.filter((tile) => tile.complete && tile.naturalWidth > 0).length;
-      const button = [...document.querySelectorAll('button')].find((item) => item.textContent.includes('七日旅程'));
+      const button = document.querySelector('.journey-start-gate button');
       return {
         title: document.title,
+        readyState: document.readyState,
+        gatePresent: Boolean(document.querySelector('.journey-start-gate')),
+        tripHydrated: document.documentElement.dataset.tripHydrated ?? null,
+        inlineBootstrapScripts: document.querySelectorAll('script[data-pages-inline-bootstrap]').length,
+        externalScripts: document.querySelectorAll('script[src]').length,
+        turbopackQueueLength: Array.isArray(globalThis.TURBOPACK) ? globalThis.TURBOPACK.length : null,
+        nextFlightQueueLength: Array.isArray(globalThis.__next_f) ? globalThis.__next_f.length : null,
         viewport: [innerWidth, innerHeight],
         allTiles: tiles.length,
         loadedTiles: loaded(tiles),

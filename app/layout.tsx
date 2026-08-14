@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { withBasePath } from "./site-paths";
-import { HydrationRecovery, hydrationRecoveryScript } from "./HydrationRecovery";
 
 export const metadata: Metadata = {
   title: "海南东线七日地图｜武汉出发的真实自驾路线",
@@ -21,12 +20,11 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <head>
-        <link rel="preconnect" href="https://server.arcgisonline.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="//server.arcgisonline.com" />
+        <link rel="preconnect" href="https://tile.openstreetmap.de" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//tile.openstreetmap.de" />
         <link rel="preload" href={withBasePath("/routes/hainan-plan-a.geojson")} as="fetch" type="application/geo+json" crossOrigin="anonymous" />
-        <script dangerouslySetInnerHTML={{ __html: hydrationRecoveryScript }} />
       </head>
-      <body><HydrationRecovery />{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
