@@ -16,6 +16,7 @@ import {
 import { buildJourneyPhotoItems, type JourneyPhotoItem } from "./journey-photos";
 import { sampleRouteAtProgress } from "./trip-motion";
 import { withBasePath } from "./site-paths";
+import { DeferredImage } from "./DeferredImage";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -224,8 +225,7 @@ function JourneyPhotoRail({
             aria-pressed={item.id === activeId}
             onClick={() => onOpen(item)}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={withBasePath(item.photo.src)} alt={item.photo.alt} loading="lazy" decoding="async" />
+            <DeferredImage src={withBasePath(item.photo.src)} alt={item.photo.alt} loading="lazy" />
             <span className="journey-photo-day">DAY {item.dayId}</span>
             <span className={`journey-photo-source is-${item.photo.platform === "小红书" ? "xhs" : "official"}`}>{item.photo.platform}</span>
             <span className="journey-photo-caption"><b>{item.place.shortName}</b><small>{item.kind === "hotel" ? "住宿基地" : item.place.city}</small></span>

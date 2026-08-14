@@ -32,6 +32,8 @@ test("server-renders the Hainan map-first trip", async () => {
   assert.match(html, /一人/);
   assert.match(html, /二人/);
   assert.match(html, /旅程地图/);
+  assert.match(html, /deferred-image-placeholder/);
+  assert.doesNotMatch(html, /<img[^>]+src="\/hainan\//);
   assert.match(html, /全程路线/);
   assert.match(html, /万宁住两晚/);
   assert.match(html, /新开设计海岸线/);

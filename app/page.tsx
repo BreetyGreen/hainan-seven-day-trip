@@ -7,6 +7,7 @@ import { researchSummary } from "./trip-details";
 import { withBasePath } from "./site-paths";
 import { SanyaBayHotelGuide } from "./SanyaBayHotelGuide";
 import { hotelDecisionProfiles } from "./trip-recommendations";
+import { DeferredImage } from "./DeferredImage";
 
 const modeNotes: Record<TravelMode, { label: string; subtitle: string; guidance: string }> = {
   solo: {
@@ -58,9 +59,7 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
   return (
     <article className="hotel-story">
       <div className="hotel-photo-wrap">
-        {/* Local, source-verified photography is intentionally served from the static itinerary bundle. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={withBasePath(hotel.image.src)} alt={hotel.image.alt} loading={base === 1 ? "eager" : "lazy"} />
+        <DeferredImage src={withBasePath(hotel.image.src)} alt={hotel.image.alt} loading="lazy" />
         <span>BASE {base} · {hotel.city}</span>
         <small>图源：{hotel.image.platform} · {hotel.image.credit}</small>
       </div>
@@ -72,8 +71,7 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
           <div className="hotel-gallery" aria-label={`${hotel.name}实景图库`}>
             {hotel.gallery.map((photo) => (
               <a key={photo.src} href={photo.creditUrl} target="_blank" rel="noreferrer" title={`${photo.noteTitle} · ${photo.credit}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={withBasePath(photo.src)} alt={photo.alt} loading="lazy" />
+                <DeferredImage src={withBasePath(photo.src)} alt={photo.alt} loading="lazy" />
                 <span>{photo.noteTitle}</span>
               </a>
             ))}

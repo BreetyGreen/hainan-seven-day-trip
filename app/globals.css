@@ -62,6 +62,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--coral); outline
 .map-layer, .route-map-canvas { height: 100%; width: 100%; }
 .map-layer { background: #b9ccca; inset: 0; position: absolute; }
 .route-map-canvas { background: #bdd0cd; }
+.deferred-image-placeholder { animation: deferred-image-pulse 1.4s ease-in-out infinite alternate; background: linear-gradient(135deg,#d8e2df,#edf1ed 48%,#ccd9d6); display: block; height: 100%; min-height: 48px; width: 100%; }
+@keyframes deferred-image-pulse { from { opacity: .68; } to { opacity: 1; } }
 
 /* Minimal Leaflet layout contract. */
 .leaflet-container { font: inherit; outline: none; overflow: hidden; position: relative; }

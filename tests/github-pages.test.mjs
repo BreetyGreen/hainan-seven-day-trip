@@ -15,9 +15,6 @@ test("configures a repository-scoped static GitHub Pages build", async () => {
   assert.match(nextConfig, /basePath/);
   assert.match(nextConfig, /assetPrefix/);
   assert.match(packageJson, /"build:pages"/);
-  assert.match(packageJson, /SINGLE_CHUNK_BUILD=1/);
-  assert.match(packageJson, /next build --webpack/);
-  assert.match(nextConfig, /config\.optimization\.splitChunks = false/);
   assert.match(workflow, /actions\/deploy-pages@v4/);
   assert.match(workflow, /npm run build:pages/);
   assert.match(workflow, /path:\s*\.\/out/);

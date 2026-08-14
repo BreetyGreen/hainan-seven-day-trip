@@ -24,6 +24,22 @@ test("keeps the place hero compact and defers heavy media libraries", async () =
   assert.doesNotMatch(routeMap, /import \{ PlaceDecisionTabs \} from/);
 });
 
+test("does not let below-the-fold photography compete with hydration", async () => {
+  const [page, routeMap, deferredImage] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/DeferredImage.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /import \{ DeferredImage \}/);
+  assert.match(routeMap, /import \{ DeferredImage \}/);
+  assert.match(page, /<DeferredImage/);
+  assert.match(routeMap, /<DeferredImage/);
+  assert.match(deferredImage, /useState\(false\)/);
+  assert.match(deferredImage, /useEffect/);
+  assert.match(deferredImage, /deferred-image-placeholder/);
+});
+
 test("uses the responsive Esri tile source and avoids off-screen tile overfetch", async () => {
   const [routeMap, layout] = await Promise.all([
     readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),

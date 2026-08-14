@@ -9,13 +9,6 @@ const nextConfig: NextConfig = {
   basePath,
   assetPrefix: basePath || undefined,
   trailingSlash: isGithubPages,
-  webpack(config, { isServer }) {
-    if (process.env.SINGLE_CHUNK_BUILD === "1" && !isServer) {
-      config.optimization.splitChunks = false;
-      config.optimization.runtimeChunk = "single";
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
