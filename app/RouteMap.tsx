@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
 import { getPlanDayRoute, places, type Day, type ItineraryPlan, type Place, type TravelLegMode } from "./trip-data";
@@ -15,11 +16,6 @@ import {
 import { buildJourneyPhotoItems, type JourneyPhotoItem } from "./journey-photos";
 import { sampleRouteAtProgress } from "./trip-motion";
 import { withBasePath } from "./site-paths";
-import { PlacePhotoGallery } from "./PlacePhotoGallery";
-import { SocialInspirationGallery } from "./SocialInspirationGallery";
-import { SocialVideoGallery } from "./SocialVideoGallery";
-import { PrivateSocialGallery } from "./PrivateSocialGallery";
-import { PlaceDecisionTabs } from "./PlaceDecisionTabs";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -31,6 +27,12 @@ import {
   type PlaybackStage,
   type RouteCoordinate,
 } from "./trip-playback";
+
+const PlacePhotoGallery = dynamic(() => import("./PlacePhotoGallery").then((module) => module.PlacePhotoGallery), { ssr: false });
+const SocialInspirationGallery = dynamic(() => import("./SocialInspirationGallery").then((module) => module.SocialInspirationGallery), { ssr: false });
+const SocialVideoGallery = dynamic(() => import("./SocialVideoGallery").then((module) => module.SocialVideoGallery), { ssr: false });
+const PrivateSocialGallery = dynamic(() => import("./PrivateSocialGallery").then((module) => module.PrivateSocialGallery), { ssr: false });
+const PlaceDecisionTabs = dynamic(() => import("./PlaceDecisionTabs").then((module) => module.PlaceDecisionTabs), { ssr: false });
 
 type RouteFeature = {
   type: "Feature";
@@ -535,7 +537,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         map.on("zoomstart", markZoomStart);
         map.on("zoomend", markZoomEnd);
 
-        const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
           maxZoom: 18,
           updateWhenZooming: false,

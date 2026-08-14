@@ -20,7 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <head><script dangerouslySetInnerHTML={{ __html: hydrationRecoveryScript }} /></head>
+      <head>
+        <link rel="preconnect" href="https://tile.openstreetmap.org" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//tile.openstreetmap.org" />
+        <link rel="preload" href={withBasePath("/routes/hainan-plan-a.geojson")} as="fetch" type="application/geo+json" crossOrigin="anonymous" />
+        <script dangerouslySetInnerHTML={{ __html: hydrationRecoveryScript }} />
+      </head>
       <body><HydrationRecovery />{children}</body>
     </html>
   );
