@@ -48,10 +48,10 @@ const lingshuiHighEngagement = "https://www.xiaohongshu.com/explore/6969f4c90000
 const wanningHighEngagement = "https://www.xiaohongshu.com/search_result?keyword=%E4%B8%87%E5%AE%81%E7%BA%AF%E5%9C%9F%E8%91%97%E5%BF%85%E5%90%8318%E5%AE%B6%E8%80%81%E5%BA%97";
 
 export const researchSummary: ResearchSummary = {
-  scannedCards: 150,
-  deepReads: 21,
-  queryGroups: ["海南东线 7 天慢游", "海口／陵水／三亚吃住", "万宁安静海景酒店", "万宁小众玩法", "万宁本地老店", "万宁—陵水少折返"],
-  conclusion: "万宁值得住两晚；用神州半岛做基地、石梅湾与兴隆组成短线，比把日月湾网红店逐个打卡更符合安静慢游。",
+  scannedCards: 123,
+  deepReads: 60,
+  queryGroups: ["海南东线 7 天慢游", "海口／万宁／陵水安静海景酒店", "万宁石梅湾与兴隆短线", "陵水清水湾与土福湾慢住", "海南本地老店与酒店餐饮", "九月天气与东线自驾"],
+  conclusion: "最终保留海口、万宁、陵水三处基地；万宁住两晚，陵水住三晚。Plan A 侧重清水湾与石梅湾，Plan B 侧重兴隆林野与土福湾，全程最多换两次酒店。",
 };
 
 export const userResearchSources: ResearchSource[] = [
