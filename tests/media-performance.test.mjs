@@ -24,15 +24,16 @@ test("keeps the place hero compact and defers heavy media libraries", async () =
   assert.doesNotMatch(routeMap, /import \{ PlaceDecisionTabs \} from/);
 });
 
-test("uses one OpenStreetMap tile host to avoid three cold TLS connections", async () => {
+test("uses the responsive Esri tile source and avoids off-screen tile overfetch", async () => {
   const [routeMap, layout] = await Promise.all([
     readFile(new URL("../app/RouteMap.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(routeMap, /https:\/\/tile\.openstreetmap\.org\/\{z\}\/\{x\}\/\{y\}\.png/);
-  assert.doesNotMatch(routeMap, /\{s\}\.tile\.openstreetmap\.org/);
-  assert.match(layout, /rel="preconnect" href="https:\/\/tile\.openstreetmap\.org"/);
-  assert.match(layout, /rel="dns-prefetch" href="\/\/tile\.openstreetmap\.org"/);
+  assert.match(routeMap, /https:\/\/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Street_Map\/MapServer\/tile\/\{z\}\/\{y\}\/\{x\}/);
+  assert.match(routeMap, /keepBuffer: 0/);
+  assert.doesNotMatch(routeMap, /tile\.openstreetmap\.org/);
+  assert.match(layout, /rel="preconnect" href="https:\/\/server\.arcgisonline\.com"/);
+  assert.match(layout, /rel="dns-prefetch" href="\/\/server\.arcgisonline\.com"/);
   assert.match(layout, /rel="preload"[^>]+hainan-plan-a\.geojson[^>]+as="fetch"/);
 });

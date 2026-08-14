@@ -404,6 +404,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
   const [loadedRoutePath, setLoadedRoutePath] = useState<string | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [mapReady, setMapReady] = useState(false);
+  const [tilesReady, setTilesReady] = useState(false);
   const [tilesFailed, setTilesFailed] = useState(false);
   const [playbackStatus, setPlaybackStatus] = useState<PlaybackStatus>("idle");
   const [visibleStage, setVisibleStage] = useState<PlaybackStage | null>(null);
@@ -413,7 +414,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
   const [arrivalStageIndex, setArrivalStageIndex] = useState<number | null>(null);
   const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number; arrivalMode: boolean; stopIndex?: number } | null>(null);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
-  const routeIsReady = mapReady && status === "ready" && loadedRoutePath === plan.routePath;
+  const routeIsReady = mapReady && tilesReady && status === "ready" && loadedRoutePath === plan.routePath;
 
   const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(schedule, place.id)) => {
     pausePlaybackRef.current();
@@ -476,6 +477,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
     async function initialize() {
       if (!containerRef.current || mapRef.current) return;
       setMapReady(false);
+      setTilesReady(false);
       try {
         const L = await import("leaflet");
         if (cancelled || !containerRef.current) return;
@@ -539,14 +541,18 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         map.on("zoomstart", markZoomStart);
         map.on("zoomend", markZoomEnd);
 
-        const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        const tiles = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+          attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> and data partners, including OpenStreetMap contributors',
           maxZoom: 18,
           updateWhenZooming: false,
           updateWhenIdle: true,
           updateInterval: 160,
-          keepBuffer: 2,
+          keepBuffer: 0,
         });
+        const markTilesReady = () => {
+          if (!cancelled) setTilesReady(true);
+        };
+        tiles.on("load", markTilesReady);
         tiles.on("tileerror", () => setTilesFailed(true));
         tiles.addTo(map);
 
