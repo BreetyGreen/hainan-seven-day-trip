@@ -47,3 +47,24 @@ test("preserves JavaScript replacement tokens and patches the real currentScript
   assert.match(result, /name==="src"\?"\/hainan-seven-day-trip\/_next\/static\/chunks\/runtime\.js"/);
   assert.match(result, /new URL\("\/hainan-seven-day-trip\/_next\/static\/chunks\/runtime\.js",document\.baseURI\)\.href/);
 });
+
+test("keeps oversized framework chunks external and raises their fetch priority", async () => {
+  const html = [
+    '<script src="/hainan-seven-day-trip/_next/static/chunks/framework.js" async=""></script>',
+    '<script src="/hainan-seven-day-trip/_next/static/chunks/app.js" async=""></script>',
+  ].join("");
+  const sources = new Map([
+    ["/_next/static/chunks/framework.js", "x".repeat(20)],
+    ["/_next/static/chunks/app.js", "app();"],
+  ]);
+
+  const result = await inlineInitialScripts(
+    html,
+    "/hainan-seven-day-trip",
+    async (path) => sources.get(path),
+    { maxInlineBytes: 10 },
+  );
+
+  assert.match(result, /framework\.js" async="" fetchpriority="high"><\/script>/);
+  assert.match(result, /data-pages-inline-bootstrap="app\.js"/);
+});

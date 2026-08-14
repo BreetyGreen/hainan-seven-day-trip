@@ -38,6 +38,11 @@ test("does not let below-the-fold photography compete with hydration", async () 
   assert.match(deferredImage, /useState\(false\)/);
   assert.match(deferredImage, /useEffect/);
   assert.match(deferredImage, /deferred-image-placeholder/);
+  assert.match(deferredImage, /trip-map-ready/);
+  assert.match(deferredImage, /dataset\.tripMapReady/);
+  assert.match(deferredImage, /window\.setTimeout\(activate, 12_000\)/);
+  assert.match(routeMap, /dataset\.tripMapReady = "1"/);
+  assert.match(routeMap, /dispatchEvent\(new Event\("trip-map-ready"\)\)/);
 });
 
 test("uses a low-request tile grid on ultra-wide screens", async () => {

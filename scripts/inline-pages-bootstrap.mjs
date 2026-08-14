@@ -4,7 +4,7 @@ import { pathToFileURL } from "node:url";
 
 const startupScriptPattern = /<script\b([^>]*?)\bsrc="([^"]+)"([^>]*)><\/script>/gi;
 
-export async function inlineInitialScripts(html, basePath, loadScript) {
+export async function inlineInitialScripts(html, basePath, loadScript, { maxInlineBytes = Number.POSITIVE_INFINITY } = {}) {
   const matches = [...html.matchAll(startupScriptPattern)];
   let result = html;
 
@@ -17,6 +17,13 @@ export async function inlineInitialScripts(html, basePath, loadScript) {
     const localPath = src.slice(basePath.length);
     const source = await loadScript(localPath);
     if (typeof source !== "string") throw new Error(`Unable to inline startup script: ${localPath}`);
+    if (Buffer.byteLength(source, "utf8") > maxInlineBytes) {
+      const prioritized = /\bfetchpriority=/i.test(tag)
+        ? tag
+        : tag.replace(/><\/script>$/i, ' fetchpriority="high"></script>');
+      result = result.replace(tag, () => prioritized);
+      continue;
+    }
 
     const scriptUrl = `new URL(${JSON.stringify(src)},document.baseURI).href`;
     const wrappedSource = `(()=>{const __pagesInlineScript=document.currentScript;const __pagesOriginalGetAttribute=__pagesInlineScript.getAttribute.bind(__pagesInlineScript);Object.defineProperty(__pagesInlineScript,"src",{configurable:true,value:${scriptUrl}});__pagesInlineScript.getAttribute=(name)=>name==="src"?${JSON.stringify(src)}:__pagesOriginalGetAttribute(name);${source}})();`;
@@ -40,7 +47,7 @@ async function htmlFiles(root) {
   return nested.flat();
 }
 
-export async function inlinePagesBootstrap({ outDir = "out", basePath = "/hainan-seven-day-trip" } = {}) {
+export async function inlinePagesBootstrap({ outDir = "out", basePath = "/hainan-seven-day-trip", maxInlineBytes = 160_000 } = {}) {
   const root = resolve(outDir);
   const files = await htmlFiles(root);
   let inlined = 0;
@@ -49,6 +56,7 @@ export async function inlinePagesBootstrap({ outDir = "out", basePath = "/hainan
     const html = await readFile(file, "utf8");
     const next = await inlineInitialScripts(html, basePath, (localPath) =>
       readFile(join(root, localPath.replace(/^\//, "")), "utf8"),
+      { maxInlineBytes },
     );
     if (next === html) continue;
     await writeFile(file, next, "utf8");

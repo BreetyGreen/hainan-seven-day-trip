@@ -555,7 +555,11 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
           keepBuffer: 0,
         });
         const markTilesReady = () => {
-          if (!cancelled) setTilesReady(true);
+          if (!cancelled) {
+            document.documentElement.dataset.tripMapReady = "1";
+            window.dispatchEvent(new Event("trip-map-ready"));
+            setTilesReady(true);
+          }
         };
         tiles.on("load", markTilesReady);
         tiles.on("tileerror", () => setTilesFailed(true));

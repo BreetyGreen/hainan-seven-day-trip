@@ -10,8 +10,19 @@ export function DeferredImage({ src, alt = "", className, ...imageProps }: Defer
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setActive(true));
-    return () => window.cancelAnimationFrame(frame);
+    let frame = 0;
+    const activate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => setActive(true));
+    };
+    if (document.documentElement.dataset.tripMapReady === "1") activate();
+    else window.addEventListener("trip-map-ready", activate, { once: true });
+    const fallback = window.setTimeout(activate, 12_000);
+    return () => {
+      window.removeEventListener("trip-map-ready", activate);
+      window.clearTimeout(fallback);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   if (!active) {
