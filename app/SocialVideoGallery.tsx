@@ -13,12 +13,22 @@ export function SocialVideoGallery({ city }: { city: string }) {
   const [theme, setTheme] = useState<"全部" | SocialVideoTheme>("全部");
   const [expanded, setExpanded] = useState(false);
   const [activeVideo, setActiveVideo] = useState<SocialVideo | null>(null);
+  const [activated, setActivated] = useState(false);
   const platformVideos = platform === "全部" ? videos : videos.filter((video) => video.platform === platform);
   const filteredVideos = theme === "全部" ? platformVideos : platformVideos.filter((video) => video.theme === theme);
   const visibleCards = expanded ? filteredVideos : filteredVideos.slice(0, 6);
   const closeViewer = useCallback(() => setActiveVideo(null), []);
 
   if (videos.length === 0) return null;
+
+  if (!activated) {
+    return (
+      <section className="media-library-gate is-video" aria-label={`${city}小红书与抖音视频库`}>
+        <div><span>VIDEO JOURNEY</span><strong>{city} · {videos.length} 条视频线索</strong><small>点击后再加载封面；播放器仍需二次点击</small></div>
+        <button type="button" onClick={() => setActivated(true)}>打开视频库 <span>▶</span></button>
+      </section>
+    );
+  }
 
   return (
     <section className="social-video-gallery" aria-label={`${city}小红书与抖音视频旅程`}>

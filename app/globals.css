@@ -808,6 +808,13 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 }
 
 .decision-tabs { margin: 22px 0; border: 1px solid rgba(12,48,52,.12); border-radius: 20px; overflow: hidden; background: #f7f6f1; }
+.media-library-gate { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: 14px 0; padding: 14px 15px; border: 1px solid rgba(12,48,52,.12); border-radius: 15px; background: linear-gradient(135deg,#f8f7f2,#edf2ef); }
+.media-library-gate > div { display: grid; gap: 2px; min-width: 0; }
+.media-library-gate > div span { color: var(--plan-accent, #e86f5c); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.media-library-gate > div strong { overflow: hidden; color: #17393a; font-family: var(--font-serif); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.media-library-gate > div small { color: #788482; font-size: 9px; }
+.media-library-gate > button { flex: 0 0 auto; min-height: 38px; padding: 0 12px; border: 0; border-radius: 11px; background: #0e3838; color: #fff; font-size: 10px; font-weight: 800; cursor: pointer; }
+.media-library-gate > button span { margin-left: 5px; color: #f39a88; }
 .decision-tabs-intro { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; padding: 15px 18px; background: #0d3435; color: #fff; }
 .decision-tabs-intro span { grid-row: 1 / 3; align-self: center; padding-right: 12px; border-right: 1px solid rgba(255,255,255,.2); font-size: 10px; letter-spacing: .12em; color: #f39a88; }
 .decision-tabs-intro strong { font-family: var(--font-serif); font-size: 16px; }
@@ -840,6 +847,12 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .decision-evidence .risk-中 { color: #9b701c; }
 
 .sanya-bay-guide { margin: 16px 0; border: 1px solid rgba(12,48,52,.12); border-radius: 17px; overflow: hidden; background: #fff; }
+.hotel-decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 12px 0; }
+.hotel-decision-grid div { padding: 8px 9px; border-radius: 9px; background: #f3f4ef; }
+.hotel-decision-grid dt { color: var(--plan-accent, #e86f5c); font-size: 8px; font-weight: 900; letter-spacing: .08em; }
+.hotel-decision-grid dd { margin: 3px 0 0; color: #596a69; font-size: 9px; line-height: 1.45; }
+.hotel-price-band { display: grid; gap: 3px; padding: 9px 10px; border-radius: 9px; background: #fff2ed; color: #775c56; font-size: 9px; }
+.hotel-price-band b { color: #a64c3f; }
 .sanya-bay-guide > summary { display: grid; gap: 3px; padding: 14px 16px; cursor: pointer; list-style: none; background: linear-gradient(135deg,#0e3838,#1a5c59); color: #fff; }
 .sanya-bay-guide > summary::-webkit-details-marker { display: none; }
 .sanya-bay-guide > summary span { color: #f2a08e; font-size: 10px; font-weight: 800; letter-spacing: .1em; }
@@ -865,6 +878,7 @@ canvas.leaflet-zoom-animated { will-change: transform; }
   .decision-panel { padding: 15px; }
   .decision-panel-heading h3 { font-size: 18px; }
   .bay-guide-panel dl { grid-template-columns: 1fr; }
+  .hotel-decision-grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

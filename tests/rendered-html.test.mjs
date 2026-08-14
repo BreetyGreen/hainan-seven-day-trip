@@ -69,9 +69,9 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(page, /activePlan\.schedule/);
   assert.match(page, /activePlan\.hotels/);
   assert.match(page, /plan=\{activePlan\}/);
-  assert.match(routeMap, /小红书高互动/);
-  assert.match(routeMap, /避雷\/核验/);
-  assert.match(routeMap, /地图导航/);
+  assert.match(routeMap, /PlaceDecisionTabs/);
+  assert.match(routeMap, /前往下一站/);
+  assert.match(routeMap, /durationLabel/);
   assert.match(page, /useState<number \| null>\(null\)/);
   assert.match(page, /journey-shell/);
   assert.match(page, /selectedDay/);

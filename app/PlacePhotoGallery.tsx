@@ -16,6 +16,7 @@ export function PlacePhotoGallery({ placeName, photos, dayId, city, category }: 
   const [activeIndex, setActiveIndex] = useState(0);
   const hasMultiplePhotos = photos.length > 1;
   const activePhoto = photos[Math.min(activeIndex, photos.length - 1)];
+  const thumbnailPhotos = activeIndex < 4 ? photos.slice(0, 4) : [...photos.slice(0, 3), activePhoto];
 
   if (!activePhoto) return null;
 
@@ -42,7 +43,7 @@ export function PlacePhotoGallery({ placeName, photos, dayId, city, category }: 
     >
       <div className="place-photo-stage">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={activePhoto.src} src={withBasePath(activePhoto.src)} alt={activePhoto.alt} />
+        <img key={activePhoto.src} src={withBasePath(activePhoto.src)} alt={activePhoto.alt} decoding="async" />
         {hasMultiplePhotos && (
           <>
             <button className="place-photo-nav is-previous" type="button" onClick={showPrevious} aria-label="上一张地点图片">←</button>
@@ -60,7 +61,9 @@ export function PlacePhotoGallery({ placeName, photos, dayId, city, category }: 
 
       {hasMultiplePhotos && (
         <div className="place-photo-thumbnails" aria-label="地点图片缩略图">
-          {photos.map((photo, index) => (
+          {thumbnailPhotos.map((photo) => {
+            const index = photos.indexOf(photo);
+            return (
             <button
               className={index === activeIndex ? "is-active" : ""}
               key={photo.src}
@@ -72,7 +75,8 @@ export function PlacePhotoGallery({ placeName, photos, dayId, city, category }: 
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={withBasePath(photo.src)} alt="" loading="lazy" />
             </button>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>

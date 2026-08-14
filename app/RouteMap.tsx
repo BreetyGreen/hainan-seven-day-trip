@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GeoJsonObject } from "geojson";
 import type { Canvas, LayerGroup, Map as LeafletMap, Marker, Polyline } from "leaflet";
 import { getPlanDayRoute, places, type Day, type ItineraryPlan, type Place, type TravelLegMode } from "./trip-data";
-import { getDayGuide } from "./trip-details";
 import { modeLabel } from "./trip-legs";
 import {
   cameraForArrival,
@@ -255,15 +254,12 @@ function PlaceDetailDialog({
   onContinue: () => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
-  const dayGuide = getDayGuide(dayId);
   const nextLeg = schedule.find((day) => day.id === dayId)?.legs.find((leg) => leg.fromIndex === routeContext.position - 1);
   const sourceLinks = [
     ...(place.image ? [{ label: `图片来源 · ${place.image.platform} · ${place.image.credit}`, url: place.image.creditUrl }] : []),
     ...(place.gallery?.map((photo) => ({ label: `图片来源 · ${photo.platform} · ${photo.credit}`, url: photo.creditUrl })) ?? []),
     { label: `${place.activity.source.platform} · ${place.activity.source.title}`, url: place.activity.source.url },
     { label: "地点核验", url: place.sourceUrl },
-    ...(dayGuide?.foodStops.map((stop) => ({ label: stop.sourceLabel, url: stop.sourceUrl })) ?? []),
-    ...(dayGuide?.optional ? [{ label: dayGuide.optional.title, url: dayGuide.optional.sourceUrl }] : []),
   ].filter((source, index, all) => all.findIndex((item) => item.url === source.url) === index);
 
   useEffect(() => {
@@ -360,33 +356,6 @@ function PlaceDetailDialog({
             <ul>{place.activity.practical.map((tip) => <li key={tip}>{tip}</li>)}</ul>
             <p><b>九月退路</b>{place.activity.weather}</p>
           </section>
-
-          {dayGuide && (
-            <section className="place-detail-section day-deep-dive">
-              <div className="place-detail-heading"><span>03</span><h3>这一天怎么串起来</h3></div>
-              <h4>{dayGuide.headline}</h4>
-              <div className="day-rhythm">{dayGuide.rhythm.map((item, index) => <span key={item}><b>{index + 1}</b>{item}</span>)}</div>
-              <h4>顺路吃 · 小红书高互动与位置双核验</h4>
-              <div className="food-stop-list">
-                {dayGuide.foodStops.map((stop) => (
-                  <article key={stop.name} className="food-stop-card">
-                    <div><strong>{stop.name}</strong><span>{stop.area} · {stop.when}</span></div>
-                    <em className={`food-evidence is-${stop.evidence.kind}`}>{stop.evidence.label}</em>
-                    <p>{stop.reason}</p>
-                    <small>建议点：{stop.order.join(" · ")}</small>
-                    <p className="food-caution"><b>避雷/核验</b>{stop.caution}</p>
-                    <nav className="food-stop-actions" aria-label={`${stop.name}资料`}>
-                      <a href={stop.sourceUrl} target="_blank" rel="noreferrer">查看笔记依据 ↗</a>
-                      <a href={stop.mapUrl} target="_blank" rel="noreferrer">地图导航 ↗</a>
-                    </nav>
-                  </article>
-                ))}
-              </div>
-              {dayGuide.optional && (
-                <div className="optional-stop"><strong>{dayGuide.optional.title}</strong><p>{dayGuide.optional.detail}</p></div>
-              )}
-            </section>
-          )}
 
           <footer className="place-detail-sources">
             <strong>资料来源</strong>

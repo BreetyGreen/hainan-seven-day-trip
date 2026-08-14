@@ -6,6 +6,7 @@ import { calculatePlanBudget, itineraryPlans, type Hotel, type ItineraryPlan, ty
 import { researchSummary } from "./trip-details";
 import { withBasePath } from "./site-paths";
 import { SanyaBayHotelGuide } from "./SanyaBayHotelGuide";
+import { hotelDecisionProfiles } from "./trip-recommendations";
 
 const modeNotes: Record<TravelMode, { label: string; subtitle: string; guidance: string }> = {
   solo: {
@@ -53,6 +54,7 @@ function BudgetSummary({ plan, mode }: { plan: ItineraryPlan; mode: TravelMode }
 }
 
 function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
+  const profile = hotelDecisionProfiles.find((item) => item.id === hotel.id);
   return (
     <article className="hotel-story">
       <div className="hotel-photo-wrap">
@@ -66,12 +68,21 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
         <p className="hotel-nights">入住 Day {hotel.checkInDay} · {hotel.nights}</p>
         <h2>{hotel.name}</h2>
         <p>{hotel.fit}</p>
+        {profile && (
+          <dl className="hotel-decision-grid">
+            <div><dt>建议房型</dt><dd>{profile.room}</dd></div>
+            <div><dt>海景判断</dt><dd>{profile.view}</dd></div>
+            <div><dt>餐饮</dt><dd>{profile.dining}</dd></div>
+            <div><dt>自驾</dt><dd>{profile.parking}</dd></div>
+          </dl>
+        )}
         <details className="hotel-details">
           <summary>查看选择理由与入住提醒</summary>
           <h3>为什么选它</h3>
           <ul>{hotel.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
           <h3>入住提醒</h3>
           <p className="hotel-caution">{hotel.cautions.join("；")}</p>
+          {profile && <p className="hotel-price-band"><b>九月参考</b>{profile.priceBand}</p>}
         </details>
         <div className="hotel-links">
           <a href={hotel.officialUrl} target="_blank" rel="noreferrer">酒店官网 ↗</a>
@@ -242,7 +253,7 @@ export default function Home() {
           )}
 
           <p className="research-link">小红书原笔记已整理进地点详情 · 站内先看结论，需要时再打开原文</p>
-          <p className="verified-note"><span>●</span> 活动、地图与酒店 · 2026-08-11 核验</p>
+          <p className="verified-note"><span>●</span> 吃穿住行玩、地图与酒店 · 2026-08-14 核验</p>
         </aside>
       </section>
     </main>

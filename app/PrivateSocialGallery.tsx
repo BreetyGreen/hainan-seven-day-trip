@@ -22,6 +22,7 @@ export function PrivateSocialGallery({ placeId, placeName, city }: { placeId: st
   const [theme, setTheme] = useState<"全部" | PrivateSocialTheme>("全部");
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<PrivateSocialImage | null>(null);
+  const [activated, setActivated] = useState(false);
 
   const placeImages = useMemo(() => privateSocialImagesForPlace(placeId), [placeId]);
   const cityImages = useMemo(() => privateSocialImages.filter((image) => image.city === activeCity), [activeCity]);
@@ -52,6 +53,15 @@ export function PrivateSocialGallery({ placeId, placeName, city }: { placeId: st
   };
 
   if (placeImages.length === 0) return null;
+
+  if (!activated) {
+    return (
+      <section className="media-library-gate is-photo" aria-label={`${placeName}小红书地点图库`}>
+        <div><span>XHS PLACE GALLERY</span><strong>{placeName} · {placeImages.length} 张地点实景</strong><small>按地点分卡，不混入城市总图库；需要时再加载</small></div>
+        <button type="button" onClick={() => setActivated(true)}>打开地点图库 <span>→</span></button>
+      </section>
+    );
+  }
 
   return (
     <section className={`private-social-gallery is-${scope}`} aria-label={scope === "place" ? `${placeName}私人图片` : `${activeCity}私人图片总库`}>
