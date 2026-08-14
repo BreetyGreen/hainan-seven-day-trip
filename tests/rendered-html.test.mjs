@@ -105,6 +105,10 @@ test("keeps the map controls accessible and removes starter artifacts", async ()
   assert.match(routeMap, /journey-start-gate/);
   assert.match(routeMap, /开始七日旅程/);
   assert.match(routeMap, /playbackStatus === "idle" && !placeDetail/);
+  assert.match(routeMap, /const \[mapReady, setMapReady\] = useState\(false\)/);
+  assert.match(routeMap, /const routeIsReady = mapReady && status === "ready"/);
+  assert.match(routeMap, /mapRef\.current = map;[\s\S]*setMapReady\(true\)/);
+  assert.match(routeMap, /setMapReady\(false\)/);
   assert.match(routeMap, /requiresManualArrival/);
   assert.match(routeMap, /cameraForTravel/);
   assert.match(routeMap, /cameraForArrival/);

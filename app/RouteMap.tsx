@@ -403,6 +403,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
   const [routeData, setRouteData] = useState<RouteCollection | null>(null);
   const [loadedRoutePath, setLoadedRoutePath] = useState<string | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [mapReady, setMapReady] = useState(false);
   const [tilesFailed, setTilesFailed] = useState(false);
   const [playbackStatus, setPlaybackStatus] = useState<PlaybackStatus>("idle");
   const [visibleStage, setVisibleStage] = useState<PlaybackStage | null>(null);
@@ -412,7 +413,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
   const [arrivalStageIndex, setArrivalStageIndex] = useState<number | null>(null);
   const [placeDetail, setPlaceDetail] = useState<{ place: Place; dayId: number; arrivalMode: boolean; stopIndex?: number } | null>(null);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
-  const routeIsReady = status === "ready" && loadedRoutePath === plan.routePath;
+  const routeIsReady = mapReady && status === "ready" && loadedRoutePath === plan.routePath;
 
   const openPlaceDetail = useCallback((place: Place, dayId = firstDayForPlace(schedule, place.id)) => {
     pausePlaybackRef.current();
@@ -474,6 +475,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
     let mapContainer: HTMLDivElement | null = null;
     async function initialize() {
       if (!containerRef.current || mapRef.current) return;
+      setMapReady(false);
       try {
         const L = await import("leaflet");
         if (cancelled || !containerRef.current) return;
@@ -557,6 +559,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
         travelerMarkerRef.current = travelerMarker;
         routeLayerRef.current = L.layerGroup().addTo(map);
         markerLayerRef.current = L.layerGroup().addTo(map);
+        setMapReady(true);
       } catch {
         if (!cancelled) setStatus("error");
       }
