@@ -648,6 +648,8 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .map-legend .photo { background: var(--cyan); border-radius: 50%; height: 7px; width: 7px; }
 .map-legend .change { background: #fff1c9; border: 1px solid #a95b17; border-radius: 2px; height: 9px; width: 12px; }
 .map-status { align-items: center; background: var(--navy); color: white; display: flex; inset: 0; justify-content: center; position: absolute; z-index: 950; }
+.map-status strong { color: var(--paper); font-family: var(--font-serif); font-size: 14px; }
+.map-status button { min-height: 38px; margin-left: 12px; padding: 0 15px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; background: var(--coral); color: #fff; font-weight: 800; cursor: pointer; }
 .map-error { align-items: flex-start; flex-direction: column; gap: 8px; padding: 40px; }
 .tile-note { background: var(--white); bottom: 66px; font-size: 9px; left: 400px; padding: 7px 9px; position: absolute; z-index: 900; }
 

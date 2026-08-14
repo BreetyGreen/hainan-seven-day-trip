@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { withBasePath } from "./site-paths";
+import { HydrationRecovery, hydrationRecoveryScript } from "./HydrationRecovery";
 
 export const metadata: Metadata = {
   title: "海南东线七日地图｜武汉出发的真实自驾路线",
@@ -19,7 +20,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <head><script dangerouslySetInnerHTML={{ __html: hydrationRecoveryScript }} /></head>
+      <body><HydrationRecovery />{children}</body>
     </html>
   );
 }
