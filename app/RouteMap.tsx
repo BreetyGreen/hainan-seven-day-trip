@@ -35,6 +35,23 @@ const SocialVideoGallery = dynamic(() => import("./SocialVideoGallery").then((mo
 const PrivateSocialGallery = dynamic(() => import("./PrivateSocialGallery").then((module) => module.PrivateSocialGallery), { ssr: false });
 const PlaceDecisionTabs = dynamic(() => import("./PlaceDecisionTabs").then((module) => module.PlaceDecisionTabs), { ssr: false });
 
+const initialTileRanges = [
+  { z: 5, minX: 24, maxX: 27, minY: 13, maxY: 15 },
+  { z: 6, minX: 49, maxX: 54, minY: 26, maxY: 30 },
+  { z: 7, minX: 98, maxX: 107, minY: 52, maxY: 59 },
+  { z: 8, minX: 204, maxX: 209, minY: 111, maxY: 116 },
+];
+
+function hasCachedInitialTile(coords: { z: number; x: number; y: number }) {
+  return initialTileRanges.some((range) => (
+    coords.z === range.z
+    && coords.x >= range.minX
+    && coords.x <= range.maxX
+    && coords.y >= range.minY
+    && coords.y <= range.maxY
+  ));
+}
+
 type RouteFeature = {
   type: "Feature";
   properties: {
@@ -554,6 +571,13 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
           updateInterval: 160,
           keepBuffer: 0,
         });
+        const remoteTileUrl = tiles.getTileUrl.bind(tiles);
+        tiles.getTileUrl = (coords) => {
+          const cachedCoords = { ...coords, z: coords.z + (useWideTileGrid ? -1 : 0) };
+          return hasCachedInitialTile(cachedCoords)
+            ? withBasePath(`/map-tiles/osm/${cachedCoords.z}/${cachedCoords.x}/${cachedCoords.y}.png`)
+            : remoteTileUrl(coords);
+        };
         const markTilesReady = () => {
           if (!cancelled) {
             document.documentElement.dataset.tripMapReady = "1";

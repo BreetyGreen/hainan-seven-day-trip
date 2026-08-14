@@ -52,6 +52,10 @@ test("uses a low-request tile grid on ultra-wide screens", async () => {
   ]);
 
   assert.match(routeMap, /https:\/\/tile\.openstreetmap\.de\/\{z\}\/\{x\}\/\{y\}\.png/);
+  assert.match(routeMap, /const initialTileRanges = \[/);
+  assert.match(routeMap, /tiles\.getTileUrl = \(coords\) =>/);
+  assert.match(routeMap, /const cachedCoords = \{ \.\.\.coords, z: coords\.z \+ \(useWideTileGrid \? -1 : 0\) \}/);
+  assert.match(routeMap, /withBasePath\(`\/map-tiles\/osm\/\$\{cachedCoords\.z\}\/\$\{cachedCoords\.x\}\/\$\{cachedCoords\.y\}\.png`\)/);
   assert.match(routeMap, /const useWideTileGrid = window\.innerWidth >= 2200/);
   assert.match(routeMap, /tileSize: useWideTileGrid \? 512 : 256/);
   assert.match(routeMap, /zoomOffset: useWideTileGrid \? -1 : 0/);

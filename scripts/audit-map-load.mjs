@@ -158,6 +158,7 @@ async function pageState() {
         loadedTiles: loaded(tiles),
         visibleTiles: visible.length,
         loadedVisibleTiles: loaded(visible),
+        tileUrls: tiles.map((tile) => tile.currentSrc || tile.src),
         startLabel: button?.textContent.trim() ?? null,
         startEnabled: button ? !button.disabled : false,
       };
