@@ -6,7 +6,7 @@ test("counts independent evidence sources rather than image pages", async () => 
   const { researchEvidence, researchMetrics } = await import("../app/research-evidence.ts");
 
   assert.ok(researchMetrics.candidateCount >= 100, `expected at least 100 candidates, got ${researchMetrics.candidateCount}`);
-  assert.ok(researchMetrics.deepReadCount >= 40 && researchMetrics.deepReadCount <= 60, `expected 40-60 deep reads, got ${researchMetrics.deepReadCount}`);
+  assert.ok(researchMetrics.deepReadCount >= 40 && researchMetrics.deepReadCount <= 75, `expected 40-75 deep reads, got ${researchMetrics.deepReadCount}`);
   assert.equal(researchMetrics.candidateCount, researchEvidence.length);
   assert.equal(new Set(researchEvidence.map((item) => item.sourceId)).size, researchEvidence.length);
   assert.equal(new Set(researchEvidence.map((item) => item.url)).size, researchEvidence.length);
@@ -32,11 +32,11 @@ test("keeps the linked four-bay hotel note as one high-value source", async () =
 test("every selected hotel has experience, official or OTA, and map evidence", async () => {
   const { evidenceForEntity } = await import("../app/research-evidence.ts");
   const selectedHotels = [
+    "hongyuan-crest",
+    "yuyue-artia",
+    "kimpton-clearwater",
     "haikou-marriott",
-    "haikou-west-coast-holiday",
     "grand-hyatt-wanning",
-    "wanning-holiday-inn",
-    "clearwater-indigo",
     "sangem-moon",
   ];
 

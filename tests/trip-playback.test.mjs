@@ -65,15 +65,15 @@ test("gives visible movement enough time to read as travel rather than a jump", 
   assert.ok(wanningLocalDrive.durationMs >= 2400);
 });
 
-test("keeps the Haikou west-coast hotel, coast stop, and hotel return on distinct route positions", () => {
+test("keeps the Haikou Jiangdong hotel, coast stop, and hotel return on distinct route positions", () => {
   const dayOne = createPlaybackPlan(days, places, routeData.features).find((day) => day.dayId === 1);
   const localStops = dayOne.stops.slice(2);
   const localSegments = dayOne.segments.slice(2);
 
   assert.deepEqual(localStops.map((stop) => stop.place.id), [
-    "haikou-marriott",
-    "haikou-west-coast",
-    "haikou-marriott",
+    "hongyuan-crest",
+    "jiangdong-coast",
+    "hongyuan-crest",
   ]);
   assert.ok(localStops[0].routeIndex < localStops[1].routeIndex);
   assert.ok(localStops[1].routeIndex < localStops[2].routeIndex);
@@ -115,9 +115,9 @@ test("pauses only at meaningful arrivals and the first visit to each hotel base"
   assert.equal(requiresManualArrival(byId("wuhan-airport"), new Set()), false);
   assert.equal(requiresManualArrival(byId("shimei-bay"), new Set()), true);
   assert.equal(requiresManualArrival(byId("xincun-port"), new Set()), true);
-  assert.equal(requiresManualArrival(byId("wanning-hyatt"), new Set()), true);
-  assert.equal(requiresManualArrival(byId("wanning-hyatt"), new Set(["wanning-hyatt"])), false);
-  assert.equal(requiresManualArrival(byId("clearwater-indigo"), new Set(["wanning-hyatt"])), true);
+  assert.equal(requiresManualArrival(byId("yuyue-artia"), new Set()), true);
+  assert.equal(requiresManualArrival(byId("yuyue-artia"), new Set(["yuyue-artia"])), false);
+  assert.equal(requiresManualArrival(byId("kimpton-clearwater"), new Set(["yuyue-artia"])), true);
 });
 
 test("builds exact previous-current-next context for a middle arrival", () => {
@@ -126,10 +126,10 @@ test("builds exact previous-current-next context for a middle arrival", () => {
 
   assert.equal(context.position, 2);
   assert.equal(context.total, 3);
-  assert.equal(context.previous.place.id, "clearwater-indigo");
+  assert.equal(context.previous.place.id, "kimpton-clearwater");
   assert.equal(context.current.place.id, "cdf-sanya");
-  assert.equal(context.next.place.id, "clearwater-indigo");
-  assert.deepEqual(context.remaining.map((stop) => stop.place.id), ["clearwater-indigo"]);
+  assert.equal(context.next.place.id, "kimpton-clearwater");
+  assert.deepEqual(context.remaining.map((stop) => stop.place.id), ["kimpton-clearwater"]);
   assert.equal(context.nextMode, "drive");
 });
 
@@ -139,9 +139,9 @@ test("keeps repeated hotel occurrences and final stops unambiguous", () => {
   const finalHotel = createRouteContext(dayThree, 3);
   const firstHotel = createRouteContext(dayThree, 0);
 
-  assert.equal(firstHotel.current.place.id, "wanning-hyatt");
+  assert.equal(firstHotel.current.place.id, "yuyue-artia");
   assert.equal(firstHotel.next.place.id, "shimei-bay");
-  assert.equal(finalHotel.current.place.id, "wanning-hyatt");
+  assert.equal(finalHotel.current.place.id, "yuyue-artia");
   assert.equal(finalHotel.previous.place.id, "xinglong-market");
   assert.equal(finalHotel.next, null);
   assert.deepEqual(finalHotel.remaining, []);

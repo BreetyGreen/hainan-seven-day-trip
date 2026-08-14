@@ -229,6 +229,12 @@ canvas.leaflet-zoom-animated { will-change: transform; }
 .hotel-story-body > p, .hotel-story-body li { color: var(--muted); font-size: 9px; line-height: 1.55; }
 .hotel-story-body > p { margin: 0; }
 .hotel-story-body .hotel-nights { color: var(--plan-deep); font-size: 8px; font-weight: 850; }
+.hotel-gallery { display: grid; gap: 6px; grid-template-columns: repeat(2,minmax(0,1fr)); margin-top: 9px; }
+.hotel-gallery a { aspect-ratio: 1.55; border-radius: 7px; display: block; overflow: hidden; position: relative; }
+.hotel-gallery a::after { background: linear-gradient(180deg,transparent 48%,rgba(7,27,38,.72)); content: ""; inset: 0; position: absolute; }
+.hotel-gallery img { height: 100%; object-fit: cover; transition: transform .25s cubic-bezier(.2,.8,.2,1); width: 100%; }
+.hotel-gallery a:hover img { transform: scale(1.04); }
+.hotel-gallery span { bottom: 5px; color: white; font-size: 7px; font-weight: 750; left: 7px; max-width: calc(100% - 14px); overflow: hidden; position: absolute; text-overflow: ellipsis; white-space: nowrap; z-index: 1; }
 .hotel-story-body ul { margin: 0; padding-left: 16px; }
 .hotel-details { margin-top: 8px; }
 .hotel-details summary { color: var(--coral-dark); cursor: pointer; font-size: 8px; font-weight: 800; list-style-position: inside; }

@@ -65,9 +65,20 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
         <small>图源：{hotel.image.platform} · {hotel.image.credit}</small>
       </div>
       <div className="hotel-story-body">
-        <p className="hotel-nights">入住 Day {hotel.checkInDay} · {hotel.nights}</p>
+        <p className="hotel-nights">{hotel.opened} 年开业 · 入住 Day {hotel.checkInDay} · {hotel.nights}</p>
         <h2>{hotel.name}</h2>
         <p>{hotel.fit}</p>
+        {hotel.gallery && hotel.gallery.length > 0 && (
+          <div className="hotel-gallery" aria-label={`${hotel.name}实景图库`}>
+            {hotel.gallery.map((photo) => (
+              <a key={photo.src} href={photo.creditUrl} target="_blank" rel="noreferrer" title={`${photo.noteTitle} · ${photo.credit}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={withBasePath(photo.src)} alt={photo.alt} loading="lazy" />
+                <span>{photo.noteTitle}</span>
+              </a>
+            ))}
+          </div>
+        )}
         {profile && (
           <dl className="hotel-decision-grid">
             <div><dt>建议房型</dt><dd>{profile.room}</dd></div>
@@ -86,7 +97,7 @@ function HotelStory({ hotel, base }: { hotel: Hotel; base: number }) {
         </details>
         <div className="hotel-links">
           <a href={hotel.officialUrl} target="_blank" rel="noreferrer">酒店官网 ↗</a>
-          <a href={hotel.xhsSource.url} target="_blank" rel="noreferrer">查看图片与房型来源 ↗</a>
+          <a href={hotel.xhsSource.url} target="_blank" rel="noreferrer">小红书实住参考 ↗</a>
         </div>
       </div>
     </article>

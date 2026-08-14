@@ -78,6 +78,19 @@ const officialCandidate = (sourceId: string, title: string, url: string, city: s
   claims: [sourceType === "酒店官网" ? "用于核验酒店身份、房型、设施、地址与预订规则。" : sourceType === "天气" ? "用于制定九月高温、降雨、台风和紫外线退路。" : "用于核验地点身份、开放规则与安全提示。"],
 });
 
+const ctripCandidate = (sourceId: string, title: string, url: string, city: string, entityIds: string[]) => evidence({
+  sourceId,
+  title,
+  author: "携程酒店公开页",
+  url,
+  city,
+  entityIds,
+  category: "住",
+  sourceType: "携程",
+  deepRead: true,
+  claims: ["用于交叉核对酒店地址、开业年份、房型图片、设施与近期住客评价样本。"],
+});
+
 const fourBayMedia = [
   "https://sns-webpic-qc.xhscdn.com/202608141040/9b73c3744f53e7caadace875038724de/1040g2sg323op983a74e05ni99ggg9993kmt3qm8!nd_dft_wlteh_jpg_3",
   "https://sns-webpic-qc.xhscdn.com/202608141040/aceb82d9f82fa1e78e674cf931eb07d6/1040g2sg323op983a74eg5ni99ggg9993q2spj20!nd_dft_wlteh_jpg_3",
@@ -130,9 +143,18 @@ const xhsEvidence: ResearchEvidence[] = [
   xhsNote("xhs-search-haikou-west-coast-holiday", "海口西海岸假日酒店真实入住候选池", "小红书检索", "https://www.xiaohongshu.com/search_result?keyword=海口西海岸假日酒店真实入住", "海口", ["haikou-west-coast-holiday"], "住", false),
   xhsNote("xhs-search-wanning-holiday", "万宁神州半岛假日度假酒店真实入住候选池", "小红书检索", "https://www.xiaohongshu.com/search_result?keyword=万宁神州半岛假日度假酒店真实入住", "万宁", ["wanning-holiday-inn"], "住", false),
   xhsNote("xhs-search-clearwater-indigo", "海南清水湾英迪格酒店真实入住候选池", "小红书检索", "https://www.xiaohongshu.com/search_result?keyword=海南清水湾英迪格酒店真实入住", "陵水", ["clearwater-indigo"], "住", false),
+  xhsNote("xhs-search-hongyuan-crest", "海口鸿园雅诗阁臻选真实入住候选池", "小红书检索", "https://www.xiaohongshu.com/search_result?keyword=海口鸿园酒店公寓雅诗阁臻选", "海口", ["hongyuan-crest"], "住", false),
+  xhsNote("xhs-search-yuyue-artia", "万宁日月湾中旅逐浪屿玥真实入住候选池", "小红书检索", "https://www.xiaohongshu.com/search_result?keyword=万宁日月湾中旅逐浪屿玥酒店", "万宁", ["yuyue-artia"], "住", false),
+  xhsNote("xhs-search-kimpton-clearwater", "海南清水湾金普顿真实入住候选池", "小红书检索", "https://www.xiaohongshu.com/search_result?keyword=海南清水湾金普顿酒店", "陵水", ["kimpton-clearwater"], "住", false),
 ];
 
 const hotelOfficialEvidence: ResearchEvidence[] = [
+  officialCandidate("hotel-hongyuan-crest", "海口鸿园酒店公寓·雅诗阁臻选", "https://www.discoverasr.com.cn/the-crest-collection/china/hong-yuan-hotel-by-the-crest-collection", "海口", ["hongyuan-crest"], "住", "酒店官网"),
+  ctripCandidate("hotel-hongyuan-crest-ctrip", "海口鸿园酒店公寓·雅诗阁臻选携程页", "https://m.ctrip.com/html5/hotel/hoteldetail/124885649.html", "海口", ["hongyuan-crest"]),
+  officialCandidate("hotel-yuyue-artia", "万宁日月湾中旅逐浪屿玥酒店", "https://www.ctg.cn/article/19375", "万宁", ["yuyue-artia"], "住", "酒店官网"),
+  ctripCandidate("hotel-yuyue-artia-ctrip", "万宁日月湾中旅逐浪屿玥酒店携程页", "https://hotels.ctrip.com/hotels/133666427.html", "万宁", ["yuyue-artia"]),
+  officialCandidate("hotel-kimpton-clearwater", "海南清水湾金普顿酒店", "https://www.ihg.com.cn/kimptonhotels/hotels/cn/zh/hainan-clear-water-bay-lingshui-china/lqscl/hoteldetail", "陵水", ["kimpton-clearwater"], "住", "酒店官网"),
+  ctripCandidate("hotel-kimpton-clearwater-ctrip", "海南清水湾金普顿酒店携程页", "https://m.ctrip.com/html5/hotel/hoteldetail/124304630.html", "陵水", ["kimpton-clearwater"]),
   officialCandidate("hotel-haikou-marriott-overview", "海口万豪酒店", "https://www.marriott.com.cn/hotels/HAKMC-haikou-marriott-hotel/overview/", "海口", ["haikou-marriott"], "住", "酒店官网"),
   officialCandidate("hotel-haikou-marriott-rooms", "海口万豪酒店客房", "https://www.marriott.com.cn/hotels/hakmc-haikou-marriott-hotel/rooms/", "海口", ["haikou-marriott"], "住", "酒店官网"),
   officialCandidate("hotel-haikou-west-coast-holiday", "海口西海岸假日酒店", "https://www.ihg.com.cn/holidayinn/hotels/cn/zh/haikou/hakbh/hoteldetail", "海口", ["haikou-west-coast-holiday"], "住", "酒店官网"),
@@ -154,6 +176,9 @@ const hotelOfficialEvidence: ResearchEvidence[] = [
 ];
 
 const hotelMapEvidence = [
+  ["hongyuan-crest", "海口鸿园酒店公寓·雅诗阁臻选", "海口"],
+  ["yuyue-artia", "万宁日月湾中旅逐浪屿玥酒店", "万宁"],
+  ["kimpton-clearwater", "海南清水湾金普顿酒店", "陵水"],
   ["haikou-marriott", "海口万豪酒店", "海口"],
   ["haikou-west-coast-holiday", "海口西海岸假日酒店", "海口"],
   ["haikou-sheraton", "海口喜来登酒店", "海口"],

@@ -58,6 +58,7 @@ test("hotel recommendations keep official and visual evidence", async () => {
   assert.deepEqual(hotels.map((hotel) => hotel.checkInDay), [1, 2, 4]);
 
   for (const hotel of hotels) {
+    assert.ok(hotel.opened >= 2024, `${hotel.name} must be a 2024+ Plan A hotel`);
     assert.ok(hotel.reasons.length >= 2);
     assert.ok(hotel.cautions.length >= 1);
     assert.match(hotel.officialUrl, /^https:\/\//);
@@ -67,6 +68,11 @@ test("hotel recommendations keep official and visual evidence", async () => {
     assert.match(hotel.image.src, /^\/hainan\/.+\.webp$/i);
     assert.match(hotel.image.creditUrl, /^https:\/\//);
     await access(new URL(`../public${hotel.image.src}`, import.meta.url));
+
+    const photos = [hotel.image, ...(hotel.gallery ?? [])];
+    assert.ok(photos.length >= 3, `${hotel.name} needs at least three matched hotel photos`);
+    assert.equal(new Set(photos.map((photo) => photo.src)).size, photos.length);
+    for (const photo of photos) await access(new URL(`../public${photo.src}`, import.meta.url));
   }
 });
 
@@ -74,17 +80,19 @@ test("uses one Haikou night, two Wanning nights, and three Lingshui nights", () 
   const overnightBases = new Set(days.slice(0, 6).map((day) => day.sleep));
   assert.equal(overnightBases.size, 3);
   assert.deepEqual([...overnightBases], [
-    "海口万豪酒店",
-    "万宁神州半岛君悦酒店",
-    "海南清水湾英迪格酒店",
+    "海口鸿园酒店公寓·雅诗阁臻选",
+    "万宁日月湾中旅逐浪屿玥酒店",
+    "海南清水湾金普顿酒店",
   ]);
   assert.deepEqual(days.filter((day) => day.isHotelChange).map((day) => day.id), [2, 4]);
   assert.equal(days.filter((day) => /换宿/.test(day.pace)).length, 2);
   assert.equal(places.some((place) => place.city === "万宁"), true);
   assert.equal(hotels.some((hotel) => hotel.city === "万宁"), true);
   assert.deepEqual(days.slice(0, 6).map((day) => day.city), ["海口", "万宁", "万宁", "陵水", "陵水", "陵水"]);
-  assert.match(hotels.find((hotel) => hotel.id === "grand-hyatt-wanning")?.fit ?? "", /海景|安静/);
-  assert.match(hotels[0].fit, /西海岸|海景|安静/);
+  assert.deepEqual(hotels.map((hotel) => hotel.id), ["hongyuan-crest", "yuyue-artia", "kimpton-clearwater"]);
+  assert.deepEqual(hotels.map((hotel) => hotel.opened), [2024, 2025, 2025]);
+  assert.match(hotels.find((hotel) => hotel.id === "yuyue-artia")?.fit ?? "", /日月湾|海景|安静/);
+  assert.match(hotels[0].fit, /江东|海景|安静/);
 });
 
 test("offers complete and visually distinct Plan A and Plan B itineraries", () => {
@@ -106,6 +114,8 @@ test("offers complete and visually distinct Plan A and Plan B itineraries", () =
 
   const planA = itineraryPlans.find((plan) => plan.id === "A");
   const planB = itineraryPlans.find((plan) => plan.id === "B");
+  assert.deepEqual(planA?.hotels.map((hotel) => hotel.id), ["hongyuan-crest", "yuyue-artia", "kimpton-clearwater"]);
+  assert.deepEqual(planB?.hotels.map((hotel) => hotel.id), ["haikou-marriott", "grand-hyatt-wanning", "sangem-moon"]);
   assert.match(`${planA?.name}${planA?.description}`, /晴天|海岸/);
   assert.match(planA?.days.find((day) => day.dayId === 3)?.summary ?? "", /海岸|石梅湾|神州半岛/);
   assert.match(`${planB?.name}${planB?.description}`, /雨天|酒店|免税/);
@@ -123,7 +133,7 @@ test("offers complete and visually distinct Plan A and Plan B itineraries", () =
     "Plan A and Plan B must not render the same map nodes",
   );
   assert.equal(planA?.hotels[0].city, "海口");
-  assert.match(planA?.hotels[0].fit ?? "", /西海岸|海景|安静/);
+  assert.match(planA?.hotels[0].fit ?? "", /江东|海景|安静/);
   assert.equal(planB?.hotels[0].city, "海口");
   assert.match(planB?.hotels[0].fit ?? "", /西海岸|海景|安静/);
   assert.notEqual(planA?.routePath, planB?.routePath);
