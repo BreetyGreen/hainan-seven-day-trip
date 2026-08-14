@@ -263,3 +263,7 @@ export const researchMetrics = {
 export function evidenceForEntity(entityId: string) {
   return researchEvidence.filter((item) => item.entityIds.includes(entityId));
 }
+
+export function evidenceForSource(sourceId: string) {
+  return researchEvidence.find((item) => item.sourceId === sourceId);
+}

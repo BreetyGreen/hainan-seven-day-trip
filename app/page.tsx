@@ -5,6 +5,7 @@ import { RouteMap } from "./RouteMap";
 import { calculatePlanBudget, itineraryPlans, type Hotel, type ItineraryPlan, type TravelMode } from "./trip-data";
 import { researchSummary } from "./trip-details";
 import { withBasePath } from "./site-paths";
+import { SanyaBayHotelGuide } from "./SanyaBayHotelGuide";
 
 const modeNotes: Record<TravelMode, { label: string; subtitle: string; guidance: string }> = {
   solo: {
@@ -212,6 +213,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              <SanyaBayHotelGuide />
             </>
           )}
 

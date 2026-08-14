@@ -20,6 +20,7 @@ import { PlacePhotoGallery } from "./PlacePhotoGallery";
 import { SocialInspirationGallery } from "./SocialInspirationGallery";
 import { SocialVideoGallery } from "./SocialVideoGallery";
 import { PrivateSocialGallery } from "./PrivateSocialGallery";
+import { PlaceDecisionTabs } from "./PlaceDecisionTabs";
 import {
   createRouteContext,
   createPlaybackPlan,
@@ -237,6 +238,7 @@ function JourneyPhotoRail({
 function PlaceDetailDialog({
   place,
   dayId,
+  planId,
   routeContext,
   schedule,
   arrivalMode,
@@ -245,6 +247,7 @@ function PlaceDetailDialog({
 }: {
   place: Place;
   dayId: number;
+  planId: "A" | "B";
   routeContext: RouteContext;
   schedule: Day[];
   arrivalMode: boolean;
@@ -339,6 +342,8 @@ function PlaceDetailDialog({
             <span><b>建议时间</b>{place.activity.time}</span>
             <span><b>停留</b>{place.activity.duration}</span>
           </div>
+
+          <PlaceDecisionTabs dayId={dayId} planId={planId} placeId={place.id} />
 
           <SocialVideoGallery city={place.city} />
           {process.env.NEXT_PUBLIC_PRIVATE_MEDIA === "1"
@@ -1182,6 +1187,7 @@ export function RouteMap({ selectedDay, plan }: RouteMapProps) {
           key={`${placeDetail.place.id}-${placeDetail.dayId}-${placeDetail.stopIndex}`}
           place={placeDetail.place}
           dayId={placeDetail.dayId}
+          planId={plan.id}
           routeContext={detailRouteContext}
           schedule={schedule}
           arrivalMode={placeDetail.arrivalMode && arrivalStageIndex !== null}
