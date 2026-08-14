@@ -1,0 +1,2006 @@
+{
+  "generatedAt": "2026-08-14T03:44:39.493Z",
+  "method": "Independent source IDs plus public Xiaohongshu SSR parsing; image pages never increment candidate counts.",
+  "metrics": {
+    "candidateCount": 123,
+    "deepReadCount": 60,
+    "independentSourceCount": 123,
+    "independentUrlCount": 123,
+    "byCategory": {
+      "吃": 28,
+      "穿": 8,
+      "住": 44,
+      "行": 13,
+      "玩": 30
+    },
+    "verifiedAt": "2026-08-14"
+  },
+  "xhsChecks": [
+    {
+      "sourceId": "xhs-6a7c01e500000000220162ab",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/discovery/item/6a7c01e500000000220162ab?app_platform=android&ignoreEngage=true&app_version=9.41.2&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBkjWv9foUsfufrQWkKYsq3JVHB0zzuoJE6Xl5RGBjrLE%3D&author_share=1&shareRedId=OD9GQzlGOkE2NzUyOTgwNjk3OTg1Pko8&apptime=1786673410&share_id=3a5dd012ad484a8c99cbc9b27d897025&share_channel=copy_link&appuid=69dc6a6800000000340119d3&xhsshare=CopyLink",
+      "title": "终于懂了三亚四大湾区怎么选酒店了",
+      "author": "不仔客海鲜海棠湾店老板",
+      "imageCount": 11,
+      "engagement": {
+        "likes": 566,
+        "collects": 809,
+        "comments": 35,
+        "shares": 217
+      }
+    },
+    {
+      "sourceId": "xhs-6gqXrkMD9Zk",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/discovery/item/6a544dc100000000160248ff?app_platform=ios&app_version=9.40.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBNEkCBB6PpI2HmjSg7frQQKUWpyYnuCI4lzz4Y4ynUZI=&author_share=1&xhsshare=CopyLink&shareRedId=ODw1MjhHOkA2NzUyOTgwNjY2OTo1RjtK&apptime=1786357356&share_id=d3973c19deb1472b9a5f6bb38a8ec76a",
+      "title": "三亚下楼就是海景的酒店已整理好（四大湾区）",
+      "author": "会飞的椰子树",
+      "imageCount": 13,
+      "engagement": {
+        "likes": 2389,
+        "collects": 3380,
+        "comments": 108,
+        "shares": 838
+      }
+    },
+    {
+      "sourceId": "xhs-2HxyZx28FWw",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/discovery/item/6a75165f0000000032021ff9?app_platform=ios&app_version=9.40.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBGtWMXrMYX8PTFbdyTQmgSa9bZgPp0uR_vl1VOpawryc=&author_share=1&xhsshare=CopyLink&shareRedId=ODw1MjhHOkA2NzUyOTgwNjY2OTo1RjtK&apptime=1786360903&share_id=40bf2d59c9c8469da0b929ea6f4b8e47",
+      "title": "个人觉得三亚无法超越的店（已吃版",
+      "author": "菠萝",
+      "imageCount": 4,
+      "engagement": {
+        "likes": 214,
+        "collects": 244,
+        "comments": 8,
+        "shares": 103
+      }
+    },
+    {
+      "sourceId": "xhs-6QybMpO8y3I",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/discovery/item/6a79cbca000000000502868b?app_platform=ios&app_version=9.40.1&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBetm2DDQ2u6e2JLEDcdyMvIax3sRdzX7DehKkYZlao54=&author_share=1&xhsshare=CopyLink&shareRedId=ODw1MjhHOkA2NzUyOTgwNjY2OTo1RjtK&apptime=1786377506&share_id=9db41c8e89ee47089ecd56019bc5ad12",
+      "title": "下周出发去三亚！！！",
+      "author": "土豆泥",
+      "imageCount": 8,
+      "engagement": {
+        "likes": 803,
+        "collects": 1068,
+        "comments": 34,
+        "shares": 305
+      }
+    },
+    {
+      "sourceId": "xhs-6a7070660000000025002e78",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a7070660000000025002e78?xsec_token=CBmz0SfFtHmk_f4oQ2cE0Syi6myVeaDZHS-UFAP3rABMU=&xsec_source=app_share",
+      "title": "个人觉得万宁无法超越的店（已吃版",
+      "author": "菠萝",
+      "imageCount": 4,
+      "engagement": {
+        "likes": 378,
+        "collects": 536,
+        "comments": 11,
+        "shares": 208
+      }
+    },
+    {
+      "sourceId": "xhs-6a689911000000000503abca",
+      "ok": false,
+      "error": "Error: noteDetailMap contains no public note"
+    },
+    {
+      "sourceId": "xhs-6a71b3a50000000021020fc8",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a71b3a50000000021020fc8?xsec_token=ABNfxQl393g1AacquOmr5DSlmB3AvJ-BSJUQAbBh2PW98=&xsec_source=pc_search",
+      "title": "海陆之间：陵水新村的疍家文明与生命脉动",
+      "author": "金属滚儿",
+      "imageCount": 8,
+      "engagement": {
+        "likes": 1,
+        "collects": 0,
+        "comments": 0,
+        "shares": 2
+      }
+    },
+    {
+      "sourceId": "xhs-6a2b733d000000000802544e",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a2b733d000000000802544e?xsec_token=ABnAMbQdECihFgwj8XFK7U-wCbpQ1J-wwoBEVnkv4Jffg=&xsec_source=pc_search",
+      "title": "万宁3天2晚旅行攻略|头一次来这样玩不纠结",
+      "author": "逍遥",
+      "imageCount": 6,
+      "engagement": {
+        "likes": 644,
+        "collects": 810,
+        "comments": 30,
+        "shares": 411
+      }
+    },
+    {
+      "sourceId": "xhs-69abee14000000000e03ce43",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/69abee14000000000e03ce43?xsec_token=ABSflyHtUNEkaYDtjgaPlX72PUFu45v99A9k63R-lj7BI=&xsec_source=pc_search",
+      "title": "来了万宁才知道，之前看的攻略有多离谱。。😅",
+      "author": "卷卷心",
+      "imageCount": 7,
+      "engagement": {
+        "likes": 2369,
+        "collects": 2571,
+        "comments": 31,
+        "shares": 633
+      }
+    },
+    {
+      "sourceId": "xhs-6a79ad60000000002202c3da",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a79ad60000000002202c3da?xsec_token=ABEYVGrdadig7lhyus-gD04BkuOPVf-Hy6-qwIwe-hTrE=&xsec_source=pc_search",
+      "title": "海南自驾游攻略第四站➡陵水 疍家 清水湾",
+      "author": "双双&豆包",
+      "imageCount": 18,
+      "engagement": {
+        "likes": 3,
+        "collects": 3,
+        "comments": 2,
+        "shares": 1
+      }
+    },
+    {
+      "sourceId": "xhs-6a657af900000000010307a4",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a657af900000000010307a4?xsec_token=ABjP_9LUg4g5koaqlNXaxAnfNy0MdtakAWiSgcoDnPz0g=&xsec_source=pc_search",
+      "title": "三亚大东海顺路游玩一日游攻略～",
+      "author": "拾渡",
+      "imageCount": 18,
+      "engagement": {
+        "likes": 25,
+        "collects": 29,
+        "comments": 0,
+        "shares": 5
+      }
+    },
+    {
+      "sourceId": "xhs-6a58f880000000000c016cc9",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a58f880000000000c016cc9?xsec_token=ABgVnlRa7lx1XJvA5igCtNbVyvMwGtTuUsOBXFxIU9o2A=&xsec_source=pc_search",
+      "title": "三亚行-南山寺 2026年1月6号行程",
+      "author": "Hs",
+      "imageCount": 4,
+      "engagement": {
+        "likes": 29,
+        "collects": 0,
+        "comments": 3,
+        "shares": 2
+      }
+    },
+    {
+      "sourceId": "xhs-6a786a36000000002202d176",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a786a36000000002202d176?xsec_token=ABIO4HwpNBtY6l6eMsts2GMRurtC85CNDkGP6x0YSnLgw=&xsec_source=pc_search",
+      "title": "万宁｜兴隆热带植物园",
+      "author": "lelll",
+      "imageCount": 5,
+      "engagement": {
+        "likes": 3,
+        "collects": 2,
+        "comments": 0,
+        "shares": 0
+      }
+    },
+    {
+      "sourceId": "xhs-68a31c74000000001d034617",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/68a31c74000000001d034617?xsec_token=ABunHxuUfqDwAh7GMtDNCNNm6pzUpzVsMMJkFeeaQYkkQ=&xsec_source=pc_search",
+      "title": "万宁兴隆华侨农贸市场",
+      "author": "小z小c",
+      "imageCount": 5,
+      "engagement": {
+        "likes": 230,
+        "collects": 232,
+        "comments": 20,
+        "shares": 193
+      }
+    },
+    {
+      "sourceId": "xhs-69c4017c0000000023021eb9",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/69c4017c0000000023021eb9?xsec_token=AB4JxORkYxfa1HXo3F0ea-suXVgj5PlSUBrAi833uvwm0=&xsec_source=pc_search",
+      "title": "海南|海口-万宁-陵水-三亚7️⃣天线路攻略",
+      "author": "Coco妈咪",
+      "imageCount": 18,
+      "engagement": {
+        "likes": 4368,
+        "collects": 3749,
+        "comments": 142,
+        "shares": 2999
+      }
+    },
+    {
+      "sourceId": "xhs-6a7602c6000000002c002627",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/6a7602c6000000002c002627?xsec_token=ABCg0dBzZKFyzOO8xVpXPfvcSRmJTGehwX4ode7mcqkZ4=&xsec_source=pc_search",
+      "title": "三亚·南山寺📍不是烟雨西湖，是南山日出",
+      "author": "Taurus旅拍日记",
+      "imageCount": 18,
+      "engagement": {
+        "likes": 4,
+        "collects": 2,
+        "comments": 3,
+        "shares": 3
+      }
+    },
+    {
+      "sourceId": "xhs-690489c200000000030373f2",
+      "ok": true,
+      "canonicalUrl": "https://www.xiaohongshu.com/explore/690489c200000000030373f2?xsec_token=ABPYKECHKPDzn0BspJC6xktJcDQUK21_QaF6vwwgG5c5E=&xsec_source=pc_search",
+      "title": "三亚📍鹿回头🦌",
+      "author": "橙子",
+      "imageCount": 18,
+      "engagement": {
+        "likes": 1133,
+        "collects": 929,
+        "comments": 22,
+        "shares": 756
+      }
+    },
+    {
+      "sourceId": "xhs-6a33dac0000000002100add2",
+      "ok": false,
+      "error": "Error: noteDetailMap contains no public note"
+    },
+    {
+      "sourceId": "xhs-68a893f3000000001c032dad",
+      "ok": false,
+      "error": "Error: noteDetailMap contains no public note"
+    }
+  ],
+  "sources": [
+    {
+      "sourceId": "xhs-6a7c01e500000000220162ab",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "终于懂了三亚四大湾区怎么选酒店了",
+      "url": "https://xhslink.cn/o/9KpnK2iLckR",
+      "entityIds": [
+        "sanya-bay",
+        "dadonghai",
+        "yalong-bay",
+        "haitang-bay"
+      ],
+      "deepRead": true,
+      "promoRisk": "高",
+      "mediaCount": 11
+    },
+    {
+      "sourceId": "xhs-6gqXrkMD9Zk",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "三亚下楼就是海景的酒店已整理好（四大湾区）",
+      "url": "https://xhslink.cn/o/6gqXrkMD9Zk",
+      "entityIds": [
+        "sanya-bay",
+        "dadonghai",
+        "yalong-bay",
+        "haitang-bay"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-2HxyZx28FWw",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "个人觉得三亚无法超越的店（已吃版）",
+      "url": "https://xhslink.cn/o/2HxyZx28FWw",
+      "entityIds": [
+        "sanya-food"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6QybMpO8y3I",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "下周出发去三亚！！！",
+      "url": "https://xhslink.cn/o/6QybMpO8y3I",
+      "entityIds": [
+        "sanya-food",
+        "sanya-airport"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a7070660000000025002e78",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "小红书",
+      "title": "个人觉得万宁无法超越的店（已吃版）",
+      "url": "https://www.xiaohongshu.com/explore/6a7070660000000025002e78?xsec_token=CBmz0SfFtHmk_f4oQ2cE0Syi6myVeaDZHS-UFAP3rABMU=&xsec_source=app_share",
+      "entityIds": [
+        "xinglong-market"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a689911000000000503abca",
+      "category": "玩",
+      "city": "海口",
+      "sourceType": "小红书",
+      "title": "海口骑楼老街夜景",
+      "url": "https://www.xiaohongshu.com/explore/6a689911000000000503abca",
+      "entityIds": [
+        "qilou"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a71b3a50000000021020fc8",
+      "category": "玩",
+      "city": "陵水",
+      "sourceType": "小红书",
+      "title": "海陆之间：陵水新村的疍家文明与生命脉动",
+      "url": "https://www.xiaohongshu.com/explore/6a71b3a50000000021020fc8?xsec_token=ABNfxQl393g1AacquOmr5DSlmB3AvJ-BSJUQAbBh2PW98=&xsec_source=pc_search",
+      "entityIds": [
+        "xincun-port"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a2b733d000000000802544e",
+      "category": "玩",
+      "city": "万宁",
+      "sourceType": "小红书",
+      "title": "万宁三天两晚区域路线",
+      "url": "https://www.xiaohongshu.com/explore/6a2b733d000000000802544e?xsec_token=ABnAMbQdECihFgwj8XFK7U-wCbpQ1J-wwoBEVnkv4Jffg=&xsec_source=pc_search",
+      "entityIds": [
+        "shimei-bay",
+        "shenzhou-peninsula",
+        "xinglong-market"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-69abee14000000000e03ce43",
+      "category": "玩",
+      "city": "万宁",
+      "sourceType": "小红书",
+      "title": "万宁海岸真实体验",
+      "url": "https://www.xiaohongshu.com/explore/69abee14000000000e03ce43?xsec_token=ABSflyHtUNEkaYDtjgaPlX72PUFu45v99A9k63R-lj7BI=&xsec_source=pc_search",
+      "entityIds": [
+        "shimei-bay",
+        "shenzhou-peninsula"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a79ad60000000002202c3da",
+      "category": "玩",
+      "city": "陵水",
+      "sourceType": "小红书",
+      "title": "陵水疍家与清水湾",
+      "url": "https://www.xiaohongshu.com/explore/6a79ad60000000002202c3da?xsec_token=ABEYVGrdadig7lhyus-gD04BkuOPVf-Hy6-qwIwe-hTrE=&xsec_source=pc_search",
+      "entityIds": [
+        "xincun-port",
+        "clearwater-coast"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a657af900000000010307a4",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "大东海顺路一日游",
+      "url": "https://www.xiaohongshu.com/explore/6a657af900000000010307a4?xsec_token=ABjP_9LUg4g5koaqlNXaxAnfNy0MdtakAWiSgcoDnPz0g=&xsec_source=pc_search",
+      "entityIds": [
+        "dadonghai",
+        "luhuitou"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a58f880000000000c016cc9",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "三亚南山寺一日行程",
+      "url": "https://www.xiaohongshu.com/explore/6a58f880000000000c016cc9?xsec_token=ABgVnlRa7lx1XJvA5igCtNbVyvMwGtTuUsOBXFxIU9o2A=&xsec_source=pc_search",
+      "entityIds": [
+        "nanshan"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a786a36000000002202d176",
+      "category": "玩",
+      "city": "万宁",
+      "sourceType": "小红书",
+      "title": "兴隆热带植物园",
+      "url": "https://www.xiaohongshu.com/explore/6a786a36000000002202d176?xsec_token=ABIO4HwpNBtY6l6eMsts2GMRurtC85CNDkGP6x0YSnLgw=&xsec_source=pc_search",
+      "entityIds": [
+        "xinglong-garden"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-68a31c74000000001d034617",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "小红书",
+      "title": "兴隆华侨农贸市场",
+      "url": "https://www.xiaohongshu.com/explore/68a31c74000000001d034617?xsec_token=ABunHxuUfqDwAh7GMtDNCNNm6pzUpzVsMMJkFeeaQYkkQ=&xsec_source=pc_search",
+      "entityIds": [
+        "xinglong-market"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-69c4017c0000000023021eb9",
+      "category": "行",
+      "city": "海南",
+      "sourceType": "小红书",
+      "title": "海口出发海南东线七天",
+      "url": "https://www.xiaohongshu.com/explore/69c4017c0000000023021eb9?xsec_token=AB4JxORkYxfa1HXo3F0ea-suXVgj5PlSUBrAi833uvwm0=&xsec_source=pc_search",
+      "entityIds": [
+        "qilou",
+        "shimei-bay",
+        "clearwater-coast"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a7602c6000000002c002627",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "南山寺日出与海上观音",
+      "url": "https://www.xiaohongshu.com/explore/6a7602c6000000002c002627?xsec_token=ABCg0dBzZKFyzOO8xVpXPfvcSRmJTGehwX4ode7mcqkZ4=&xsec_source=pc_search",
+      "entityIds": [
+        "nanshan"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-690489c200000000030373f2",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "小红书",
+      "title": "鹿回头城市与游艇港",
+      "url": "https://www.xiaohongshu.com/explore/690489c200000000030373f2?xsec_token=ABPYKECHKPDzn0BspJC6xktJcDQUK21_QaF6vwwgG5c5E=&xsec_source=pc_search",
+      "entityIds": [
+        "luhuitou",
+        "banshan-marina"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-6a33dac0000000002100add2",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "小红书",
+      "title": "神州半岛君悦真实入住测评",
+      "url": "https://www.xiaohongshu.com/explore/6a33dac0000000002100add2",
+      "entityIds": [
+        "grand-hyatt-wanning"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-68a893f3000000001c032dad",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "小红书",
+      "title": "海南酒店攻略：陵水三正月",
+      "url": "https://www.xiaohongshu.com/explore/68a893f3000000001c032dad",
+      "entityIds": [
+        "sangem-moon"
+      ],
+      "deepRead": true,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-search-haikou-marriott",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "小红书",
+      "title": "海口万豪酒店真实入住候选池",
+      "url": "https://www.xiaohongshu.com/search_result?keyword=海口万豪酒店真实入住",
+      "entityIds": [
+        "haikou-marriott"
+      ],
+      "deepRead": false,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-search-haikou-west-coast-holiday",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "小红书",
+      "title": "海口西海岸假日酒店真实入住候选池",
+      "url": "https://www.xiaohongshu.com/search_result?keyword=海口西海岸假日酒店真实入住",
+      "entityIds": [
+        "haikou-west-coast-holiday"
+      ],
+      "deepRead": false,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-search-wanning-holiday",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "小红书",
+      "title": "万宁神州半岛假日度假酒店真实入住候选池",
+      "url": "https://www.xiaohongshu.com/search_result?keyword=万宁神州半岛假日度假酒店真实入住",
+      "entityIds": [
+        "wanning-holiday-inn"
+      ],
+      "deepRead": false,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "xhs-search-clearwater-indigo",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "小红书",
+      "title": "海南清水湾英迪格酒店真实入住候选池",
+      "url": "https://www.xiaohongshu.com/search_result?keyword=海南清水湾英迪格酒店真实入住",
+      "entityIds": [
+        "clearwater-indigo"
+      ],
+      "deepRead": false,
+      "promoRisk": "中",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-haikou-marriott-overview",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "酒店官网",
+      "title": "海口万豪酒店",
+      "url": "https://www.marriott.com.cn/hotels/HAKMC-haikou-marriott-hotel/overview/",
+      "entityIds": [
+        "haikou-marriott"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-haikou-marriott-rooms",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "酒店官网",
+      "title": "海口万豪酒店客房",
+      "url": "https://www.marriott.com.cn/hotels/hakmc-haikou-marriott-hotel/rooms/",
+      "entityIds": [
+        "haikou-marriott"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-haikou-west-coast-holiday",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "酒店官网",
+      "title": "海口西海岸假日酒店",
+      "url": "https://www.ihg.com.cn/holidayinn/hotels/cn/zh/haikou/hakbh/hoteldetail",
+      "entityIds": [
+        "haikou-west-coast-holiday"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-haikou-sheraton",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "酒店官网",
+      "title": "海口喜来登酒店",
+      "url": "https://www.marriott.com.cn/hotels/hakss-sheraton-haikou-hotel/overview/",
+      "entityIds": [
+        "haikou-sheraton"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-grand-hyatt-wanning",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "酒店官网",
+      "title": "万宁神州半岛君悦酒店",
+      "url": "https://www.hyatt.com/grand-hyatt/zh-CN/shhgh-grand-hyatt-shenzhou-peninsula",
+      "entityIds": [
+        "grand-hyatt-wanning"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-wanning-holiday",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "酒店官网",
+      "title": "万宁神州半岛假日度假酒店",
+      "url": "https://www.ihg.com/holidayinnresorts/hotels/cn/zh/wanning/wxjsh/hoteldetail",
+      "entityIds": [
+        "wanning-holiday-inn"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-westin-shimei",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "酒店官网",
+      "title": "石梅湾威斯汀度假酒店",
+      "url": "https://www.marriott.com.cn/hotels/syxwi-the-westin-shimei-bay-resort/overview/",
+      "entityIds": [
+        "westin-shimei"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-le-meridien-shimei",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "酒店官网",
+      "title": "石梅湾艾美度假酒店",
+      "url": "https://www.marriott.com.cn/hotels/syxmd-le-meridien-shimei-bay-beach-resort-and-spa/overview/",
+      "entityIds": [
+        "le-meridien-shimei"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-clearwater-indigo",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "酒店官网",
+      "title": "海南清水湾英迪格酒店",
+      "url": "https://www.ihg.com.cn/hotelindigo/hotels/cn/zh/lingshui/lqswb/hoteldetail",
+      "entityIds": [
+        "clearwater-indigo"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-sangem-moon",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "酒店官网",
+      "title": "海南三正月酒店",
+      "url": "https://www.sangemmoon.com/",
+      "entityIds": [
+        "sangem-moon"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-sangem-rooms",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "酒店官网",
+      "title": "海南三正月酒店房型",
+      "url": "https://www.sangemmoon.com/room.html",
+      "entityIds": [
+        "sangem-moon"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-raffles-hainan",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "酒店官网",
+      "title": "海南清水湾雅居乐莱佛士酒店",
+      "url": "https://www.raffles.com/zh/hainan/",
+      "entityIds": [
+        "raffles-hainan"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-capella-tufu",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "酒店官网",
+      "title": "海南土福湾嘉佩乐度假酒店",
+      "url": "https://www.capellahotels.com/cn/zh/capella-hainan",
+      "entityIds": [
+        "capella-tufu"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-park-hyatt-sanya",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "酒店官网",
+      "title": "三亚太阳湾柏悦酒店",
+      "url": "https://www.hyatt.com/park-hyatt/zh-CN/sanph-park-hyatt-sanya-sunny-bay-resort",
+      "entityIds": [
+        "yalong-bay",
+        "park-hyatt-sanya"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-sanya-marriott-yalong",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "酒店官网",
+      "title": "三亚亚龙湾万豪度假酒店",
+      "url": "https://www.marriott.com.cn/hotels/syxmc-sanya-marriott-yalong-bay-resort-and-spa/overview/",
+      "entityIds": [
+        "yalong-bay",
+        "sanya-marriott-yalong"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-sofitel-sanya",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "酒店官网",
+      "title": "三亚理文索菲特度假酒店",
+      "url": "https://all.accor.com/hotel/8167/index.zh.shtml",
+      "entityIds": [
+        "haitang-bay",
+        "sofitel-sanya"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-sheraton-haitang",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "酒店官网",
+      "title": "三亚海棠湾喜来登度假酒店",
+      "url": "https://www.marriott.com.cn/hotels/syxsb-sheraton-sanya-haitang-bay-resort/overview/",
+      "entityIds": [
+        "haitang-bay",
+        "sheraton-haitang"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "hotel-jw-dadonghai",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "酒店官网",
+      "title": "三亚山海天JW万豪酒店",
+      "url": "https://www.marriott.com.cn/hotels/syxdb-jw-marriott-hotel-sanya-dadonghai-bay/overview/",
+      "entityIds": [
+        "dadonghai",
+        "jw-dadonghai"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-haikou-marriott",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "海口万豪酒店",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E6%B5%B7%E5%8F%A3%E4%B8%87%E8%B1%AA%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "haikou-marriott"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-haikou-west-coast-holiday",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "海口西海岸假日酒店",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E6%B5%B7%E5%8F%A3%E8%A5%BF%E6%B5%B7%E5%B2%B8%E5%81%87%E6%97%A5%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "haikou-west-coast-holiday"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-haikou-sheraton",
+      "category": "住",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "海口喜来登酒店",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E6%B5%B7%E5%8F%A3%E5%96%9C%E6%9D%A5%E7%99%BB%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "haikou-sheraton"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-grand-hyatt-wanning",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "万宁神州半岛君悦酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E4%B8%87%E5%AE%81%E7%A5%9E%E5%B7%9E%E5%8D%8A%E5%B2%9B%E5%90%9B%E6%82%A6%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "grand-hyatt-wanning"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-wanning-holiday-inn",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "万宁神州半岛假日度假酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E4%B8%87%E5%AE%81%E7%A5%9E%E5%B7%9E%E5%8D%8A%E5%B2%9B%E5%81%87%E6%97%A5%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "wanning-holiday-inn"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-westin-shimei",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "石梅湾威斯汀度假酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E7%9F%B3%E6%A2%85%E6%B9%BE%E5%A8%81%E6%96%AF%E6%B1%80%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "westin-shimei"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-le-meridien-shimei",
+      "category": "住",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "石梅湾艾美度假酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E7%9F%B3%E6%A2%85%E6%B9%BE%E8%89%BE%E7%BE%8E%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "le-meridien-shimei"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-clearwater-indigo",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "海南清水湾英迪格酒店",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B5%B7%E5%8D%97%E6%B8%85%E6%B0%B4%E6%B9%BE%E8%8B%B1%E8%BF%AA%E6%A0%BC%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "clearwater-indigo"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-sangem-moon",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "海南三正月酒店",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B5%B7%E5%8D%97%E4%B8%89%E6%AD%A3%E6%9C%88%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "sangem-moon"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-raffles-hainan",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "海南清水湾雅居乐莱佛士酒店",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B5%B7%E5%8D%97%E6%B8%85%E6%B0%B4%E6%B9%BE%E9%9B%85%E5%B1%85%E4%B9%90%E8%8E%B1%E4%BD%9B%E5%A3%AB%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "raffles-hainan"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-capella-tufu",
+      "category": "住",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "海南土福湾嘉佩乐度假酒店",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B5%B7%E5%8D%97%E5%9C%9F%E7%A6%8F%E6%B9%BE%E5%98%89%E4%BD%A9%E4%B9%90%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "capella-tufu"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-park-hyatt-sanya",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚太阳湾柏悦酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E5%A4%AA%E9%98%B3%E6%B9%BE%E6%9F%8F%E6%82%A6%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "park-hyatt-sanya"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-sanya-marriott-yalong",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚亚龙湾万豪度假酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E4%BA%9A%E9%BE%99%E6%B9%BE%E4%B8%87%E8%B1%AA%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "sanya-marriott-yalong"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-sofitel-sanya",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚理文索菲特度假酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E7%90%86%E6%96%87%E7%B4%A2%E8%8F%B2%E7%89%B9%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "sofitel-sanya"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-sheraton-haitang",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚海棠湾喜来登度假酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E6%B5%B7%E6%A3%A0%E6%B9%BE%E5%96%9C%E6%9D%A5%E7%99%BB%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "sheraton-haitang"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-jw-dadonghai",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚山海天JW万豪酒店",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E5%B1%B1%E6%B5%B7%E5%A4%A9JW%E4%B8%87%E8%B1%AA%E9%85%92%E5%BA%97",
+      "entityIds": [
+        "jw-dadonghai"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-sanya-bay",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚湾酒店带",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E6%B9%BE%E9%85%92%E5%BA%97%E5%B8%A6",
+      "entityIds": [
+        "sanya-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-hotel-haitang-bay",
+      "category": "住",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "海棠湾酒店带",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E6%B5%B7%E6%A3%A0%E6%B9%BE%E9%85%92%E5%BA%97%E5%B8%A6",
+      "entityIds": [
+        "haitang-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-haikou-hengxingfa",
+      "category": "吃",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "恒兴发茶店",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E6%81%92%E5%85%B4%E5%8F%91%E8%8C%B6%E5%BA%97",
+      "entityIds": [
+        "haikou-hengxingfa"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-haikou-xitianmiao",
+      "category": "吃",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "西天庙小吃街",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E8%A5%BF%E5%A4%A9%E5%BA%99%E5%B0%8F%E5%90%83%E8%A1%97",
+      "entityIds": [
+        "haikou-xitianmiao"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-haikou-shuixiangkou",
+      "category": "吃",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "水巷口",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E6%B0%B4%E5%B7%B7%E5%8F%A3",
+      "entityIds": [
+        "haikou-shuixiangkou"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-haikou-qilou-breakfast",
+      "category": "吃",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "骑楼老街海南粉",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E9%AA%91%E6%A5%BC%E8%80%81%E8%A1%97%E6%B5%B7%E5%8D%97%E7%B2%89",
+      "entityIds": [
+        "haikou-qilou-breakfast"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-haikou-dadiao",
+      "category": "吃",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "大刁老爸茶",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E5%A4%A7%E5%88%81%E8%80%81%E7%88%B8%E8%8C%B6",
+      "entityIds": [
+        "haikou-dadiao"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-haikou-zhen-dafu",
+      "category": "吃",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "甄大福老盐饮品",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E7%94%84%E5%A4%A7%E7%A6%8F%E8%80%81%E7%9B%90%E9%A5%AE%E5%93%81",
+      "entityIds": [
+        "haikou-zhen-dafu"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-wanning-wuji",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "吴记后安粉汤",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E5%90%B4%E8%AE%B0%E5%90%8E%E5%AE%89%E7%B2%89%E6%B1%A4",
+      "entityIds": [
+        "wanning-wuji"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-wanning-xindazhong",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "新大众茶坊",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E6%96%B0%E5%A4%A7%E4%BC%97%E8%8C%B6%E5%9D%8A",
+      "entityIds": [
+        "wanning-xindazhong"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-wanning-yuanhuiji",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "原辉记清补凉",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E5%8E%9F%E8%BE%89%E8%AE%B0%E6%B8%85%E8%A1%A5%E5%87%89",
+      "entityIds": [
+        "wanning-yuanhuiji"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-wanning-gangjiao",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "港角菠萝包",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E6%B8%AF%E8%A7%92%E8%8F%A0%E8%90%9D%E5%8C%85",
+      "entityIds": [
+        "wanning-gangjiao"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-wanning-linjie",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "林姐香味海鲜",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E6%9E%97%E5%A7%90%E9%A6%99%E5%91%B3%E6%B5%B7%E9%B2%9C",
+      "entityIds": [
+        "wanning-linjie"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-wanning-xinglong-market-food",
+      "category": "吃",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "兴隆华侨农贸市场小吃",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E5%85%B4%E9%9A%86%E5%8D%8E%E4%BE%A8%E5%86%9C%E8%B4%B8%E5%B8%82%E5%9C%BA%E5%B0%8F%E5%90%83",
+      "entityIds": [
+        "wanning-xinglong-market-food"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-lingshui-yingjie",
+      "category": "吃",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "英姐酸粉热粉",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E8%8B%B1%E5%A7%90%E9%85%B8%E7%B2%89%E7%83%AD%E7%B2%89",
+      "entityIds": [
+        "lingshui-yingjie"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-lingshui-xincun-seafood",
+      "category": "吃",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "新村港渔排海鲜",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%96%B0%E6%9D%91%E6%B8%AF%E6%B8%94%E6%8E%92%E6%B5%B7%E9%B2%9C",
+      "entityIds": [
+        "lingshui-xincun-seafood"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-lingshui-clearwater-light",
+      "category": "吃",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "清水湾轻食",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B8%85%E6%B0%B4%E6%B9%BE%E8%BD%BB%E9%A3%9F",
+      "entityIds": [
+        "lingshui-clearwater-light"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-lingshui-indigo-dining",
+      "category": "吃",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "清水湾英迪格观海餐厅",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B8%85%E6%B0%B4%E6%B9%BE%E8%8B%B1%E8%BF%AA%E6%A0%BC%E8%A7%82%E6%B5%B7%E9%A4%90%E5%8E%85",
+      "entityIds": [
+        "lingshui-indigo-dining"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-lingshui-sangem-dining",
+      "category": "吃",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "三正月明月宫",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E4%B8%89%E6%AD%A3%E6%9C%88%E6%98%8E%E6%9C%88%E5%AE%AB",
+      "entityIds": [
+        "lingshui-sangem-dining"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-lingshui-tufu-local",
+      "category": "吃",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "土福湾海南菜",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E5%9C%9F%E7%A6%8F%E6%B9%BE%E6%B5%B7%E5%8D%97%E8%8F%9C",
+      "entityIds": [
+        "lingshui-tufu-local"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-sanya-buzai",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "不仔客海鲜",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%8D%E4%BB%94%E5%AE%A2%E6%B5%B7%E9%B2%9C",
+      "entityIds": [
+        "sanya-buzai"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-sanya-aju",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "阿菊冷饮",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E9%98%BF%E8%8F%8A%E5%86%B7%E9%A5%AE",
+      "entityIds": [
+        "sanya-aju"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-sanya-xinma",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "馨妈儋州米烂",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E9%A6%A8%E5%A6%88%E5%84%8B%E5%B7%9E%E7%B1%B3%E7%83%82",
+      "entityIds": [
+        "sanya-xinma"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-sanya-ating",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "阿婷小吃店",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E9%98%BF%E5%A9%B7%E5%B0%8F%E5%90%83%E5%BA%97",
+      "entityIds": [
+        "sanya-ating"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-sanya-qiongxiangge",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "琼乡阁海南私房菜",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E7%90%BC%E4%B9%A1%E9%98%81%E6%B5%B7%E5%8D%97%E7%A7%81%E6%88%BF%E8%8F%9C",
+      "entityIds": [
+        "sanya-qiongxiangge"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "map-food-sanya-xiaogao",
+      "category": "吃",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "小高后安粉餐厅",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E5%B0%8F%E9%AB%98%E5%90%8E%E5%AE%89%E7%B2%89%E9%A4%90%E5%8E%85",
+      "entityIds": [
+        "sanya-xiaogao"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-qilou",
+      "category": "玩",
+      "city": "海口",
+      "sourceType": "景区官网",
+      "title": "海口骑楼老街",
+      "url": "https://www.haikou.gov.cn/zfdt/ztbd/2022nzt/hkqljzlswhjq/",
+      "entityIds": [
+        "qilou"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-shimei-bay",
+      "category": "玩",
+      "city": "万宁",
+      "sourceType": "景区官网",
+      "title": "石梅湾生态修复",
+      "url": "https://www.mee.gov.cn/home/ztbd/2021/mlhwyxalzjhd/algs/hns2/202109/t20210906_900100.shtml",
+      "entityIds": [
+        "shimei-bay"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-xinglong-garden",
+      "category": "玩",
+      "city": "万宁",
+      "sourceType": "景区官网",
+      "title": "兴隆热带植物园",
+      "url": "https://zhuanti.mct.gov.cn/csxz2022/hainan/detail/1528.html",
+      "entityIds": [
+        "xinglong-garden"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-xincun-port",
+      "category": "玩",
+      "city": "陵水",
+      "sourceType": "景区官网",
+      "title": "陵水新村疍家文化",
+      "url": "https://www.hainan.gov.cn/hainan/c100641g/202310/639e14e4e6ef4ae997a117ba042a0d73.shtml",
+      "entityIds": [
+        "xincun-port"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-cdf",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "景区官网",
+      "title": "cdf三亚国际免税城",
+      "url": "https://www.ctgdutyfree.com.cn/detail/4340.html",
+      "entityIds": [
+        "cdf-sanya"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-luhuitou",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "景区官网",
+      "title": "鹿回头风景区",
+      "url": "https://www.visitsanya.com/zh/venue/%E9%B9%BF%E5%9B%9E%E5%A4%B4%E9%A3%8E%E6%99%AF%E5%8C%BA",
+      "entityIds": [
+        "luhuitou"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-banshan-marina",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "景区官网",
+      "title": "半山半岛帆船港",
+      "url": "https://www.visitsanya.com/zh/venue/%E4%B8%89%E4%BA%9A%E5%8D%8A%E5%B1%B1%E5%8D%8A%E5%B2%9B%E5%B8%86%E8%88%B9%E6%B8%AF",
+      "entityIds": [
+        "banshan-marina"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-nanshan",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "景区官网",
+      "title": "南山文化旅游区",
+      "url": "https://www.nanshan.com/",
+      "entityIds": [
+        "nanshan"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-dadonghai",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "景区官网",
+      "title": "大东海旅游区",
+      "url": "https://www.visitsanya.com/zh/venue/%E5%A4%A7%E4%B8%9C%E6%B5%B7",
+      "entityIds": [
+        "dadonghai"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-haitang-bay",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "景区官网",
+      "title": "海棠湾",
+      "url": "https://www.visitsanya.com/zh/experience/%E6%B5%B7%E6%A3%A0%E6%B9%BE",
+      "entityIds": [
+        "haitang-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-west-coast",
+      "category": "玩",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "西海岸滨海带",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E8%A5%BF%E6%B5%B7%E5%B2%B8%E6%BB%A8%E6%B5%B7%E5%B8%A6",
+      "entityIds": [
+        "haikou-west-coast"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-shenzhou",
+      "category": "玩",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "神州半岛海岸",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E7%A5%9E%E5%B7%9E%E5%8D%8A%E5%B2%9B%E6%B5%B7%E5%B2%B8",
+      "entityIds": [
+        "shenzhou-peninsula"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-clearwater",
+      "category": "玩",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "清水湾海岸",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B8%85%E6%B0%B4%E6%B9%BE%E6%B5%B7%E5%B2%B8",
+      "entityIds": [
+        "clearwater-coast"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-tufu",
+      "category": "玩",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "土福湾海岸",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E5%9C%9F%E7%A6%8F%E6%B9%BE%E6%B5%B7%E5%B2%B8",
+      "entityIds": [
+        "sangem-beach"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-sanya-bay",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚湾椰梦长廊",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E6%B9%BE%E6%A4%B0%E6%A2%A6%E9%95%BF%E5%BB%8A",
+      "entityIds": [
+        "sanya-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-yalong",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "亚龙湾公共海滩",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%BA%9A%E9%BE%99%E6%B9%BE%E5%85%AC%E5%85%B1%E6%B5%B7%E6%BB%A9",
+      "entityIds": [
+        "yalong-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-sunny-bay",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "太阳湾公路",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E5%A4%AA%E9%98%B3%E6%B9%BE%E5%85%AC%E8%B7%AF",
+      "entityIds": [
+        "yalong-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-houhai",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "后海村",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E5%90%8E%E6%B5%B7%E6%9D%91",
+      "entityIds": [
+        "haitang-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-wuzhizhou",
+      "category": "玩",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "蜈支洲岛码头",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E8%9C%88%E6%94%AF%E6%B4%B2%E5%B2%9B%E7%A0%81%E5%A4%B4",
+      "entityIds": [
+        "haitang-bay"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "play-map-xinglong-market",
+      "category": "玩",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "兴隆华侨农贸市场",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E5%85%B4%E9%9A%86%E5%8D%8E%E4%BE%A8%E5%86%9C%E8%B4%B8%E5%B8%82%E5%9C%BA",
+      "entityIds": [
+        "xinglong-market"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-hainan-home",
+      "category": "穿",
+      "city": "海南",
+      "sourceType": "天气",
+      "title": "海南重要气象信息",
+      "url": "https://www.weather.com.cn/hainan/zyqxxx/index.shtml",
+      "entityIds": [
+        "trip-clothing"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-hainan-forecast",
+      "category": "穿",
+      "city": "海南",
+      "sourceType": "天气",
+      "title": "海南天气预报",
+      "url": "https://www.weather.com.cn/hainan/index.shtml",
+      "entityIds": [
+        "trip-clothing"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-september-climate",
+      "category": "穿",
+      "city": "海南",
+      "sourceType": "天气",
+      "title": "海南九月气候公报参考",
+      "url": "https://www.weather.com.cn/hainan/zyqxxx/10/2403100.shtml",
+      "entityIds": [
+        "trip-clothing"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-autumn-typhoon",
+      "category": "穿",
+      "city": "海南",
+      "sourceType": "天气",
+      "title": "秋台风科普",
+      "url": "https://www.cma.gov.cn/2011xwzx/2011xqxxw/2011xqxyw/202110/t20211030_4082002.html",
+      "entityIds": [
+        "trip-clothing"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-haikou",
+      "category": "穿",
+      "city": "海口",
+      "sourceType": "天气",
+      "title": "海口天气预报",
+      "url": "https://www.weather.com.cn/weather/101310101.shtml",
+      "entityIds": [
+        "day-1-clothing"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-wanning",
+      "category": "穿",
+      "city": "万宁",
+      "sourceType": "天气",
+      "title": "万宁天气预报",
+      "url": "https://www.weather.com.cn/weather/101310215.shtml",
+      "entityIds": [
+        "day-2-clothing",
+        "day-3-clothing"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-lingshui",
+      "category": "穿",
+      "city": "陵水",
+      "sourceType": "天气",
+      "title": "陵水天气预报",
+      "url": "https://www.weather.com.cn/weather/101310216.shtml",
+      "entityIds": [
+        "day-4-clothing",
+        "day-5-clothing",
+        "day-6-clothing"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "weather-sanya",
+      "category": "穿",
+      "city": "三亚",
+      "sourceType": "天气",
+      "title": "三亚天气预报",
+      "url": "https://www.weather.com.cn/weathern/101310201.shtml",
+      "entityIds": [
+        "day-7-clothing"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-wuhan-airport",
+      "category": "行",
+      "city": "武汉",
+      "sourceType": "地图",
+      "title": "武汉天河国际机场",
+      "url": "https://www.amap.com/search?query=%E6%AD%A6%E6%B1%89%20%E6%AD%A6%E6%B1%89%E5%A4%A9%E6%B2%B3%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA",
+      "entityIds": [
+        "wuhan-airport"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-haikou-airport",
+      "category": "行",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "海口美兰国际机场",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E6%B5%B7%E5%8F%A3%E7%BE%8E%E5%85%B0%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA",
+      "entityIds": [
+        "haikou-airport"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-sanya-airport",
+      "category": "行",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚凤凰国际机场",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E5%87%A4%E5%87%B0%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA",
+      "entityIds": [
+        "sanya-airport"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-haikou-wanning",
+      "category": "行",
+      "city": "海南",
+      "sourceType": "地图",
+      "title": "海口万宁自驾路线",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8D%97%20%E6%B5%B7%E5%8F%A3%E4%B8%87%E5%AE%81%E8%87%AA%E9%A9%BE%E8%B7%AF%E7%BA%BF",
+      "entityIds": [
+        "route-haikou-wanning"
+      ],
+      "deepRead": true,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-wanning-lingshui",
+      "category": "行",
+      "city": "海南",
+      "sourceType": "地图",
+      "title": "万宁陵水自驾路线",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8D%97%20%E4%B8%87%E5%AE%81%E9%99%B5%E6%B0%B4%E8%87%AA%E9%A9%BE%E8%B7%AF%E7%BA%BF",
+      "entityIds": [
+        "route-wanning-lingshui"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-lingshui-sanya",
+      "category": "行",
+      "city": "海南",
+      "sourceType": "地图",
+      "title": "陵水三亚凤凰机场自驾路线",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8D%97%20%E9%99%B5%E6%B0%B4%E4%B8%89%E4%BA%9A%E5%87%A4%E5%87%B0%E6%9C%BA%E5%9C%BA%E8%87%AA%E9%A9%BE%E8%B7%AF%E7%BA%BF",
+      "entityIds": [
+        "route-lingshui-sanya"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-shimei-xinglong",
+      "category": "行",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "石梅湾兴隆自驾路线",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E7%9F%B3%E6%A2%85%E6%B9%BE%E5%85%B4%E9%9A%86%E8%87%AA%E9%A9%BE%E8%B7%AF%E7%BA%BF",
+      "entityIds": [
+        "route-shimei-xinglong"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-clearwater-cdf",
+      "category": "行",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "清水湾免税城自驾路线",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%B8%85%E6%B0%B4%E6%B9%BE%E5%85%8D%E7%A8%8E%E5%9F%8E%E8%87%AA%E9%A9%BE%E8%B7%AF%E7%BA%BF",
+      "entityIds": [
+        "route-clearwater-cdf"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-xincun-clearwater",
+      "category": "行",
+      "city": "陵水",
+      "sourceType": "地图",
+      "title": "新村港清水湾自驾路线",
+      "url": "https://www.amap.com/search?query=%E9%99%B5%E6%B0%B4%20%E6%96%B0%E6%9D%91%E6%B8%AF%E6%B8%85%E6%B0%B4%E6%B9%BE%E8%87%AA%E9%A9%BE%E8%B7%AF%E7%BA%BF",
+      "entityIds": [
+        "route-xincun-clearwater"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-haikou-parking",
+      "category": "行",
+      "city": "海口",
+      "sourceType": "地图",
+      "title": "海口西海岸停车",
+      "url": "https://www.amap.com/search?query=%E6%B5%B7%E5%8F%A3%20%E6%B5%B7%E5%8F%A3%E8%A5%BF%E6%B5%B7%E5%B2%B8%E5%81%9C%E8%BD%A6",
+      "entityIds": [
+        "parking-haikou"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-wanning-parking",
+      "category": "行",
+      "city": "万宁",
+      "sourceType": "地图",
+      "title": "神州半岛停车",
+      "url": "https://www.amap.com/search?query=%E4%B8%87%E5%AE%81%20%E7%A5%9E%E5%B7%9E%E5%8D%8A%E5%B2%9B%E5%81%9C%E8%BD%A6",
+      "entityIds": [
+        "parking-wanning"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    },
+    {
+      "sourceId": "transport-sanya-return-car",
+      "category": "行",
+      "city": "三亚",
+      "sourceType": "地图",
+      "title": "三亚凤凰机场租车还车",
+      "url": "https://www.amap.com/search?query=%E4%B8%89%E4%BA%9A%20%E4%B8%89%E4%BA%9A%E5%87%A4%E5%87%B0%E6%9C%BA%E5%9C%BA%E7%A7%9F%E8%BD%A6%E8%BF%98%E8%BD%A6",
+      "entityIds": [
+        "return-car-sanya"
+      ],
+      "deepRead": false,
+      "promoRisk": "低",
+      "mediaCount": 0
+    }
+  ]
+}
